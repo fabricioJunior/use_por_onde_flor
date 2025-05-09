@@ -1,0 +1,12 @@
+.background-img {
+    min-height: 100vh;
+    background: url('/campanha.PNG');
+    background-size: contain;
+    width:100%;
+    position: absolute;
+    text-align: center;
+    margin: 0;
+    object-fit: cover;
+    object-position: center;
+    
+}

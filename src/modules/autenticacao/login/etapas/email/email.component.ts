@@ -1,0 +1,38 @@
+import { Component, Input, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormControl, ReactiveFormsModule, Validators, FormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { merge } from "rxjs";
+import { Output, EventEmitter } from '@angular/core';
+
+@Component({
+    selector: 'app-email',
+    templateUrl: './email.component.html',
+    styleUrls: ['./email.component.css'],
+    imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule],
+
+})
+export class EmailComponent {
+    errorMessage = signal('');
+    emailFormControl = new FormControl('', [Validators.required, Validators.email]);;
+    @Output() emailChange = new EventEmitter<string>();
+    constructor() {
+
+        merge(this.emailFormControl.statusChanges, this.emailFormControl.valueChanges)
+            .pipe(takeUntilDestroyed())
+            .subscribe(() => this.updateErrorMessage());
+    }
+
+    updateErrorMessage() {
+        if (this.emailFormControl.hasError('required')) {
+            this.errorMessage.set('Informe o email');
+        } else if (this.emailFormControl.hasError('email')) {
+            this.errorMessage.set('Informe um email válido');
+        } else {
+            this.errorMessage.set('teste');
+        }
+        this.emailChange.emit(this.emailFormControl.value?.toString() ?? '');
+
+    }
+}

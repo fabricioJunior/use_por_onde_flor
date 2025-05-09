@@ -1,0 +1,13 @@
+.text-button {
+    background: none;
+    border: none;
+    color: var(--material-theme-sys-light-primary, #006B5B) !important;
+}
+  
+  .text-button:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+  
+  .text-button:active {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
