@@ -1,4 +1,4 @@
-import { Component, Input, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule, Validators, FormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -11,12 +11,13 @@ import { Output, EventEmitter } from '@angular/core';
     templateUrl: './email.component.html',
     styleUrls: ['./email.component.css'],
     imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule],
-
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailComponent {
     errorMessage = signal('');
     emailFormControl = new FormControl('', [Validators.required, Validators.email]);;
     @Output() emailChange = new EventEmitter<string>();
+    @Output() emailValido = new EventEmitter<boolean>();
     constructor() {
 
         merge(this.emailFormControl.statusChanges, this.emailFormControl.valueChanges)
@@ -33,6 +34,7 @@ export class EmailComponent {
             this.errorMessage.set('teste');
         }
         this.emailChange.emit(this.emailFormControl.value?.toString() ?? '');
+        this.emailValido.emit(this.emailFormControl.valid);
 
     }
 }

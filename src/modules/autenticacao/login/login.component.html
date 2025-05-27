@@ -6,24 +6,35 @@
 
         <div class = "informacoes">
           <h2>Fazer login</h2>
-          <p>Acesso a fidelidade: {{selectEmail()}}</p> 
+          @if(etapa() == 0){
+            <p>Acesso a fidelidade</p> 
+          }
+          @if(etapa() == 1){
+            <p>Digite a senha do {{selectEmail()}}</p> 
+          }
+         
           <!-- @if(selectEmail() != ''){
             <p>Olá, {{selectEmail()}}</p>
           } -->
 
         </div>
-         <app-email (emailChange)="emailChange($event)"></app-email>
+        @if(etapa() == 0){
+          <app-email (emailValido)="emailValida($event)"  (emailChange)="emailChange($event)"></app-email> 
+        }
+        @if(etapa() == 1){
+          <app-senha></app-senha>
+        }
+        
         <b>
           Ganhe 20% de desconto toda vez que completar seu cartão fidelidade.
         </b>
 
         <div class="button-group">
-          <button class="button text-button">Criar Conta</button>
-          <app-filled-button [label]="buttoLabel()"  [color]="'red'" [enabled]="emailControl.valid" [action]="avancaTap" class="button avanca-button"></app-filled-button>
+          <button (click)="abrirCadastro()" class="button text-button">Criar Conta</button>
+          <app-filled-button [label]="buttoLabel()"  [color]="'red'" [enabled]="emailValido()" (onTap)="onAvancarTap()" class="button avanca-button"></app-filled-button>
         </div>
       </div>
-      
-       
+
     </div>
       <div class = "botoes-inferiores">
         <app-text-button 

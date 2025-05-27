@@ -8,12 +8,15 @@ import { MatInputModule } from '@angular/material/input';
 import { merge } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EmailComponent } from "./etapas/email/email.component";
+import { SenhaComponent } from "./etapas/senha/senha.component";
+import { Router } from '@angular/router';
 @Component({
     selector: 'Login',
     templateUrl: './login.component.html',
     styleUrl: './login.component.css',
-    imports: [TextButtonComponent, FilledButtonComponent, LogoComponent, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, EmailComponent],
+    imports: [TextButtonComponent, FilledButtonComponent, LogoComponent, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, EmailComponent, SenhaComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
 })
 export class LoginComponent {
     title = 'Login';
@@ -27,37 +30,40 @@ export class LoginComponent {
         }
     });
     selectEmail = signal('');
-    avancaEnable = signal(false);
-    readonly emailControl = new FormControl('', [Validators.required, Validators.email]);
-    readonly senha = new FormControl('', [Validators.required, Validators.minLength(6)]);
-    $event: any;
+    senha = '';
+    emailValido = signal(false);
+    loginEnable = signal(false);
 
 
-    avancaTap() {
-        console.log('teste');
-    }
+    constructor(private router: Router) { }
+
 
 
     emailChange(email: string) {
-        console.log(email.toString());
+        this.selectEmail.set(email.toString());
+    }
 
-        this.emailControl.setValue(email);
-        this.avancaEnable.set(this.emailControl.valid);
+    emailValida(valida: boolean) {
+        this.emailValido.update(() => valida);
+    }
 
+    onAvancarTap() {
+        console.log(this);
+        this.etapa.update(() => Etapas.Senha);
     }
 
     onAjudaTap() {
 
-    }
-
-    constructor() {
 
     }
+    abrirCadastro() {
+        this.router.navigate(['/cadastro']); // Redireciona para a rota /cadastro
+    }
+
 
 
 
 }
-
 
 
 enum Etapas {

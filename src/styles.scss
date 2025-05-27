@@ -1,0 +1,52 @@
+/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+// Variáveis globais
+$font-family: Roboto, "Helvetica Neue", sans-serif;
+$body-bg-color: #ffffff;
+$default-margin: 0;
+$default-padding: 0;
+$primary-color: #006B5B;
+
+// Mixins
+@mixin full-size {
+  height: 100%;
+  width: 100%;
+}
+
+// Estilos globais
+body {
+  @include full-size;
+  margin: $default-margin !important;
+  padding: $default-padding !important;
+  font-family: $font-family;
+  background-color: $body-bg-color;
+
+}
+
+html, body {
+  @include full-size;
+}
+
+* {
+  font-family: $font-family;
+}
+
+
+:root {
+  @include mat.button-overrides((
+    filled-container-color:  var(--material-theme-sys-light-primary, #006B5B),
+    filled-label-text-color: white,
+    text-label-text-color: var(--material-theme-sys-light-primary, #006B5B),
+    
+  ));
+  @include mat.form-field-overrides((
+    outlined-hover-outline-color:#006B5B,
+    outlined-focus-outline-color: $primary-color,
+    outlined-input-text-color: $primary-color,
+    outlined-hover-label-text-color: $primary-color,
+    outlined-outline-color: $primary-color
+  ));
+  
+
+}

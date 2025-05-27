@@ -1,8 +1,8 @@
 <div class = "email-group">
-    <input type="text" [formControl]="senhaFormControl" placeholder="E-mail" class="input-box" > 
+    <input type="password" [formControl]="senhaFormControl" placeholder="Digite a sua senha" class="input-box"  > 
     @if(senhaFormControl.invalid){
       <mat-error class="error-message">{{errorMessage()}}</mat-error>
     }
-    <button type = "button" id="esqueceu-seu-email-button"  class="text-button text-button-text" placeholder="" >Esqueceu seu e-mail ? </button>
+    <button type = "button" id="esqueceu-seu-email-button"  class="text-button text-button-text" placeholder="" >Esqueceu  sua senha ? </button>
  
   </div>

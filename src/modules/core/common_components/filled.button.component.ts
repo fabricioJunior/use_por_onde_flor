@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
@@ -12,7 +12,7 @@ import { MatIconModule } from "@angular/material/icon";
 })
 export class FilledButtonComponent {
     @Input() label: string = 'Button';
-    @Input() action: () => void = () => { };
+    @Output() onTap = new EventEmitter<void>()
     @Input() enabled: boolean = true;
-    @Input() color: string = 'primary';
+    @Input() color: string = 'red';
 }

@@ -1,0 +1,19 @@
+.data_nascimento_container{ 
+    margin-bottom: 15px;
+    display:flex;
+    flex-direction: row;
+    gap: 16px;
+   
+} 
+
+.cpf-container { 
+    display:flex;
+    flex-direction: column;
+}
+
+
+app-outline-input {
+    box-sizing:border-box !important;
+}
+
+    

@@ -1,0 +1,69 @@
+.cadastro-container { // ok
+  display: flex;
+  padding: 16px;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+  min-height: 100vh;
+  }
+  .container {
+    justify-content: space-between;
+    align-items: top;
+    flex-shrink: 0;
+    align-self: stretch;
+    background: var(--material-theme-sys-light-secondary-container, #ffffff);
+    display: block;
+  } 
+  .acoes-primarias { 
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    vertical-align: center;
+    align-self: stretch;
+    box-sizing: border-box;
+    padding: 12px;
+  }
+  * {
+    box-sizing: border-box;
+   }
+
+   .row {
+    display: flex;
+    justify-content: flex-end; /* Alinha os elementos ao lado direito */
+    align-items: center; /* Opcional: Alinha os elementos verticalmente ao centro */
+    box-sizing: border-box;
+    flex-direction: row;
+    
+  }
+
+  .informacoes { 
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    h2, p {
+      padding: 0px;
+      margin: 0px;
+      margin-bottom: 0px;
+      p {
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+      }
+      h2{
+        font-family: "Work Sans";
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+      }
+    }
+  }
+ 
+  
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+
+  }
+  
