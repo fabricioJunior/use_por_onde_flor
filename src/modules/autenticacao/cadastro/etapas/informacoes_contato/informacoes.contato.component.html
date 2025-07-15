@@ -1,0 +1,30 @@
+
+<div [formGroup]="formGroup">
+    <div id="acao-container">
+        <h2 class="title">Informações de contato</h2>
+        <p> Toda vez que realizar uma compra solicite ao caixa ou atendente a
+            pontuação no seu cartão fidelidade.</p>
+    </div>
+    <mat-form-field appearance="outline">
+        <mat-label>Telefone</mat-label>
+        <input matInput placeholder="Telefone" maxlength="15"
+            formControlName="telefone"
+            [value]="formGroup.get('telefone')?.value"
+            mask="(00) 00000-0000" ngxMask>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="Email" maxlength="40"
+            formControlName="email"
+            [value]="formGroup.get('email')?.value">
+
+    </mat-form-field>
+    <mat-error>
+        {{emailError()}}
+    </mat-error>
+    <div class="row">
+        <app-filled-button [label]="'Avançar'" [color]="'red'"
+            [enabled]="avancaEnable()"
+            (onTap)="onAvancarTap()"></app-filled-button>
+    </div>
+</div>

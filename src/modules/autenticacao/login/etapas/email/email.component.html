@@ -1,8 +1,14 @@
-<div class = "email-group">
-    <input type="text" [formControl]="emailFormControl" placeholder="E-mail" class="input-box" > 
-    @if(emailFormControl.invalid){
-      <mat-error class="error-message">{{errorMessage()}}</mat-error>
+<div class="email-group" [formGroup]="loginGroup">
+  <mat-form-field appearance="outline">
+    <mat-label>E-mail</mat-label>
+    <input matInput placeholder="E-mail" formControlName="email">
+    @if(loginGroup.get('email')?.invalid){
+    <mat-error class="error-message">{{errorMessage()}}</mat-error>
     }
-    <button type = "button" id="esqueceu-seu-email-button"  class="text-button text-button-text" placeholder="" >Esqueceu seu e-mail ? </button>
- 
-  </div>
+  </mat-form-field>
+
+  <button type="button" id="esqueceu-seu-email-button"
+    class="text-button text-button-text" placeholder>Esqueceu seu e-mail ?
+  </button>
+
+</div>

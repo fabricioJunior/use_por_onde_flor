@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormControl, ReactiveFormsModule, Validators, FormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule, Validators, FormsModule, FormGroup } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { merge } from "rxjs";
 import { Output, EventEmitter } from '@angular/core';
+import { LoginComponent } from "../../login.component";
 
 @Component({
     selector: 'app-email',
@@ -18,9 +19,11 @@ export class EmailComponent {
     emailFormControl = new FormControl('', [Validators.required, Validators.email]);;
     @Output() emailChange = new EventEmitter<string>();
     @Output() emailValido = new EventEmitter<boolean>();
-    constructor() {
 
-        merge(this.emailFormControl.statusChanges, this.emailFormControl.valueChanges)
+    loginGroup: FormGroup;
+    constructor(loginComponent: LoginComponent) {
+        this.loginGroup = loginComponent.loginGroup;
+        merge(loginComponent.loginGroup.get('email')!.statusChanges, this.emailFormControl.valueChanges)
             .pipe(takeUntilDestroyed())
             .subscribe(() => this.updateErrorMessage());
     }

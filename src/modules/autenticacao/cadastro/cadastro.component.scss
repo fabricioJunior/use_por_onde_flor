@@ -17,11 +17,10 @@
   .acoes-primarias { 
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 0px;
     vertical-align: center;
     align-self: stretch;
     box-sizing: border-box;
-    padding: 12px;
   }
   * {
     box-sizing: border-box;
@@ -35,11 +34,14 @@
     flex-direction: row;
     
   }
+   
+  #logo-container {
+    padding-bottom: 40px;
+   }
 
   .informacoes { 
     display: flex;
     flex-direction: column;
-    gap: 8px;
     h2, p {
       padding: 0px;
       margin: 0px;

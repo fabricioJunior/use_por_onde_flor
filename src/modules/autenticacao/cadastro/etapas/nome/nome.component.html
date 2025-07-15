@@ -1,15 +1,30 @@
 
+<div id="acao-container">
+  <h2 class="title">Informações básicas</h2>
+  <p> Insira seu nome</p>
+</div>
+<form [formGroup]="formGroup">
 
-
-  <div class="input-group"> 
+  <div class="input-group">
     <mat-form-field appearance="outline">
       <mat-label>Nome</mat-label>
-      <input matInput placeholder="Digite seu nome" id="nome"> 
-    </mat-form-field> 
+      <input matInput placeholder="Digite seu nome" id="nome"
+        [value]="formGroup.get('nome')?.value"
+        formControlName="nome">
+    </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Sobrenome</mat-label>
-      <input matInput placeholder="Digite seu sobrenome" id="nome"> 
+      <input matInput placeholder="Digite seu sobrenome" id="nome"
+        [value]="formGroup.get('sobrenome')?.value"
+        formControlName="sobrenome">
     </mat-form-field>
-    
+
+    <div class="row">
+      <app-filled-button [label]="'Avançar'"
+        [color]="'red'"
+        [enabled]="avancarEnable()"
+        (onTap)="onAvancarTap()"></app-filled-button>
+    </div>
   </div>
+</form>

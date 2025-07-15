@@ -13,7 +13,7 @@ import { merge } from "rxjs";
     imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SenhaComponent {
+export class LoginSenhaComponent {
 
     errorMessage = signal('');
     senhaFormControl = new FormControl('', [Validators.required, Validators.minLength(6)]);;

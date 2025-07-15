@@ -1,0 +1,22 @@
+
+<div [formGroup]="formGroup">
+    <div id="acao-container">
+        <h2 class="title">Senha de acesso</h2>
+        <p> Crie uma senha com no minímo 6 digitos</p>
+    </div>
+    <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input type="password" matInput placeholder="Senha" maxlength="20"
+            formControlName="senha"
+            [value]="formGroup.get('senha')?.value">
+        <mat-error>
+            {{senhaError()}}
+        </mat-error>
+    </mat-form-field>
+
+    <div class="row">
+        <app-filled-button [label]="'Avançar'" [color]="'red'"
+            [enabled]="avancaEnable()"
+            (onTap)="onAvancarTap()"></app-filled-button>
+    </div>
+</div>

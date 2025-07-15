@@ -1,54 +1,70 @@
-import { Component, EventEmitter, Output, signal, } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, signal, } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
+import { Router } from '@angular/router';
+import { CadastroComponent } from '../../cadastro.component';
+
 
 @Component({
     selector: 'app-nome-cadastro',
     templateUrl: './nome.component.html',
     styleUrls: ['./nome.component.scss'],
-    imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule],
+    imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, FilledButtonComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
 })
 export class NomeComponent {
-    @Output() nome = new EventEmitter<string>();
-    @Output() nomeValido = new EventEmitter<boolean>();
-    @Output() sobrenome = new EventEmitter<string>();
-    @Output() sobrenomeValido = new EventEmitter<boolean>();
 
-    nomeFormControl = new FormControl('', [Validators.required, Validators.minLength(3)]);
-    sobrenomeFormControl = new FormControl('', [Validators.required, Validators.minLength(3)]);
 
     nomeErrorMessage = signal('');
     sobrenomeErrorMessage = signal('');
 
-    constructor() {
-        this.nomeFormControl.valueChanges.subscribe((value) => {
-            this.nome.emit(value ?? '');
-            this.nomeValido.emit(this.nomeFormControl.valid);
-            this.updateNomeErrorMessage();
-        });
+    avancarEnable = signal(false);
 
-        this.sobrenomeFormControl.valueChanges.subscribe((value) => {
-            this.sobrenome.emit(value ?? '');
-            this.sobrenomeValido.emit(this.sobrenomeFormControl.valid);
+    formGroup: FormGroup;
+
+    constructor(cadastroComponent: CadastroComponent, private router: Router) {
+        this.formGroup = cadastroComponent.cadastroFromGroup;
+        this.formGroup.get('nome')!.valueChanges.subscribe((value) => {
+            this.updateNomeErrorMessage();
+            this.avancaEnableUpdate();
+        });
+        console.log('constructor');
+        this.formGroup.get('sobrenome')!.valueChanges.subscribe((value) => {
             this.updateSobrenomeErrorMessage();
+            this.avancaEnableUpdate();
         });
     }
 
     updateNomeErrorMessage() {
-        if (this.nomeFormControl.hasError('required')) {
+        console.log('updateNomeErrorMessage');
+        if (this.formGroup.get('nome')!.hasError('required')) {
             return 'Informe o nome';
-        } else if (this.nomeFormControl.hasError('minlength')) {
+        } else if (this.formGroup.get('nome')!.hasError('minlength')) {
             return 'Seu nome deve ter no mínimo 3 caracteres';
+        } else {
+            return '';
         }
-        return '';
+
     }
     updateSobrenomeErrorMessage() {
-        if (this.sobrenomeFormControl.hasError('required')) {
+        if (this.formGroup.get('sobrenome')!.hasError('required')) {
             return 'Informe o sobrenome';
-        } else if (this.sobrenomeFormControl.hasError('minlength')) {
+        } else if (this.formGroup.get('sobrenome')!.hasError('minlength')) {
             return 'Seu sobrenome deve ter no mínimo 3 caracteres';
+        } else {
+            return '';
         }
-        return '';
+    }
+
+    avancaEnableUpdate() {
+        var enable = !this.formGroup.get('sobrenome')?.invalid && !this.formGroup.get('nome')?.invalid;
+        this.avancarEnable.set(enable);
+    }
+
+    onAvancarTap() {
+        this.router.navigate(['/cadastro', { outlets: { cadastroOutlet: ['infoBasicas'] } }]);
     }
 }

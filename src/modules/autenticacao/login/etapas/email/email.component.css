@@ -68,13 +68,7 @@
         background-color: inherit;
       }
 
-      input{
-        padding: 8px 16px;
-        align-items: center;
-        border: 1px solid var(--Cores-Verde-Escuro, #237266);
-        margin: 0px !important;
-        height: auto;
-        box-sizing: border-box;
-        display: block;
-        width: 100% !important;
+  
+      mat-form-field{
+        width: 100%;
       }

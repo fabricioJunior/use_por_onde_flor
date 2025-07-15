@@ -1,25 +1,15 @@
 <div class="cadastro-container">
   <div class="container">
-    <div class="acoes-primarias"> 
-
-      <app-logo></app-logo>
-      
-       <div class="informacoes"> 
-        <h2 class="title">Criar Conta</h2>
-        <p> Insira seu nome</p>
-       </div>
-      @if(etapa() == 0){
-        <app-nome-cadastro></app-nome-cadastro>
-      }
-      @if(etapa() == 1){
-        <app-informacoes-basicas></app-informacoes-basicas>
-      }
-      <div class="row">
-          <app-filled-button [label]="'Avançar'" [color]="'red'" [enabled]="true" (onTap)="onAvancarTap()"></app-filled-button>
+    <div class="acoes-primarias">
+      <div id="logo-container">
+        <app-logo></app-logo>
       </div>
-     </div>
+
+      <div>
+        <router-outlet name="cadastroOutlet"></router-outlet>
+      </div>
+
+    </div>
   </div>
-  
-    
- 
-  </div>
+
+</div>

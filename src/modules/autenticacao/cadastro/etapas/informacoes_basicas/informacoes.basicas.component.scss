@@ -1,5 +1,5 @@
 .data_nascimento_container{ 
-    margin-bottom: 15px;
+    margin-bottom: 0px;
     display:flex;
     flex-direction: row;
     gap: 16px;
@@ -11,9 +11,22 @@
     flex-direction: column;
 }
 
+.row{
+    display: flex;
+    justify-content: end;
+    align-items: end;
+}
 
 app-outline-input {
     box-sizing:border-box !important;
+    margin-bottom: 0px !important;
+    flex-direction: none;
 }
 
-    
+#data_error_box{ 
+  margin-bottom: 16px;
+}
+
+#acao-container {
+    padding-bottom: 40px;
+}

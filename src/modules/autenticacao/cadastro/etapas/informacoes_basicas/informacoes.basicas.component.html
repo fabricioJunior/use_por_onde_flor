@@ -1,13 +1,20 @@
-<div>
+<div id="acao-container">
+  <div id="acao-container">
+    <h2 class="title">Informações básicas</h2>
+    <p> Insira seu nome</p>
+  </div>
+</div>
+<div [formGroup]="formGroup">
 
-  <div class = "data_nascimento_container">
+  <div class="data_nascimento_container">
     <mat-form-field appearance="outline">
       <mat-label>Dia</mat-label>
-      <input matInput placeholder="Dia" maxlength="2"> 
+      <input matInput placeholder="Dia" maxlength="2" formControlName="dia"
+        [value]="formGroup.get('dia')?.value">
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Mês</mat-label>
-      <mat-select>
+      <mat-select formControlName="mes" [value]="formGroup.get('mes')?.value">
         <mat-option value=1>Janeiro</mat-option>
         <mat-option value=2>Fevereiro</mat-option>
         <mat-option value=3>Março</mat-option>
@@ -25,16 +32,38 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Ano</mat-label>
-      <input matInput placeholder="Ano" [maxLength]="4"> 
+      <input matInput placeholder="Ano" [maxLength]="4" formControlName="ano"
+        [value]="formGroup.get('ano')?.value">
     </mat-form-field>
   </div>
+  <div id="data_error_box">
+    <mat-error>
+      {{dataError()}}
+    </mat-error>
+  </div>
+
   <div class="cpf-container">
     <mat-form-field appearance="outline">
       <mat-label>CPF</mat-label>
-      <input matInput placeholder="CPF" [maxLength]="14" mask="000.000.000-00||00.000.000/0000-00"> 
-    </mat-form-field>
-  </div>
-  
+      <input matInput placeholder="CPF" [maxLength]="14" formControlName="cpf"
+        [value]="formGroup.get('cpf')?.value"
+        mask="000.000.000-00||00.000.000/0000-00">
 
+    </mat-form-field>
+    <mat-error>
+      {{cpfError()}}
+    </mat-error>
+  </div>
+  <div class="row">
+    @if(loading()){
+    <mat-spinner></mat-spinner>
+
+    } @else {
+    <app-filled-button [label]="'Avançar'" [color]="'red'"
+      [enabled]="avancaEnable()"
+      (onTap)="onAvancarTap()"></app-filled-button>
+    }
+
+  </div>
 
 </div>

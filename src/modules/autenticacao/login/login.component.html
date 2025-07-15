@@ -1,50 +1,42 @@
-<div class = "body-all">
-    <div class="container">
-      <div class="acoes-primarias"> 
+<div class="body-all">
+  <div class="container">
+    <div class="acoes-primarias">
 
-        <app-logo></app-logo>
+      <app-logo></app-logo>
 
-        <div class = "informacoes">
-          <h2>Fazer login</h2>
-          @if(etapa() == 0){
-            <p>Acesso a fidelidade</p> 
-          }
-          @if(etapa() == 1){
-            <p>Digite a senha do {{selectEmail()}}</p> 
-          }
-         
-          <!-- @if(selectEmail() != ''){
-            <p>Olá, {{selectEmail()}}</p>
-          } -->
-
-        </div>
-        @if(etapa() == 0){
-          <app-email (emailValido)="emailValida($event)"  (emailChange)="emailChange($event)"></app-email> 
-        }
-        @if(etapa() == 1){
-          <app-senha></app-senha>
-        }
-        
-        <b>
-          Ganhe 20% de desconto toda vez que completar seu cartão fidelidade.
-        </b>
-
-        <div class="button-group">
-          <button (click)="abrirCadastro()" class="button text-button">Criar Conta</button>
-          <app-filled-button [label]="buttoLabel()"  [color]="'red'" [enabled]="emailValido()" (onTap)="onAvancarTap()" class="button avanca-button"></app-filled-button>
-        </div>
+      <div class="informacoes">
+        <h2>Fazer login</h2>
+        <p>Acesso a fidelidade</p>
       </div>
 
+      <div class="formulario-login">
+        <form [formGroup]="loginGroup">
+          <router-outlet name="loginOutlet"></router-outlet>
+        </form>
+      </div>
+
+      <b>
+        Ganhe 20% de desconto toda vez que completar seu cartão fidelidade.
+      </b>
+
+      <div class="button-group">
+        <button (click)="abrirCadastro()" class="button text-button">Criar
+          Conta</button>
+        <app-filled-button [label]="'Avançar'" [color]="'red'"
+          [enabled]="true" (onTap)="onAvancarTap()"
+          class="button avanca-button"></app-filled-button>
+      </div>
     </div>
-      <div class = "botoes-inferiores">
-        <app-text-button 
-        [label]="'Ajuda'" 
-        [action]="onAjudaTap">
-      </app-text-button>  
-      <app-text-button 
-        [label]="'Privacidade'" 
-        [action]="onAjudaTap">
-      </app-text-button> 
-      </div>
-</div>
 
+  </div>
+  <div class="botoes-inferiores">
+    <app-text-button
+      [label]="'Ajuda'"
+      [action]="onAjudaTap">
+    </app-text-button>
+    <app-text-button
+      [label]="'Privacidade'"
+      [action]="onAjudaTap">
+    </app-text-button>
+  </div>
+</div>
