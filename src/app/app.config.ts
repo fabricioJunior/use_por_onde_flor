@@ -8,8 +8,9 @@ import { HttpClientModule, provideHttpClient, withInterceptors, withInterceptors
 import { ApiBaseUrlInterceptor } from './config/config.service';
 import { UsuarioDocumentoValidoDataSource } from '../modules/autenticacao/data/usuario.documento.valido.data.source';
 import { UsuarioEmailValidoDataSource } from '../modules/autenticacao/data/usuario.email.valido.data.source';
-import { LoginService } from '../modules/autenticacao/services/login.service';
+import { AutenticacaoService } from '../modules/autenticacao/services/autenticacao.service';
 import { UsuarioDataSource } from '../modules/autenticacao/data/usuario.data.source';
+import { AutenticacaoDataSource } from '../modules/autenticacao/data/autenticacao.data.source';
 const maskConfig: Partial<NgxMaskConfig> = {
   validation: false,
 };
@@ -22,7 +23,8 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([ApiBaseUrlInterceptor])),
     { provide: UsuarioDocumentoValidoDataSource },
     { provide: UsuarioEmailValidoDataSource },
-    { provide: LoginService },
+    { provide: AutenticacaoService },
     { provide: UsuarioDataSource },
+    { provide: AutenticacaoDataSource },
   ]
 };

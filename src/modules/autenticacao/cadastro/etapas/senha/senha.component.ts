@@ -7,7 +7,7 @@ import { NgxMaskDirective } from "ngx-mask";
 import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
 import { CadastroComponent } from "../../cadastro.component";
 import { Router } from "@angular/router";
-import { LoginService } from "../../../services/login.service";
+import { AutenticacaoService } from "../../../services/autenticacao.service";
 
 @Component(
     {
@@ -26,7 +26,7 @@ export class SenhaComponent {
     avancaEnable = signal(false);
 
 
-    constructor(cadastroComponent: CadastroComponent, private router: Router, private loginService: LoginService) {
+    constructor(cadastroComponent: CadastroComponent, private router: Router, private loginService: AutenticacaoService) {
         this.formGroup = cadastroComponent.cadastroFromGroup;
 
         this.formGroup.get('senha')?.statusChanges.subscribe((value) => {

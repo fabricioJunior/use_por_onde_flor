@@ -72,3 +72,9 @@
       mat-form-field{
         width: 100%;
       }
+      .button-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      }

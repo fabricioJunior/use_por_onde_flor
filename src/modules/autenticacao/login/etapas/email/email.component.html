@@ -1,14 +1,15 @@
 <div class="email-group" [formGroup]="loginGroup">
   <mat-form-field appearance="outline">
     <mat-label>E-mail</mat-label>
-    <input matInput placeholder="E-mail" formControlName="email">
-    @if(loginGroup.get('email')?.invalid){
-    <mat-error class="error-message">{{errorMessage()}}</mat-error>
-    }
+    <input matInput placeholder="E-mail" formControlName="email"
+      [value]="loginGroup.get('email')?.value">
   </mat-form-field>
-
-  <button type="button" id="esqueceu-seu-email-button"
-    class="text-button text-button-text" placeholder>Esqueceu seu e-mail ?
-  </button>
-
+  <mat-error class="error-message">{{errorMessage()}}</mat-error>
+  <div class="button-group">
+    <button (click)="abrirCadastro()" class="button text-button">Criar
+      Conta</button>
+    <app-filled-button [label]="'Avançar'" [color]="'red'"
+      [enabled]="avancaEnable()" (onTap)="onAvancarTap()"
+      class="button avanca-button"></app-filled-button>
+  </div>
 </div>

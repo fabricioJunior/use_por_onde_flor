@@ -5,15 +5,25 @@ import { Injectable } from "@angular/core";
 
 @Injectable()
 export class UsuarioDataSource extends RemoteDataSourceBase<Object> {
-    override path = 'v1/pessoas-usuarios/registrar';
+    override path = 'v1/pessoas-usuarios/';
 
 
     criarUsuario(usuario: UsuarioDto): Observable<Object> {
         return this.post(
             {
                 body: usuario,
-                responseType: 'text'
+                responseType: 'text',
+                path: 'registrar'
             }
         )
+    }
+
+    recuperarUsuario(): Observable<UsuarioDto> {
+
+        return this.get(
+            {
+                path: 'perfil'
+            }
+        );
     }
 }

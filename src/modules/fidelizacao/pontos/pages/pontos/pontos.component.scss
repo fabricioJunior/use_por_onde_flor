@@ -1,0 +1,89 @@
+
+.container { 
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    min-height: 100vh;
+    box-sizing: border-box; /* Inclui padding e border no tamanho total */
+    padding-top: 40px;
+    padding-right: 24px;
+    padding-left: 24px;
+    gap: 40px;
+    max-width: 100%; /* Garante que o container não ultrapasse a largura da tela */
+    overflow: hidden; /* Impede que os elementos filhos ultrapassem os limites visíveis */
+}
+h2 {
+    margin: 0px;
+}
+p{
+    padding: 0px;
+    margin: 0px;
+}
+.row-end { 
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 100%; /* Limita a largura ao tamanho da tela */
+    overflow: hidden; /* Remove qualquer scroll horizontal */
+}
+.cartao-pontos{ 
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center; 
+    /* Permite que os elementos quebrem para outra linha */
+    width: 100%;
+    gap: 32px;
+    max-width: 100%; /* Limita o tamanho máximo ao tamanho da tela */
+    box-sizing: border-box;
+    background-color: #CAE7DF;
+    border-radius: 24px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    padding-right: 16px;
+    padding-left: 16px;
+}
+
+.pontos-group{ 
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+
+    p{
+         color: #A5A5A5;
+        text-align: center;
+        font-family: Nunito;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: normal;   
+    }
+    h2{
+        font-family: Nunito;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+    }
+}
+
+
+
+.acoes-primarias{
+
+    display: flex;
+    gap: 40px;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%; /* Limita o tamanho máximo ao tamanho da tela */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.info-cliente {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+
+}

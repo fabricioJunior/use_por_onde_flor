@@ -9,6 +9,7 @@ import { InformacoesBasicasComponent } from '../modules/autenticacao/cadastro/et
 import { InformacoesContatoComponent } from '../modules/autenticacao/cadastro/etapas/informacoes_contato/informacoes.contato.component';
 import { SenhaComponent } from '../modules/autenticacao/cadastro/etapas/senha/senha.component';
 import { FimComponent } from '../modules/autenticacao/cadastro/etapas/fim/fim.component';
+import { PontosComponent } from '../modules/fidelizacao/pontos/pages/pontos/pontos.component';
 
 export const routes: Routes = [
 
@@ -24,6 +25,9 @@ export const routes: Routes = [
                 path: 'stepSenha', component: LoginSenhaComponent, outlet: 'loginOutlet',
             }
         ]
+    },
+    {
+        path: 'home', component: PontosComponent
     },
     {
         path: 'cadastro', component: CadastroComponent,

@@ -14,7 +14,7 @@ import { Router, RouterModule } from '@angular/router';
     selector: 'Login',
     templateUrl: './login.component.html',
     styleUrl: './login.component.css',
-    imports: [TextButtonComponent, FilledButtonComponent, LogoComponent, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, RouterModule],
+    imports: [TextButtonComponent, LogoComponent, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, RouterModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
@@ -38,11 +38,6 @@ export class LoginComponent {
 
 
     }
-
-    abrirCadastro() {
-        this.router.navigate(['/cadastro']); // Redireciona para a rota /cadastro
-    }
-
 
 
 

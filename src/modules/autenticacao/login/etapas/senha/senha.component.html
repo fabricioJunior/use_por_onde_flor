@@ -1,8 +1,20 @@
-<div class = "email-group">
-    <input type="password" [formControl]="senhaFormControl" placeholder="Digite a sua senha" class="input-box"  > 
-    @if(senhaFormControl.invalid){
-      <mat-error class="error-message">{{errorMessage()}}</mat-error>
-    }
-    <button type = "button" id="esqueceu-seu-email-button"  class="text-button text-button-text" placeholder="" >Esqueceu  sua senha ? </button>
- 
+<div class="email-group" [formGroup]="formGroup">
+
+  <mat-form-field appearance="outline">
+    <mat-label>Senha</mat-label>
+    <input type="password" matInput placeholder="E-mail"
+      formControlName="senha">
+  </mat-form-field>
+  <mat-error class="error-message">{{errorMessage()}}</mat-error>
+
+  <div class="row">
+    <button type="button" id="esqueceu-seu-email-button"
+      class="text-button text-button-text" placeholder>Esqueceu sua senha ?
+    </button>
+    <app-filled-button [label]="'Avançar'" [color]="'red'"
+      [enabled]="avancaEnable()" (onTap)="login()"
+      class="button avanca-button"></app-filled-button>
+
   </div>
+
+</div>

@@ -16,9 +16,14 @@ export abstract class RemoteDataSourceBase<Dto> {
         if (options?.pathArguments != null) {
             url = this.insertPathArguments(url, options.pathArguments);
         }
+        if (options?.path != null) {
+            url = this.insertPath(url, options.path);
+        }
         console.log(url);
         return this.http.get<Dto>(url);
     }
+
+
 
     private insertPathArguments(url: string, pathArguments: Arguments): string {
         var keys = Object.keys(pathArguments);
@@ -28,15 +33,24 @@ export abstract class RemoteDataSourceBase<Dto> {
         });
         return localUrl;
     }
+    private insertPath(url: string, path: string) {
+        return url + path;
+    }
 
     protected post(options?: RequestOptions): Observable<Dto> {
-
+        var url = this.path;
+        if (options?.pathArguments != null) {
+            url = this.insertPathArguments(url, options.pathArguments);
+        }
+        if (options?.path != null) {
+            url = this.insertPath(url, options.path);
+        }
         if (options?.responseType == 'text') {
-            return this.http.post(this.path, options?.body, {
+            return this.http.post(url, options?.body, {
                 responseType: 'text'
             }) as Observable<Dto>;
         }
-        return this.http.post<Dto>(this.path, options?.body, {
+        return this.http.post<Dto>(url, options?.body, {
             responseType: 'json'
         });
     }
@@ -48,6 +62,7 @@ export class RequestOptions {
     queryArumgnets?: Arguments;
     body?: object;
     responseType?: string;
+    path?: string;
 
     constructor(partial?: Partial<RequestOptions>) {
         Object.assign(this, partial);

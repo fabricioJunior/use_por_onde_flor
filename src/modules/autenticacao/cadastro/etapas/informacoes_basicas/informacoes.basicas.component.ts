@@ -7,7 +7,7 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from "ngx-mask";
 import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
 import { CadastroComponent } from "../../cadastro.component";
 import { Route, Router } from "@angular/router";
-import { LoginService } from "../../../services/login.service";
+import { AutenticacaoService } from "../../../services/autenticacao.service";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { single } from "rxjs";
 
@@ -30,7 +30,7 @@ export class InformacoesBasicasComponent {
 
     avancaEnable = signal(false);
 
-    constructor(cadastroComponent: CadastroComponent, private router: Router, private loginService: LoginService) {
+    constructor(cadastroComponent: CadastroComponent, private router: Router, private loginService: AutenticacaoService) {
         this.formGroup = cadastroComponent.cadastroFromGroup;
 
         this.formGroup.statusChanges.subscribe((value) => {

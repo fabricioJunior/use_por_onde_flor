@@ -19,7 +19,9 @@
         background-color: rgba(0, 0, 0, 0.1);
       } 
      
-    
+      mat-form-field{
+        width: 100%;
+      }
       b {
           color: #000;
           font-family: Roboto;
@@ -68,13 +70,13 @@
         background-color: inherit;
       }
 
-      input{
-        padding: 8px 16px;
-        align-items: center;
-        border: 1px solid var(--Cores-Verde-Escuro, #237266);
-        margin: 0px !important;
-        height: auto;
-        box-sizing: border-box;
-        display: block;
-        width: 100% !important;
-      }
+   .row {
+    display: flex;
+    justify-content: space-between; /* Distribui os elementos com espaço igual entre eles */
+    align-items: center; /* Alinha os elementos verticalmente ao centro */
+    box-sizing: border-box;
+    flex-direction: row; 
+    width: 100%;
+  }
+
+      

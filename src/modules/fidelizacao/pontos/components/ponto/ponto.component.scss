@@ -1,0 +1,23 @@
+.logo{
+    width: 24px;
+    height: 24px;
+    background-repeat:no-repeat;
+    background-position: center center;
+    //background: url('/flor.png') center center no-repeat;
+    background-size: contain;
+    padding: 24px;
+}  
+
+
+.body {
+    width: 40px;
+    height: 40px;
+    background-color: #237266;
+    border-radius: 100%;
+    display: flex; /* Ativa o Flexbox */
+    justify-content: center; /* Alinha os elementos horizontalmente no centro */
+    align-items: center; 
+} 
+* {
+    box-sizing: border-box;
+}

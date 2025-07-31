@@ -47,6 +47,9 @@ html, body {
     outlined-hover-label-text-color: $primary-color,
     outlined-outline-color: $primary-color
   ));
+  @include mat.icon-button-overrides((
+   
+     icon-color:#006B5B,
+  ));
   
-
 }

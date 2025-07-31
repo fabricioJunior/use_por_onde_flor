@@ -7,7 +7,7 @@ import { NgxMaskDirective } from "ngx-mask";
 import { CadastroComponent } from "../../cadastro.component";
 import { NgxMaskConfig } from 'ngx-mask'
 import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
-import { LoginService } from "../../../services/login.service";
+import { AutenticacaoService } from "../../../services/autenticacao.service";
 import { Router } from "@angular/router";
 
 
@@ -45,7 +45,7 @@ export class InformacoesContatoComponent {
 
     formGroup: FormGroup;
 
-    constructor(cadastroComponent: CadastroComponent, private loginService: LoginService, private router: Router) {
+    constructor(cadastroComponent: CadastroComponent, private loginService: AutenticacaoService, private router: Router) {
         this.formGroup = cadastroComponent.cadastroFromGroup;
         this.formGroup.get('email')!.statusChanges.subscribe((value) => {
             this.atualizarErrorEmail();
