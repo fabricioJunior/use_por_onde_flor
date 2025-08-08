@@ -10,6 +10,7 @@ import { InformacoesContatoComponent } from '../modules/autenticacao/cadastro/et
 import { SenhaComponent } from '../modules/autenticacao/cadastro/etapas/senha/senha.component';
 import { FimComponent } from '../modules/autenticacao/cadastro/etapas/fim/fim.component';
 import { PontosComponent } from '../modules/fidelizacao/pontos/pages/pontos/pontos.component';
+import { PagamentoComponent } from '../modules/pagamento/presentation/pagamento/pagamento.component';
 
 export const routes: Routes = [
 
@@ -47,8 +48,12 @@ export const routes: Routes = [
             },
             {
                 path: 'fim', component: FimComponent, outlet: 'cadastroOutlet'
-            }
+            },
+
         ]
     },
     { path: '', redirectTo: '/login', pathMatch: 'full' },
+    {
+        path: 'pagamento', component: PagamentoComponent
+    }
 ];

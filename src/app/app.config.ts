@@ -11,6 +11,8 @@ import { UsuarioEmailValidoDataSource } from '../modules/autenticacao/data/usuar
 import { AutenticacaoService } from '../modules/autenticacao/services/autenticacao.service';
 import { UsuarioDataSource } from '../modules/autenticacao/data/usuario.data.source';
 import { AutenticacaoDataSource } from '../modules/autenticacao/data/autenticacao.data.source';
+import { PagamentoDatasource } from '../modules/pagamento/data/pagamento.datasource';
+import { PagamentoService } from '../modules/pagamento/services/pagamento.service';
 const maskConfig: Partial<NgxMaskConfig> = {
   validation: false,
 };
@@ -26,5 +28,7 @@ export const appConfig: ApplicationConfig = {
     { provide: AutenticacaoService },
     { provide: UsuarioDataSource },
     { provide: AutenticacaoDataSource },
+    { provide: PagamentoService },
+    { provide: PagamentoDatasource }
   ]
 };

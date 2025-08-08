@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'platform'
+  providedIn: 'root'
 })
 export class LocalStorageService {
-  private storage: Storage;
+  private storage?: Storage;
 
   constructor() {
-    this.storage = window.localStorage;
+  }
+
+  setStorage(storage: Storage) {
+    this.storage = storage;
   }
 
   set(key: string, value: any): boolean {

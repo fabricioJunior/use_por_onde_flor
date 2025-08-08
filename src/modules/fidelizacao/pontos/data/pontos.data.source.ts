@@ -4,7 +4,13 @@ import { PontoDto } from "./dto/ponto.dto";
 export class PontosDataSource extends RemoteDataSourceBase<PontoDto> {
     override path = '/v1/pessoas/{pessoaId}/transacoes-pontos';
 
+}
 
 
+
+class PontosQuery {
+    ids?: string[];
+    empresaIds?: string[];
+    tipos?: string[];
 
 }

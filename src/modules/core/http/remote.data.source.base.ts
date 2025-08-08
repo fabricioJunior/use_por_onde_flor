@@ -7,7 +7,7 @@ import { Observable } from "rxjs";
 export abstract class RemoteDataSourceBase<Dto> {
     abstract path: string;
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient,) { }
 
     protected get(options?: RequestOptions): Observable<Dto> {
         var url = this.path;
