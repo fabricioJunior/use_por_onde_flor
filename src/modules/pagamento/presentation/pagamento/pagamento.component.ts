@@ -39,7 +39,7 @@ export class PagamentoComponent implements OnInit {
         await this.delay(1000);
         var observable = await this.pagamentoService.finalizarPedido(pagamento);
         var result = await firstValueFrom(observable);
-        window.open(result.comprovante?.toString() ?? 'www.useporondeflor.com.br');
+        document.location.href = result.comprovante?.toString() ?? 'www.useporondeflor.com.br';
 
     }
     delay(ms: number) {
