@@ -25,21 +25,23 @@ export class PagamentoComponent implements OnInit {
         var idPedido = this.router.snapshot.queryParams['idPedido'];
         if (idPedido != null) {
             this.redirecionarParaPagamento(idPedido);
+        } else {
+            var receiptUrl = this.router.snapshot.queryParams['receipt_url'];
+            var transactionId = this.router.snapshot.queryParams['transaction_id'];
+            var capture_method = this.router.snapshot.queryParams['capture_method'];
+            var order_nsu = this.router.snapshot.queryParams['order_nsu'];
+            var pagamento = new PagamentoFinalizadoDto({
+                comprovanteDePagamento: receiptUrl,
+                transanctionId: transactionId,
+                formaDePagamento: capture_method,
+                idPedido: order_nsu,
+            });
+            await this.delay(1000);
+            var observable = await this.pagamentoService.finalizarPedido(pagamento);
+            var result = await firstValueFrom(observable);
+            document.location.href = result.comprovante?.toString() ?? 'www.useporondeflor.com.br';
         }
-        var receiptUrl = this.router.snapshot.queryParams['receipt_url'];
-        var transactionId = this.router.snapshot.queryParams['transaction_id'];
-        var capture_method = this.router.snapshot.queryParams['capture_method'];
-        var order_nsu = this.router.snapshot.queryParams['order_nsu'];
-        var pagamento = new PagamentoFinalizadoDto({
-            comprovanteDePagamento: receiptUrl,
-            transanctionId: transactionId,
-            formaDePagamento: capture_method,
-            idPedido: order_nsu,
-        });
-        await this.delay(1000);
-        var observable = await this.pagamentoService.finalizarPedido(pagamento);
-        var result = await firstValueFrom(observable);
-        document.location.href = result.comprovante?.toString() ?? 'www.useporondeflor.com.br';
+
 
     }
     delay(ms: number) {
@@ -57,6 +59,9 @@ export class PagamentoComponent implements OnInit {
             });
         } else {
             this.pagamentoPendente.set(false);
+            if (pagamentoPendenteDto.comprovante != null) {
+                document.location.href = pagamentoPendenteDto.comprovante?.toString();
+            }
         }
     }
     // Component logic goes here
