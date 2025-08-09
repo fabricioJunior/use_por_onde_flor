@@ -3,6 +3,7 @@ import { RemoteDataSourceBase } from "../../core/http/remote.data.source.base";
 import { HttpClient } from "@angular/common/http";
 import { PagamentoPendenteDto } from "./dto/pagamento.pendente.dto";
 import { Injectable } from "@angular/core";
+import { PagamentoFinalizadoDto } from "./dto/pagamento.finalizado.dto";
 //http://localhost:4200/pagamento?idPedido=6395
 //
 @Injectable()
@@ -22,6 +23,11 @@ export class PagamentoDatasource {
 
         return this.http.get<PagamentoPendenteDto>(this.url + 'pagamento/pedidoComPagamentoPendente?' + 'idPedido=' + idPedido);
     }
+
+    postPagamentoFinalizado(pagamento: PagamentoFinalizadoDto): Observable<PagamentoPendenteDto> {
+        return this.http.post<PagamentoPendenteDto>(this.url + 'pagamento', pagamento,);
+    }
+
 
 }
 

@@ -18,4 +18,8 @@ export class PagamentoService {
         return firstValueFrom(this.pagamentoDatasource.getPedidoPendente(idPedido));
 
     }
+
+    async finalizarPedido(pagamento: PagamentoPendenteDto) {
+        return this.pagamentoDatasource.postPagamentoFinalizado(pagamento);
+    }
 }
