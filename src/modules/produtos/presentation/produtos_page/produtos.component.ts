@@ -6,7 +6,7 @@ import { MatListModule } from '@angular/material/list';
 import { ProdutoDto } from "../../data/dtos/produto.dto";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatCardModule } from '@angular/material/card';
-
+import { debounceTime } from 'rxjs/operators';
 @Component({
     selector: 'app-produtos',
     templateUrl: './produtos.component.html',
@@ -21,7 +21,7 @@ export class ProdutosComponent {
     produtos: ProdutoDto[] = [];
 
     constructor(private produtoService: ProdutoService) {
-        this.descricaoFromControl.statusChanges.subscribe((value) => {
+        this.descricaoFromControl.statusChanges.pipe(debounceTime(300)).subscribe((value) => {
             this.onDescricaoChange();
         });
     }
