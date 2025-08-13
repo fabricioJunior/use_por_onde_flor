@@ -6,8 +6,8 @@ import { Inject, Injectable } from "@angular/core";
 @Injectable()
 export class ProdutoDataSource {
 
-    // url = 'https://estoque.coralcloud.app/';
-    url = 'http://localhost:5080/'
+    url = 'https://estoque.coralcloud.app/';
+    // url = 'http://localhost:5080/'
     constructor(private http: HttpClient) {
 
 
