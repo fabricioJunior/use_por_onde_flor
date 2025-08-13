@@ -11,6 +11,7 @@ import { SenhaComponent } from '../modules/autenticacao/cadastro/etapas/senha/se
 import { FimComponent } from '../modules/autenticacao/cadastro/etapas/fim/fim.component';
 import { PontosComponent } from '../modules/fidelizacao/pontos/pages/pontos/pontos.component';
 import { PagamentoComponent } from '../modules/pagamento/presentation/pagamento/pagamento.component';
+import { ProdutosComponent } from '../modules/produtos/presentation/produtos_page/produtos.component';
 
 export const routes: Routes = [
 
@@ -55,5 +56,8 @@ export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     {
         path: 'pagamento', component: PagamentoComponent
+    },
+    {
+        path: 'produtos', component: ProdutosComponent
     }
 ];

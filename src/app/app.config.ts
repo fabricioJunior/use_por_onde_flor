@@ -13,6 +13,8 @@ import { UsuarioDataSource } from '../modules/autenticacao/data/usuario.data.sou
 import { AutenticacaoDataSource } from '../modules/autenticacao/data/autenticacao.data.source';
 import { PagamentoDatasource } from '../modules/pagamento/data/pagamento.datasource';
 import { PagamentoService } from '../modules/pagamento/services/pagamento.service';
+import { ProdutoDataSource } from '../modules/produtos/data/produto.data.source';
+import { ProdutoService } from '../modules/produtos/services/produto.service';
 const maskConfig: Partial<NgxMaskConfig> = {
   validation: false,
 };
@@ -29,6 +31,9 @@ export const appConfig: ApplicationConfig = {
     { provide: UsuarioDataSource },
     { provide: AutenticacaoDataSource },
     { provide: PagamentoService },
-    { provide: PagamentoDatasource }
+    { provide: PagamentoDatasource },
+    { provide: ProdutoDataSource },
+    { provide: ProdutoService }
+
   ]
 };

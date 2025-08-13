@@ -1,0 +1,40 @@
+<div class="container">
+    <h2>Pesquisa de produtos</h2>
+    <mat-form-field appearance="outline">
+        <mat-label>Descrição</mat-label>
+        <input type="text" matInput placeholder="Descrição" maxlength="20"
+            [formControl]="descricaoFromControl">
+        <mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    @if(loading()){
+    <mat-progress-spinner></mat-progress-spinner>
+    }@else{
+    <mat-list>
+
+        @for (produto of produtos; track produto) {
+        <div class="item">
+            <mat-card class="card" appearance="outlined">
+                <mat-card-header>
+                    <mat-card-title>{{produto.descricao}}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="row">
+                        <div>
+                            {{produto.tamanho}}/{{produto.cor}}
+                        </div>
+                        <div>
+                            {{produto.quantidade}}
+                        </div>
+                    </div>
+
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        }
+    </mat-list>
+    }
+
+</div>

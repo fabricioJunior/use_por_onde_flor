@@ -58,9 +58,11 @@ export class PagamentoComponent implements OnInit {
                 document.location.href = value.toString();
             });
         } else {
-            this.pagamentoPendente.set(false);
+
             if (pagamentoPendenteDto.comprovante != null) {
                 document.location.href = pagamentoPendenteDto.comprovante?.toString();
+            } else {
+                this.pagamentoPendente.set(false);
             }
         }
     }
