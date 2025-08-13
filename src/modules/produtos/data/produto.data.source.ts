@@ -19,7 +19,7 @@ export class ProdutoDataSource {
     }
 
     async getProdutosComFiltro(descricao: string): Promise<ProdutoDto[]> {
-        var produtos = await firstValueFrom(this.http.get<ProdutoDto[]>(this.url + 'estoque/filtro?descricao=' + descricao));
+        var produtos = await firstValueFrom(this.http.get<ProdutoDto[]>(this.url + 'estoque/filtro?descricao=' + descricao + 'estoqueMaiorQueZero=true'));
         return produtos;
     }
 
