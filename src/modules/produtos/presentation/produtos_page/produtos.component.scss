@@ -1,3 +1,7 @@
+.container{
+    padding: 16px;
+}
+
 .item{
   
     padding: 8px;
@@ -8,8 +12,12 @@
 }
 
 .row {
- display: flex;
- flex-direction: row;
+  display: flex;
+  flex-direction: row;
   justify-content: space-between; /* Mantém os elementos o mais longe possível */
   align-items: center; 
 }
+
+ mat-form-field{
+        width: 100%;
+    }
