@@ -21,7 +21,7 @@ export class ProdutosComponent {
     produtos: ProdutoDto[] = [];
 
     constructor(private produtoService: ProdutoService) {
-        this.descricaoFromControl.statusChanges.pipe(debounceTime(300)).subscribe((value) => {
+        this.descricaoFromControl.statusChanges.pipe(debounceTime(500)).subscribe((value) => {
             this.onDescricaoChange();
         });
     }
