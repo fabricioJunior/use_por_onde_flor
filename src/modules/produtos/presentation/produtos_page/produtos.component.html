@@ -1,15 +1,21 @@
 <div class="container">
     <h2>Pesquisa de produtos</h2>
+
     <mat-form-field appearance="outline">
         <mat-label>Descrição</mat-label>
         <input type="text" matInput placeholder="Descrição" maxlength="20"
             [formControl]="descricaoFromControl">
+        <button (click)="onTapFilter()" mat-icon-button matSuffix>
+            <mat-icon>filter_list</mat-icon>
+        </button>
         <mat-error>
         </mat-error>
     </mat-form-field>
 
     @if(loading()){
-    <mat-progress-spinner></mat-progress-spinner>
+    <div class="center">
+        <mat-spinner> </mat-spinner>
+    </div>
     }@else{
     <mat-list>
 

@@ -1,0 +1,22 @@
+
+.container {
+    gap: 16px;
+    display: flex;
+    align-items: center;
+    align-self: center;
+    flex-direction: column;
+    padding: 8px;
+}
+
+.row{ 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Mantém os elementos o mais longe possível */
+    align-items: center;
+    width:  100%;
+    
+    h3{
+        margin: 8px;
+    }
+    
+}

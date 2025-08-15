@@ -18,16 +18,25 @@ export class ProdutoDataSource {
         return produtos;
     }
 
-    async getProdutosComFiltro(descricao: string): Promise<ProdutoDto[]> {
-        var produtos = await firstValueFrom(this.http.get<ProdutoDto[]>(this.url + 'estoque/filtro?descricao=' + descricao + '&estoqueMaiorQueZero=true'));
+    async getProdutosComFiltro(descricao: string, cores?: string[], tamanhos?: string[]): Promise<ProdutoDto[]> {
+        var args = 'estoque/filtro?descricao=' + descricao + '&estoqueMaiorQueZero=true';
+        if (tamanhos != null && tamanhos?.length > 0) {
+            var tamanhoArg = tamanhos.join();
+            args += '&tamanhos=' + tamanhoArg;
+        }
+        if (cores != null && cores?.length > 0) {
+            var coresArg = cores.join();
+            args += '&cores=' + coresArg;
+        }
+        var produtos = await firstValueFrom(this.http.get<ProdutoDto[]>(this.url + args));
         return produtos;
     }
 
-    async getCores(): Promise<String[]> {
-        return await firstValueFrom(this.http.get<String[]>(this.url + 'estoque/cores'));
+    async getCores(): Promise<string[]> {
+        return await firstValueFrom(this.http.get<string[]>(this.url + 'estoque/cores'));
     }
-    async getTamanhos(): Promise<String[]> {
-        return await firstValueFrom(this.http.get<String[]>(this.url + 'estoque/tamanhos'));
+    async getTamanhos(): Promise<string[]> {
+        return await firstValueFrom(this.http.get<string[]>(this.url + 'estoque/tamanhos'));
     }
 
     async getCruzamentoTamanhoCor(): Promise<CruzamentoCoresETamanhosDto> {

@@ -9,7 +9,14 @@ export class ProdutoService {
     constructor(private produtoDataSource: ProdutoDataSource) {
 
     }
-    async recuperarProdutos(descrica: string): Promise<ProdutoDto[]> {
-        return this.produtoDataSource.getProdutosComFiltro(descrica);
+    async recuperarProdutos(descrica: string, tamanhos: string[], cores: string[]): Promise<ProdutoDto[]> {
+        return this.produtoDataSource.getProdutosComFiltro(descrica, cores, tamanhos);
+    }
+
+    async recuperarCores(): Promise<string[]> {
+        return this.produtoDataSource.getCores();
+    }
+    async recuperarTamanhos(): Promise<string[]> {
+        return this.produtoDataSource.getTamanhos();
     }
 }
