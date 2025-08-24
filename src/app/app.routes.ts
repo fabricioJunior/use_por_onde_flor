@@ -12,6 +12,7 @@ import { FimComponent } from '../modules/autenticacao/cadastro/etapas/fim/fim.co
 import { PontosComponent } from '../modules/fidelizacao/pontos/pages/pontos/pontos.component';
 import { PagamentoComponent } from '../modules/pagamento/presentation/pagamento/pagamento.component';
 import { ProdutosComponent } from '../modules/produtos/presentation/produtos_page/produtos.component';
+import { ProdutoComponent } from '../modules/produtos/presentation/produto_page/produto.component';
 
 export const routes: Routes = [
 
@@ -59,5 +60,8 @@ export const routes: Routes = [
     },
     {
         path: 'produtos', component: ProdutosComponent
+    },
+    {
+        path: 'produto/:referencia', component: ProdutoComponent
     }
 ];

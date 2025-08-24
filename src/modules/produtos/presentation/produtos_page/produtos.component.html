@@ -21,24 +21,28 @@
 
         @for (produto of produtos; track produto) {
         <div class="item">
-            <mat-card class="card" appearance="outlined">
-                <mat-card-header>
-                    <mat-card-title>{{produto.descricao}}</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                    <div class="row">
-                        <div>
-                            {{produto.tamanho}}/{{produto.cor}}
+            <div class="example-ripple-container mat-elevation-z4"
+                matRipple
+                [matRippleCentered]="true"
+                (click)="onTapProduto(produto)">
+                <mat-card class="card" appearance="outlined">
+                    <mat-card-header>
+                        <mat-card-title>{{produto.descricao}}</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="row">
+                            <div>
+                                {{produto.tamanho}}/{{produto.cor}}
+                            </div>
+                            <div>
+                                {{produto.quantidade}}
+                            </div>
                         </div>
-                        <div>
-                            {{produto.quantidade}}
-                        </div>
-                    </div>
 
-                </mat-card-content>
-            </mat-card>
+                    </mat-card-content>
+                </mat-card>
+            </div>
         </div>
-
         }
     </mat-list>
     }

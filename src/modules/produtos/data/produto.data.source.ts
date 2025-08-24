@@ -18,19 +18,28 @@ export class ProdutoDataSource {
         return produtos;
     }
 
-    async getProdutosComFiltro(descricao: string, cores?: string[], tamanhos?: string[]): Promise<ProdutoDto[]> {
-        var args = 'estoque/filtro?descricao=' + descricao + '&estoqueMaiorQueZero=true';
-        if (tamanhos != null && tamanhos?.length > 0) {
-            var tamanhoArg = tamanhos.join();
+    async getProdutosComFiltro(filtro: ProdutoFiltro): Promise<ProdutoDto[]> {
+        var args = 'estoque/filtro?estoqueMaiorQueZero=' + (filtro.estoqueMaiorQueZero ?? true);
+
+        if (filtro.descricao != null && filtro.descricao != '') {
+            args += '&descricao=' + filtro.descricao;
+        }
+        if (filtro.tamanhos != null && filtro.tamanhos?.length > 0) {
+            var tamanhoArg = filtro.tamanhos.join();
             args += '&tamanhos=' + tamanhoArg;
         }
-        if (cores != null && cores?.length > 0) {
-            var coresArg = cores.join();
+        if (filtro.cores != null && filtro.cores?.length > 0) {
+            var coresArg = filtro.cores.join();
             args += '&cores=' + coresArg;
         }
+        if (filtro.referencia != null && filtro.referencia != '') {
+            args += '&referencia=' + filtro.referencia;
+        }
+
         var produtos = await firstValueFrom(this.http.get<ProdutoDto[]>(this.url + args));
         return produtos;
     }
+
 
     async getCores(): Promise<string[]> {
         return await firstValueFrom(this.http.get<string[]>(this.url + 'estoque/cores'));
@@ -45,4 +54,12 @@ export class ProdutoDataSource {
 
 
 
+}
+
+class ProdutoFiltro {
+    descricao?: string;
+    cores?: string[];
+    tamanhos?: string[];
+    referencia?: string;
+    estoqueMaiorQueZero?: boolean = true;
 }

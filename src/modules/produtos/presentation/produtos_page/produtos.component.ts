@@ -11,13 +11,18 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBottomSheet } from "@angular/material/bottom-sheet";
 import { FiltroTamanhoCorModal } from "../filtro_tamanho_cor_modal/filtro.tamanho.cor.modal";
+import { MatRippleModule } from '@angular/material/core';
+import { ActivatedRoute, Router } from "@angular/router";
 @Component({
     selector: 'app-produtos',
     templateUrl: './produtos.component.html',
     styleUrls: ['./produtos.component.scss'],
-    imports: [MatInputModule, MatCardModule, MatListModule, MatProgressSpinnerModule, ReactiveFormsModule, MatIconModule, MatButtonModule]
+    imports: [MatRippleModule, MatInputModule, MatCardModule, MatListModule, MatProgressSpinnerModule, ReactiveFormsModule, MatIconModule, MatButtonModule]
 })
 export class ProdutosComponent {
+    onTapProduto(produto: ProdutoDto) {
+        this.router.navigate(['/produto', produto.referencia]);
+    }
 
     descricaoFromControl = new FormControl();
     loading = signal(false);
@@ -28,7 +33,7 @@ export class ProdutosComponent {
 
     private _bottomSheet = inject(MatBottomSheet);
 
-    constructor(private produtoService: ProdutoService) {
+    constructor(private produtoService: ProdutoService, private router: Router) {
         this.descricaoFromControl.statusChanges.pipe(debounceTime(500)).subscribe((value) => {
             this.onDescricaoChange();
         });

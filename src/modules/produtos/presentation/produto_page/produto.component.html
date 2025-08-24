@@ -1,0 +1,34 @@
+<div class="container">
+
+    @if(loading()){
+    <p>Carregando...</p>
+    }@else if(dataSource != null){
+    <!--  -->
+    <h3>{{this.dataSource.descricao}}</h3>
+    <div class="table-container">
+        <table>
+            <thead>
+
+                <tr>
+                    <th>Cor/Tamanho</th>
+                    <th *ngFor="let coluna of dataSource.tamanhos">{{ coluna
+                        }}</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                <tr *ngFor="let cor of dataSource.cores">
+                    <td>{{cor}}</td>
+
+                    <td
+                        *ngFor="let tamanho of dataSource.tamanhos">
+                        {{dataSource.corTamanhoParaQuantidade![`${cor}_${tamanho}`]
+                        }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    }
+
+</div>
