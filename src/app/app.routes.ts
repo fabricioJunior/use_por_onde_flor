@@ -13,6 +13,7 @@ import { PontosComponent } from '../modules/fidelizacao/pontos/pages/pontos/pont
 import { PagamentoComponent } from '../modules/pagamento/presentation/pagamento/pagamento.component';
 import { ProdutosComponent } from '../modules/produtos/presentation/produtos_page/produtos.component';
 import { ProdutoComponent } from '../modules/produtos/presentation/produto_page/produto.component';
+import { RenderMode } from '@angular/ssr';
 
 export const routes: Routes = [
 
@@ -62,6 +63,8 @@ export const routes: Routes = [
         path: 'produtos', component: ProdutosComponent
     },
     {
-        path: 'produto/:referencia', component: ProdutoComponent
+        path: 'produto/:referencia', component: ProdutoComponent,
+
     }
+
 ];
