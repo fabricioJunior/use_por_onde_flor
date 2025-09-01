@@ -10,5 +10,9 @@ export const serverRoutes: ServerRoute[] = [
   , {
     path: 'produto/:referencia',
     renderMode: RenderMode.Client,
+  },
+  {
+    path: 'pagamento/:orderNsu',
+    renderMode: RenderMode.Client,
   }
 ];

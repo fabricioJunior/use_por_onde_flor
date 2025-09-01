@@ -10,10 +10,12 @@ import { InformacoesContatoComponent } from '../modules/autenticacao/cadastro/et
 import { SenhaComponent } from '../modules/autenticacao/cadastro/etapas/senha/senha.component';
 import { FimComponent } from '../modules/autenticacao/cadastro/etapas/fim/fim.component';
 import { PontosComponent } from '../modules/fidelizacao/pontos/pages/pontos/pontos.component';
-import { PagamentoComponent } from '../modules/pagamento/presentation/pagamento/pagamento.component';
+import { PagamentoStatusComponent } from '../modules/pagamento/presentation/pagamento_status/pagamento.status.component';
 import { ProdutosComponent } from '../modules/produtos/presentation/produtos_page/produtos.component';
 import { ProdutoComponent } from '../modules/produtos/presentation/produto_page/produto.component';
 import { RenderMode } from '@angular/ssr';
+import { PagamentosComponent } from '../modules/pagamento/presentation/pagamentos/pagamentos.component';
+import { PagamentoComponent } from '../modules/pagamento/presentation/pagamento/pagamento.component';
 
 export const routes: Routes = [
 
@@ -57,7 +59,7 @@ export const routes: Routes = [
     },
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     {
-        path: 'pagamento', component: PagamentoComponent
+        path: 'pagamento', component: PagamentoStatusComponent
     },
     {
         path: 'produtos', component: ProdutosComponent
@@ -65,6 +67,12 @@ export const routes: Routes = [
     {
         path: 'produto/:referencia', component: ProdutoComponent,
 
+    },
+    {
+        path: 'pagamentos', component: PagamentosComponent,
+    },
+    {
+        path: 'pagamento/:orderNsu', component: PagamentoComponent,
     }
 
 ];

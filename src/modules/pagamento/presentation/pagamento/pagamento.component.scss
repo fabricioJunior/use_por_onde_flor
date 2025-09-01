@@ -1,7 +1,37 @@
-.container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;  
+.container {
+
+    padding: 16px;
+
+}
+
+.row{
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;             // Permite que os elementos quebrem para a próxima linha se necessário
+  box-sizing: border-box;
+}
+.row > * {
+               // Permite que os filhos ocupem o espaço disponível
+  min-width: 0;                // Garante que o texto possa quebrar
+  word-break: break-word;      // Quebra o texto se necessário
+  white-space: normal;         // Permite quebra de linha automática
+} 
+
+button.cancelar-btn {
+  background: none;
+  color: #d32f2f; /* Vermelho Material Design */
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+button.cancelar-btn:hover {
+  text-decoration: underline;
+  background: none;
+}
+.mat-success {
+    background-color: red;
+    color: #fff;
 }

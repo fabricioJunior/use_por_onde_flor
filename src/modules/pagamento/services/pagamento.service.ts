@@ -1,7 +1,10 @@
 import { firstValueFrom, Observable } from "rxjs";
-import { PagamentoDatasource } from "../data/pagamento.datasource";
+import { FindPagamentosPendentes, PagamentoDatasource } from "../data/pagamento.datasource";
 import { PagamentoPendenteDto } from "../data/dto/pagamento.pendente.dto";
 import { Injectable } from "@angular/core";
+import { PagamentoDto } from "../data/dto/pagamento.dto";
+import { Md5 } from 'ts-md5';
+
 
 @Injectable()
 export class PagamentoService {
@@ -19,7 +22,37 @@ export class PagamentoService {
 
     }
 
+
+    getPagamentos(find: FindPagamentosPendentes): Observable<PagamentoDto[]> {
+        return this.pagamentoDatasource.getPagamentos(find);
+    }
+
+    getPagamento(orderNsu: string): Observable<PagamentoDto> {
+
+        return this.pagamentoDatasource.getPagamento(orderNsu);
+    }
+
+    async getPagamentoNovo(valor: number, instagram?: string, telefone?: string): Promise<String> {
+        var currentDate = new Date().toString();
+        var keyToHash = valor.toString() + instagram?.toString() + telefone?.toString() + currentDate;
+        var orderNsu = Md5.hashStr(keyToHash);
+        var identificador = instagram ?? telefone;
+        var result = await firstValueFrom(this.pagamentoDatasource.getUrlPagamento(undefined, orderNsu, valor, identificador));
+        console.log('url de pagamento', result);
+        return orderNsu;
+    }
+
     async finalizarPedido(pagamento: PagamentoPendenteDto) {
         return this.pagamentoDatasource.postPagamentoFinalizado(pagamento);
+    }
+
+    async cancelarPagamento(orderNsu: string): Promise<PagamentoDto> {
+        await firstValueFrom(this.pagamentoDatasource.cancelarPagamento(orderNsu));
+        return await firstValueFrom(this.pagamentoDatasource.getPagamento(orderNsu));
+    }
+
+    async ativarPagamento(orderNsu: string): Promise<PagamentoDto> {
+        await firstValueFrom(this.pagamentoDatasource.reativarPagamento(orderNsu));
+        return await firstValueFrom(this.pagamentoDatasource.getPagamento(orderNsu));
     }
 }

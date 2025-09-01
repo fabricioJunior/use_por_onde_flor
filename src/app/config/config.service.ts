@@ -16,15 +16,18 @@ export class ConfigService {
 
 export const ApiBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
     var localStorageService = inject(LocalStorageService);
-
-    var tokens = localStorageService.get<TokensDto>('token') as TokensDto;
-    console.log("Tokens:", tokens);
-    if (req.url.includes('http')) {
+    console.log("url", req.url);
+    if (req.url.includes('http') || req.url.includes('pagamento')) {
+        console.log("url", req.url);
         return next(req);
     } else {
+
+        var tokens = localStorageService.get<TokensDto>('token') as TokensDto || undefined;
+        console.log("url", req.url);
+        console.log("Tokens:", tokens);
         const apiReq = req.clone({
             url: `https://apollo-api-stg.coralcloud.app/${req.url}`,
-            headers: req.headers.set('Authorization', 'Bearer ' + tokens.tokenDeAcesso),
+            headers: req.headers.set('Authorization', 'Bearer ' + tokens?.tokenDeAcesso),
         },);
         return next(apiReq);
     }

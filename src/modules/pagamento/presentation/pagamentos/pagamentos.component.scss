@@ -1,0 +1,49 @@
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* Distribui os elementos nas extremidades */
+  align-items: center;
+  width: 100%;
+}
+
+ mat-form-field{
+        width: 100%;
+    }
+
+mat-card-title  {
+  width: 100%;
+  display: flex;
+  padding: 0;
+}
+mat-card-title h2  {
+  margin: 0;
+}
+
+mat-card-header {
+    padding-top: 0px;
+}
+
+mat-card-content div {
+  word-break: break-word;    // Quebra o texto em qualquer ponto se necessário
+  white-space: normal;       // Permite quebra de linha automática
+  max-width: 100vw;          // Limita a largura ao tamanho da tela
+  overflow-wrap: anywhere;   // Quebra a palavra se necessário
+
+}
+.list-container {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.fab-position {
+  position: fixed; /* Or 'sticky' for different behavior */
+  bottom: 20px; /* Adjust as needed for desired vertical position */
+  right: 20px;  /* Adjust as needed for desired horizontal position */
+  z-index: 1000; /* Ensures the FAB is on top of other elements */
+}
+.item{
+ padding: 8px;
+}

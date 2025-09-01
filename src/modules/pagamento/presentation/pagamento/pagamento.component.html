@@ -1,8 +1,45 @@
+@if(loading()){
+
+}@else {
 <div class="container">
-    <app-logo> </app-logo>
-    <h1>Processando...</h1>
-    <mat-spinner></mat-spinner>
-    @if(!pagamentoPendente()){
-    <h1>Pagamento finalizado</h1>
+
+    <h1>Pagamento: {{pagamento?.identificadorExterno}}</h1>
+
+    <p>Valor: {{pagamento?.valor}}</p>
+    <p>Data de criação: {{pagamento?.dataCriacao}}</p>
+    @if(pagamento?.cancelado){
+    <p>Pagamento cancelado</p>
+    }@else if(pagamento?.urlComprovante == null) {
+    <p>Pendente </p>
     }
+    <div class="row">
+        <button mat-icon-button [cdkCopyToClipboard]="pagamento?.urlPagamento!">
+            <mat-icon>content_copy</mat-icon>
+        </button>
+
+        <p>{{pagamento?.urlPagamento}}</p>
+    </div>
+    @if(!pagamento?.cancelado && pagamento?.urlComprovante == null)
+    {
+    <button mat-button class="cancelar-btn" (click)="onCancelarTap()">
+        Cancelar Pagamento
+    </button>
+    }
+
+    @if(pagamento?.cancelado && pagamento?.urlComprovante == null)
+    {
+    <button mat-button class="cancelar-btn" (click)="onTapAtivarPagamento()">
+        Reativar Pagamento
+    </button>
+    }
+
+    @if(pagamento?.urlComprovante != null){
+    <div class="comprovante-container">
+        <object data={{pagamento?.urlComprovante}}>
+            <embed src={{pagamento?.urlComprovante}}/>
+        </object>
+    </div>
+    }
+
 </div>
+}
