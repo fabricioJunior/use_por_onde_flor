@@ -15,7 +15,6 @@ export class PagamentoDatasource {
 
     getUrlPagamento(idPedido?: string, orderNsu?: string, valor?: number, identificador?: string): Observable<String> {
         var uri = this.url + 'pagamento/url?';
-        console.log('uri e datasoruce', uri);
         if (idPedido) {
             uri = uri + 'idPedido=' + idPedido + '&';
         }

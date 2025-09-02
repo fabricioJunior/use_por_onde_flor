@@ -25,6 +25,7 @@ export class PagamentosComponent implements OnInit {
 
 
     pagamentos: PagamentoDto[] = [];
+    totalPagamentos = signal(0);
 
     loading = signal(true);
 
@@ -45,7 +46,13 @@ export class PagamentosComponent implements OnInit {
         }).subscribe((value) => {
             this.pagamentos = value;
             this.loading.set(false);
+            this.atualizarTotalPagamentos();
         })
+    }
+
+    atualizarTotalPagamentos() {
+        var total = this.pagamentos.reduce<number>((acumulador, currentValor) => (currentValor?.valor ?? 0) + acumulador, 0);
+        this.totalPagamentos.set(total);
     }
 
     onTapPagamento(pagamento: PagamentoDto) {
