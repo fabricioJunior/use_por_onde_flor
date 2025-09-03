@@ -13,11 +13,14 @@
     <p>Pendente </p>
     }
     <div class="row">
-        <button mat-icon-button [cdkCopyToClipboard]="pagamento?.urlPagamento!">
+        <button mat-icon-button
+            [cdkCopyToClipboard]="'www.useporondeflor.com.br/pagamento?orderNsu=' +
+            pagamento?.orderNsu">
             <mat-icon>content_copy</mat-icon>
         </button>
 
-        <p>{{pagamento?.urlPagamento}}</p>
+        <p>{{'www.useporondeflor.com.br/pagamento?orderNsu=' +
+            pagamento?.orderNsu}}</p>
     </div>
     @if(!pagamento?.cancelado && pagamento?.urlComprovante == null)
     {

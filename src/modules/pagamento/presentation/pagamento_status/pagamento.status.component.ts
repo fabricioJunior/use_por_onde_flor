@@ -23,7 +23,10 @@ export class PagamentoStatusComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         var idPedido = this.router.snapshot.queryParams['idPedido'];
-        if (idPedido != null) {
+        var orderNsu = this.router.snapshot.queryParams['orderNsu'];
+        if (orderNsu) {
+            this.redirecionarParaPagamentoByOrdeNsu(orderNsu);
+        } else if (idPedido != null) {
             this.redirecionarParaPagamento(idPedido);
         } else {
             var receiptUrl = this.router.snapshot.queryParams['receipt_url'];
@@ -35,6 +38,7 @@ export class PagamentoStatusComponent implements OnInit {
                 transanctionId: transactionId,
                 formaDePagamento: capture_method,
                 idPedido: order_nsu,
+                orderNsu: order_nsu,
             });
             await this.delay(1000);
             var observable = await this.pagamentoService.finalizarPedido(pagamento);
@@ -49,6 +53,14 @@ export class PagamentoStatusComponent implements OnInit {
     }
     redirecionarParaComprovante() { }
 
+    async redirecionarParaPagamentoByOrdeNsu(orderNsu: string) {
+        var pagamento = await firstValueFrom(this.pagamentoService.getPagamento(orderNsu));
+        if (pagamento?.pendente ?? false) {
+            document.location.href = pagamento.urlPagamento!;
+        } else if (pagamento.urlComprovante != null) {
+            document.location.href = pagamento.urlPagamento!;
+        }
+    }
     async redirecionarParaPagamento(idPedido: string) {
         var pagamentoPendenteDto = await this.pagamentoService.getPedidoPendente(idPedido);
         console.log(pagamentoPendenteDto);

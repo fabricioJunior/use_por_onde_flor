@@ -4,6 +4,7 @@ export class PagamentoFinalizadoDto {
     transanctionId?: string;
     formaDePagamento?: string;
     idPedido?: string;
+    orderNsu?: string;
     slug?: string;
 
 
