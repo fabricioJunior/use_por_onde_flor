@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal } from '@angular/core';
 import { TextButtonComponent } from "../../core/common_components/text.button.component";
 import { FilledButtonComponent } from "../../core/common_components/filled.button.component";
 import { LogoComponent } from "../../core/common_components/logo.component";
@@ -18,7 +18,7 @@ import { Router, RouterModule } from '@angular/router';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
     loginGroup = new FormGroup(
         {
@@ -28,10 +28,13 @@ export class LoginComponent {
     );
 
     constructor(private router: Router) { }
+    ngOnInit(): void {
+
+    }
 
 
     onAvancarTap() {
-        this.router.navigate(['login', { outlets: { loginOutlet: ['stepSenha'] } }]);
+        this.router.navigate(['login/stepSenha'])
     }
 
     onAjudaTap() {

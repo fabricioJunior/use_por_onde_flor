@@ -21,15 +21,15 @@ export class CadastroComponent implements OnInit {
 
     cadastroFromGroup = new FormGroup(
         {
-            nome: new FormControl('', [Validators.required, Validators.minLength(3)]),
-            sobrenome: new FormControl('', [Validators.required, Validators.minLength(3)]),
-            dia: new FormControl('', [Validators.required]),
-            mes: new FormControl('', [Validators.required]),
-            ano: new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]),
-            telefone: new FormControl('', [Validators.required, Validators.minLength(10)]),
-            email: new FormControl('', [Validators.required, Validators.email]),
-            cpf: new FormControl('', [Validators.required, Validators.minLength(11), cpfValidator()]),
-            senha: new FormControl('', [Validators.required, Validators.minLength(6)]),
+            nome: new FormControl(null, [Validators.required, Validators.minLength(3)]),
+            sobrenome: new FormControl(null, [Validators.required, Validators.minLength(3)]),
+            dia: new FormControl(null, [Validators.required]),
+            mes: new FormControl(null, [Validators.required]),
+            ano: new FormControl(null, [Validators.required, Validators.minLength(4), Validators.maxLength(4)]),
+            telefone: new FormControl(null, [Validators.required, Validators.minLength(10)]),
+            email: new FormControl(null, [Validators.required, Validators.email]),
+            cpf: new FormControl(null, [Validators.required, Validators.minLength(11), cpfValidator()]),
+            senha: new FormControl(null, [Validators.required, Validators.minLength(6)]),
         }
     );
 

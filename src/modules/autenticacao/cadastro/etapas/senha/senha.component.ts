@@ -57,11 +57,11 @@ export class SenhaComponent {
             senha: this.formGroup.get('senha')?.value,
             documento: this.formGroup.get('cpf')?.value,
             dataNascimento: this.formatDate(`${ano}-${mes}-${dia}`),
-            telefone: this.formGroup.get('telefone')?.value
-
+            telefone: this.formGroup.get('telefone')?.value,
+            empresaId: 1,
         }).subscribe((value) => {
             this.loading.set(false);
-            this.router.navigate(['/cadastro', { outlets: { cadastroOutlet: ['fim'] } }]);
+            this.router.navigate(['/cadastro/fim']);
         });
 
     }

@@ -20,7 +20,27 @@ export abstract class RemoteDataSourceBase<Dto> {
             url = this.insertPath(url, options.path);
         }
         console.log(url);
-        return this.http.get<Dto>(url);
+        console.log(options?.authToken);
+        return this.http.get<Dto>(url, {
+            headers: {
+                'Authorization': 'Bearer ' + options?.authToken
+            }
+        }
+        );
+    }
+
+    protected getList(options?: RequestOptions): Observable<Dto[]> {
+        var url = this.path;
+
+        console.log(this.path);
+        if (options?.pathArguments != null) {
+            url = this.insertPathArguments(url, options.pathArguments);
+        }
+        if (options?.path != null) {
+            url = this.insertPath(url, options.path);
+        }
+        console.log(url);
+        return this.http.get<Dto[]>(url);
     }
 
 
@@ -63,6 +83,7 @@ export class RequestOptions {
     body?: object;
     responseType?: string;
     path?: string;
+    authToken?: string;
 
     constructor(partial?: Partial<RequestOptions>) {
         Object.assign(this, partial);

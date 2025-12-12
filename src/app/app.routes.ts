@@ -16,6 +16,8 @@ import { ProdutoComponent } from '../modules/produtos/presentation/produto_page/
 import { RenderMode } from '@angular/ssr';
 import { PagamentosComponent } from '../modules/pagamento/presentation/pagamentos/pagamentos.component';
 import { PagamentoComponent } from '../modules/pagamento/presentation/pagamento/pagamento.component';
+import { RecuperarSenhaComponent } from '../modules/autenticacao/login/recuperar_senha/recuperar.senha.component';
+import { MudarSenhaComponent } from '../modules/autenticacao/login/mudar_senha/mudar.senha.component';
 
 export const routes: Routes = [
 
@@ -24,13 +26,19 @@ export const routes: Routes = [
         path: 'login', component: LoginComponent, children: [
 
             {
-                path: '', component: EmailComponent, outlet: 'loginOutlet',
+                path: '', component: EmailComponent,
             },
 
             {
-                path: 'stepSenha', component: LoginSenhaComponent, outlet: 'loginOutlet',
+                path: 'stepSenha', component: LoginSenhaComponent,
+            },
+            {
+                path: 'recuperarSenha', component: RecuperarSenhaComponent,
             }
         ]
+    },
+    {
+        path: 'mudarSenha', component: MudarSenhaComponent
     },
     {
         path: 'home', component: PontosComponent
@@ -39,40 +47,41 @@ export const routes: Routes = [
         path: 'cadastro', component: CadastroComponent,
         children: [
             {
-                path: '', component: NomeComponent, outlet: 'cadastroOutlet',
+                path: '', component: NomeComponent,
 
             },
             {
-                path: 'infoBasicas', component: InformacoesBasicasComponent, outlet: 'cadastroOutlet',
+                path: 'infoBasicas', component: InformacoesBasicasComponent,
             },
             {
-                path: 'infoContato', component: InformacoesContatoComponent, outlet: 'cadastroOutlet',
+                path: 'infoContato', component: InformacoesContatoComponent,
             },
             {
-                path: 'senha', component: SenhaComponent, outlet: 'cadastroOutlet'
+                path: 'senha', component: SenhaComponent,
             },
             {
-                path: 'fim', component: FimComponent, outlet: 'cadastroOutlet'
+                path: 'fim', component: FimComponent,
             },
 
         ]
     },
-    { path: '', redirectTo: '/login', pathMatch: 'full' },
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+
     {
         path: 'pagamento', component: PagamentoStatusComponent
     },
     {
-        path: 'produtos', component: ProdutosComponent
+        path: 'produtos', component: ProdutosComponent,
     },
     {
         path: 'produto/:referencia', component: ProdutoComponent,
-
     },
     {
         path: 'pagamentos', component: PagamentosComponent,
     },
     {
         path: 'pagamento/:orderNsu', component: PagamentoComponent,
-    }
+    },
+
 
 ];

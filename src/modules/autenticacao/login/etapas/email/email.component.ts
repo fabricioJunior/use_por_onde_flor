@@ -24,6 +24,7 @@ export class EmailComponent {
     loginGroup: FormGroup;
     constructor(private router: Router, loginComponent: LoginComponent, private loginService: AutenticacaoService) {
         this.loginGroup = loginComponent.loginGroup;
+        this.updateErrorMessage();
         merge(loginComponent.loginGroup.get('email')!.statusChanges, this.loginGroup.get('email')!.valueChanges)
             .pipe(takeUntilDestroyed())
             .subscribe(() => this.updateErrorMessage());
@@ -50,7 +51,7 @@ export class EmailComponent {
                 this.errorMessage.set('E-mail não cadastrado, verifique o e-mail inserido ou crie um conta');
             } else {
                 this.errorMessage.set('');
-                this.router.navigate(['login', { outlets: { loginOutlet: ['stepSenha'] } }]);
+                this.router.navigate(['login/stepSenha'])
 
             }
         });

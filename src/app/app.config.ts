@@ -15,6 +15,9 @@ import { PagamentoDatasource } from '../modules/pagamento/data/pagamento.datasou
 import { PagamentoService } from '../modules/pagamento/services/pagamento.service';
 import { ProdutoDataSource } from '../modules/produtos/data/produto.data.source';
 import { ProdutoService } from '../modules/produtos/services/produto.service';
+import { PontosService } from '../modules/fidelizacao/pontos/services/pontos.service';
+import { PontosDataSource } from '../modules/fidelizacao/pontos/data/pontos.data.source';
+import { RecuperarSenhaDataSource } from '../modules/autenticacao/data/recuperar.senha.data.source';
 const maskConfig: Partial<NgxMaskConfig> = {
   validation: false,
 };
@@ -35,7 +38,10 @@ export const appConfig: ApplicationConfig = {
     { provide: PagamentoService },
     { provide: PagamentoDatasource },
     { provide: ProdutoDataSource },
-    { provide: ProdutoService }
+    { provide: ProdutoService },
+    { provide: PontosService },
+    { provide: PontosDataSource, },
+    { provide: RecuperarSenhaDataSource }
 
   ]
 };

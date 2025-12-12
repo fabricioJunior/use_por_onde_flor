@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -20,7 +20,7 @@ import { Router } from "@angular/router";
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
-export class InformacoesContatoComponent {
+export class InformacoesContatoComponent implements OnInit {
 
     loading = signal(false);
 
@@ -33,7 +33,7 @@ export class InformacoesContatoComponent {
         this.loginService.validarEmailValido(this.formGroup.get('email')?.value).subscribe((value) => {
             this.loading.set(true);
             if (value.valido) {
-                this.router.navigate(['/cadastro', { outlets: { cadastroOutlet: ['senha'] } }]);
+                this.router.navigate(['/cadastro/senha']);
             } else {
                 console.log(value);
                 this.loading.set(false);
@@ -51,6 +51,11 @@ export class InformacoesContatoComponent {
             this.atualizarErrorEmail();
         });
 
+    }
+    ngOnInit(): void {
+        if (this.formGroup.get('sobrenome')?.value == null || this.formGroup.get('nome')?.value == null) {
+
+        }
     }
     atualizarErrorEmail() {
         var cpfInvalid = this.formGroup.get('email')?.invalid;

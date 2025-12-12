@@ -1,4 +1,4 @@
-import { Component, signal } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { MatSelectModule } from '@angular/material/select';
 import { FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
@@ -19,7 +19,7 @@ import { single } from "rxjs";
     providers: [provideNgxMask()]
 })
 
-export class InformacoesBasicasComponent {
+export class InformacoesBasicasComponent implements OnInit {
 
     formGroup: FormGroup;
 
@@ -49,6 +49,13 @@ export class InformacoesBasicasComponent {
         this.formGroup.get('cpf')!.statusChanges.subscribe((value) => {
             this.atualizarErrorEmCpf();
         });
+    }
+    ngOnInit(): void {
+        console.log(this.formGroup.get('sobrenome')?.value);
+        if (this.formGroup.get('sobrenome')?.value == null || this.formGroup.get('nome') == null) {
+
+            this.router.navigate(['/cadastro']);
+        }
     }
 
     atualizarErrorEmData() {
@@ -87,7 +94,7 @@ export class InformacoesBasicasComponent {
         this.loading.set(true);
         this.loginService.validarDocumentoValido(this.formGroup.get('cpf')?.value).subscribe((value) => {
             if (value.valido) {
-                this.router.navigate(['/cadastro', { outlets: { cadastroOutlet: ['infoContato'] } }]);
+                this.router.navigate(['/cadastro/infoContato']);
             } else {
                 this.loading.set(false);
                 this.cpfError.set(value.mensagem);

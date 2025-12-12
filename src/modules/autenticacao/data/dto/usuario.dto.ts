@@ -7,7 +7,8 @@ export class UsuarioDto {
     documento?: string;
     dataNascimento?: string;
     telefone?: string;
-    id?:number;
+    empresaId?: number
+    id?: number;
 
     constructor(partial?: Partial<UsuarioDto>) {
         Object.assign(this, partial);

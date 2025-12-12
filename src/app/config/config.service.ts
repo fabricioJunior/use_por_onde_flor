@@ -23,8 +23,17 @@ export const ApiBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
     } else {
 
         var tokens = localStorageService.get<TokensDto>('token') as TokensDto || undefined;
-        console.log("url", req.url);
-        console.log("Tokens:", tokens);
+
+        if (req.url == 'v1/pessoas-usuarios/perfil') {
+            const apiReq = req.clone({
+                url: `https://apollo-api-stg.coralcloud.app/${req.url}`,
+                headers: req.headers,
+            },);
+            console.log("url", req.url);
+            console.log("Tokens:", tokens);
+            console.log("Tokens:", apiReq);
+            return next(apiReq);
+        }
         const apiReq = req.clone({
             url: `https://apollo-api-stg.coralcloud.app/${req.url}`,
             headers: req.headers.set('Authorization', 'Bearer ' + tokens?.tokenDeAcesso),

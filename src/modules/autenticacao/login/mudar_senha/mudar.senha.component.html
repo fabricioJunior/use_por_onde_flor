@@ -1,0 +1,48 @@
+
+<div class="email-group">
+    <div class="column">
+        <app-logo></app-logo>
+        <h2>Atualizar Senha</h2>
+    </div>
+
+    @if(senhaAtualizadaComSucesso()){
+    <h2>Senha Atualizada com sucesso!</h2>
+
+    <div class="row">
+        <button type="button" id="esqueceu-seu-email-button"
+            (click)="irParaPagindaDoCodigo()"
+            class="text-button text-button-text" placeholder>Ir para o login
+        </button>
+
+    </div>
+
+    } @else {
+    <h4>Insira o codigo recebido no e-mail e a nova senha</h4>
+    <ng-otp-input [formControl]="codigoControl"
+        [config]="otpConfig"></ng-otp-input>
+
+    <mat-error class="error-message">{{errorMessageCode()}}</mat-error>
+
+    <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input class="input-senha" matInput placeholder="Nova senha"
+            [formControl]="senhaControl"
+            type="password"
+            [value]="senhaControl.value" />
+
+    </mat-form-field>
+    <mat-error class="error-message">{{errorMessageSenha()}}</mat-error>
+
+    @if (!carregando()) {
+    <div class="button-group">
+        <app-filled-button [label]="'Atualizar Senha'" [color]="'red'"
+            [enabled]="atualizarSenhaEnabled()" (onTap)="atualizarSenha()"
+            class="button avanca-button"></app-filled-button>
+    </div>
+    }@else {
+    <mat-spinner></mat-spinner>
+    }
+
+    }
+
+</div>

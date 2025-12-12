@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -17,7 +17,9 @@ import { FilledButtonComponent } from "../../../../core/common_components/filled
     imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, FilledButtonComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginSenhaComponent {
+export class LoginSenhaComponent implements OnInit {
+
+
 
     errorMessage = signal('');
     avancaEnable = signal(false);
@@ -31,6 +33,11 @@ export class LoginSenhaComponent {
             .pipe(takeUntilDestroyed())
             .subscribe(() => this.updateErrorMessage());
     }
+    ngOnInit(): void {
+        if (this.formGroup.get('email')?.invalid) {
+            this.router.navigate(['login']);
+        }
+    }
 
     updateErrorMessage() {
         if (this.formGroup.get('senha')!.hasError('required')) {
@@ -43,6 +50,11 @@ export class LoginSenhaComponent {
             this.avancaEnable.set(true);
             this.errorMessage.set('');
         }
+    }
+
+    onEsqueceuSenha() {
+        console.log('esqueceu senha');
+        this.router.navigate(['login/recuperarSenha']);
     }
 
     async login() {

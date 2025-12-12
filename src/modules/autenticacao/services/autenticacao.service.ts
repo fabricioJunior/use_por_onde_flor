@@ -8,6 +8,8 @@ import { UsuarioDataSource } from "../data/usuario.data.source";
 import { LocalStorageService } from "../../core/local_storage/local-storage.service";
 import { AutenticacaoDataSource } from "../data/autenticacao.data.source";
 import { TokensDto } from "../data/dto/tokens.dto";
+import { RecuperarSenhaDataSource } from "../data/recuperar.senha.data.source";
+import { RecuperarSenhaDto } from "../data/dto/recuperar.senha.dto";
 
 @Injectable()
 export class AutenticacaoService {
@@ -16,6 +18,7 @@ export class AutenticacaoService {
         private usuarioDocumentoValidoDataSource: UsuarioDocumentoValidoDataSource,
         private usuarioDataSource: UsuarioDataSource,
         private autenticacaoDataSource: AutenticacaoDataSource,
+        private recuperarSenhaDataSource: RecuperarSenhaDataSource,
         private localStorageService: LocalStorageService
     ) {
 
@@ -44,6 +47,14 @@ export class AutenticacaoService {
         return true;
     }
 
+    async solicitaEsqueciSenha(email: string): Promise<RecuperarSenhaDto> {
+        return this.recuperarSenhaDataSource.solicitarEsquecimentoDeSenha(email);
+    }
+
+    async mudarSenha(email: string, codigo: string): Promise<RecuperarSenhaDto> {
+        return this.recuperarSenhaDataSource.redefinirSenha(email, codigo);
+    }
+
     async recuperarUsuarioDaSessao(): Promise<UsuarioDto> {
         return this.localStorageService.get('usuario_da_sessao');
     }
@@ -52,8 +63,9 @@ export class AutenticacaoService {
         try {
             var tokens = await firstValueFrom(this.autenticacaoDataSource.getTokens(email, senha));
 
-            this.localStorageService.set('token', tokens);
-            var usuarioDaSessao = await firstValueFrom(this.usuarioDataSource.recuperarUsuario());
+            await this.localStorageService.set('token', tokens);
+            console.log(tokens.tokenDeAcesso);
+            var usuarioDaSessao = await firstValueFrom(this.usuarioDataSource.recuperarUsuario(tokens.tokenDeAcesso));
 
             this.localStorageService.set('usuario_da_sessao', usuarioDaSessao);
 

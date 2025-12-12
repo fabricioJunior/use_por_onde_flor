@@ -21,7 +21,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class ProdutosComponent {
     onTapProduto(produto: ProdutoDto) {
-        this.router.navigate(['/produto', produto.referencia]);
+        this.router.navigate(['/produtos/produto', produto.referencia]);
     }
 
     descricaoFromControl = new FormControl();

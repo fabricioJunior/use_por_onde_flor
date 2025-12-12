@@ -13,7 +13,7 @@ export class LocalStorageService {
     this.storage = storage;
   }
 
-  set(key: string, value: any): boolean {
+  async set(key: string, value: any): Promise<boolean> {
     if (this.storage) {
       this.storage.setItem(key, JSON.stringify(value));
       return true;

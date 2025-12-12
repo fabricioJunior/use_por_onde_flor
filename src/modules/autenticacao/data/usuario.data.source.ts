@@ -18,12 +18,15 @@ export class UsuarioDataSource extends RemoteDataSourceBase<Object> {
         )
     }
 
-    recuperarUsuario(): Observable<UsuarioDto> {
+
+    recuperarUsuario(token?: string): Observable<UsuarioDto> {
 
         return this.get(
             {
-                path: 'perfil'
+                path: 'perfil',
+                authToken: token,
             }
+            ,
         );
     }
 }

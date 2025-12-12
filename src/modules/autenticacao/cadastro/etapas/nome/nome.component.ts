@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, signal, } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, signal, } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -15,7 +15,7 @@ import { CadastroComponent } from '../../cadastro.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
-export class NomeComponent {
+export class NomeComponent implements OnInit {
 
 
     nomeErrorMessage = signal('');
@@ -31,11 +31,15 @@ export class NomeComponent {
             this.updateNomeErrorMessage();
             this.avancaEnableUpdate();
         });
-        console.log('constructor');
+
         this.formGroup.get('sobrenome')!.valueChanges.subscribe((value) => {
             this.updateSobrenomeErrorMessage();
             this.avancaEnableUpdate();
         });
+    }
+    ngOnInit(): void {
+        this.updateNomeErrorMessage();
+        this.avancaEnableUpdate();
     }
 
     updateNomeErrorMessage() {
@@ -65,6 +69,6 @@ export class NomeComponent {
     }
 
     onAvancarTap() {
-        this.router.navigate(['/cadastro', { outlets: { cadastroOutlet: ['infoBasicas'] } }]);
+        this.router.navigate(['/cadastro/infoBasicas',]);
     }
 }
