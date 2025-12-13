@@ -55,9 +55,6 @@ export class AutenticacaoService {
         return this.recuperarSenhaDataSource.redefinirSenha(email, codigo);
     }
 
-    async recuperarUsuarioDaSessao(): Promise<UsuarioDto> {
-        return this.localStorageService.get('usuario_da_sessao');
-    }
 
     async fazerLogin(email: string, senha: string): Promise<boolean> {
         try {

@@ -5,6 +5,9 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from '@angular/material/button';
 import { PontosService } from "../../services/pontos.service";
 import { PontoDto } from "../../data/dto/ponto.dto";
+import { PontosDto } from "../../data/dto/pontos.dto";
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { UsuarioDto } from "../../../../autenticacao/data/dto/usuario.dto";
 
 @Component(
     {
@@ -13,17 +16,21 @@ import { PontoDto } from "../../data/dto/ponto.dto";
         styleUrls: ['./pontos.component.scss'],
         changeDetection: ChangeDetectionStrategy.OnPush,
         standalone: true,
-        imports: [LogoComponent, PontoComponent, MatIconModule, MatButtonModule,],
+        imports: [LogoComponent, PontoComponent, MatIconModule, MatButtonModule, MatProgressSpinner],
     }
 )
 export class PontosComponent implements OnInit {
     totalDePontos = signal(0);
 
-    historicoDePontos = signal<PontoDto[]>([]);
+    historicoDePontos = signal<PontosDto | null>(null);
+    pessoa = signal<UsuarioDto | null>(null);
+
 
     async carregarPontos() {
         this.historicoDePontos.set(await this.pontosService.recuperarPontos());
-        this.totalDePontos.set(await this.pontosService.recuperarTotalPontos());
+    }
+    async carregarPessoa() {
+        this.pessoa.set(await this.pontosService.recuperarUsuario());
     }
 
     constructor(private pontosService: PontosService) {
@@ -31,6 +38,7 @@ export class PontosComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.carregarPessoa();
         this.carregarPontos();
     }
 } 

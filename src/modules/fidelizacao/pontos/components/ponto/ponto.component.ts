@@ -15,7 +15,6 @@ export class PontoComponent implements OnInit {
 
     }
     ngOnInit(): void {
-        console.log(this.enable);
         if (this.enable) {
             this.currentOpacity = 1.0;
         } else {
