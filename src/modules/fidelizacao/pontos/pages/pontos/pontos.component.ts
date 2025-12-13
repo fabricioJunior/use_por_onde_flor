@@ -8,6 +8,8 @@ import { PontoDto } from "../../data/dto/ponto.dto";
 import { PontosDto } from "../../data/dto/pontos.dto";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { UsuarioDto } from "../../../../autenticacao/data/dto/usuario.dto";
+import { Router } from "@angular/router";
+import { AutenticacaoService } from "../../../../autenticacao/services/autenticacao.service";
 
 @Component(
     {
@@ -33,7 +35,12 @@ export class PontosComponent implements OnInit {
         this.pessoa.set(await this.pontosService.recuperarUsuario());
     }
 
-    constructor(private pontosService: PontosService) {
+    logout() {
+        this.autenticacaoService.logout();
+        this.router.navigate(['/login']);
+    }
+
+    constructor(private pontosService: PontosService, private router: Router, private autenticacaoService: AutenticacaoService) {
 
     }
 

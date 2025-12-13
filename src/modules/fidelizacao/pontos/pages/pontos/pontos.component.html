@@ -1,6 +1,6 @@
 <div class="container">
     <div class="row-end">
-        <button mat-icon-button>
+        <button mat-icon-button (click)="logout()">
             <mat-icon>logout</mat-icon>
         </button>
     </div>
@@ -11,7 +11,7 @@
         </app-logo>
         <div class="info-cliente">
             <h2>Use Por Onde Flor</h2>
-            <p>Esthefane Machado Verás Carneiro - ID</p>
+            <p [textContent]="pessoa()?.nome"></p>
         </div>
 
         @if(historicoDePontos() == null){

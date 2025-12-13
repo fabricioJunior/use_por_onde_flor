@@ -38,9 +38,14 @@ export class AutenticacaoService {
 
     estaAutenticado(): boolean {
 
-        const tokens = this.localStorageService.get('token') as TokensDto;
+        const tokens = this.localStorageService.get('token') as TokensDto | null;
 
-        if (tokens == null || (tokens.expiracao as Date).getTime() <= new Date().getTime()) {
+        if (tokens == undefined || tokens == null) {
+            return false;
+        }
+
+        const expiracaoTime = new Date(tokens.expiracao ?? '').getTime();
+        if (expiracaoTime <= new Date().getTime()) {
             return false;
         }
 
@@ -71,6 +76,10 @@ export class AutenticacaoService {
             console.error("Erro ao fazer login:", error);
             return false;
         }
+    }
+
+    async logout() {
+        await this.localStorageService.clear();
     }
 
 }

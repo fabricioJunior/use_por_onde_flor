@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { CanMatchFn, Route, Routes, UrlSegment, Router } from '@angular/router';
 import { AcoesComponent } from '../modules/acoes/acoes.component';
 import { LoginComponent } from '../modules/autenticacao/login/login.component';
 import { CadastroComponent } from '../modules/autenticacao/cadastro/cadastro.component';
@@ -18,10 +18,25 @@ import { PagamentosComponent } from '../modules/pagamento/presentation/pagamento
 import { PagamentoComponent } from '../modules/pagamento/presentation/pagamento/pagamento.component';
 import { RecuperarSenhaComponent } from '../modules/autenticacao/login/recuperar_senha/recuperar.senha.component';
 import { MudarSenhaComponent } from '../modules/autenticacao/login/mudar_senha/mudar.senha.component';
+import { AutenticacaoService } from '../modules/autenticacao/services/autenticacao.service';
+import { inject } from '@angular/core';
+
+
+export const autenticacaoGuard: CanMatchFn = (route: Route, segments: UrlSegment[]) => {
+    const authService = inject(AutenticacaoService);
+    const router = inject(Router);
+
+    const estaAutenticado = authService.estaAutenticado();
+    if (!estaAutenticado) {
+        router.navigate(['/login']);
+        return false;
+    }
+    return true;
+};
 
 export const routes: Routes = [
 
-    { path: 'acoes', component: AcoesComponent },
+    { path: 'acoes', component: AcoesComponent, canMatch: [autenticacaoGuard] },
     {
         path: 'login', component: LoginComponent, children: [
 
@@ -38,10 +53,12 @@ export const routes: Routes = [
         ]
     },
     {
-        path: 'mudarSenha', component: MudarSenhaComponent
+        path: 'mudarSenha', component: MudarSenhaComponent, canMatch: [autenticacaoGuard]
     },
     {
-        path: 'home', component: PontosComponent
+        path: 'home', component: PontosComponent,
+        canMatch: [autenticacaoGuard]
+
     },
     {
         path: 'cadastro', component: CadastroComponent,
@@ -68,20 +85,25 @@ export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
 
     {
-        path: 'pagamento', component: PagamentoStatusComponent
+        path: 'pagamento', component: PagamentoStatusComponent, canMatch: [autenticacaoGuard]
     },
     {
         path: 'produtos', component: ProdutosComponent,
+        canMatch: [autenticacaoGuard]
     },
     {
         path: 'produto/:referencia', component: ProdutoComponent,
+        canMatch: [autenticacaoGuard]
     },
     {
         path: 'pagamentos', component: PagamentosComponent,
+        canMatch: [autenticacaoGuard]
     },
     {
         path: 'pagamento/:orderNsu', component: PagamentoComponent,
+        canMatch: [autenticacaoGuard]
     },
 
 
 ];
+
