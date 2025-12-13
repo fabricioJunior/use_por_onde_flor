@@ -36,7 +36,7 @@ export const autenticacaoGuard: CanMatchFn = (route: Route, segments: UrlSegment
 
 export const routes: Routes = [
 
-    { path: 'acoes', component: AcoesComponent, canMatch: [autenticacaoGuard] },
+    { path: 'acoes', component: AcoesComponent, },
     {
         path: 'login', component: LoginComponent, children: [
 
@@ -53,7 +53,7 @@ export const routes: Routes = [
         ]
     },
     {
-        path: 'mudarSenha', component: MudarSenhaComponent, canMatch: [autenticacaoGuard]
+        path: 'mudarSenha', component: MudarSenhaComponent,
     },
     {
         path: 'home', component: PontosComponent,
@@ -89,11 +89,11 @@ export const routes: Routes = [
     },
     {
         path: 'produtos', component: ProdutosComponent,
-        canMatch: [autenticacaoGuard]
+
     },
     {
         path: 'produto/:referencia', component: ProdutoComponent,
-        canMatch: [autenticacaoGuard]
+
     },
     {
         path: 'pagamentos', component: PagamentosComponent,
