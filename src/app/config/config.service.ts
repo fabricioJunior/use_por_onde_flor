@@ -39,10 +39,7 @@ export const ApiBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
             return next(apiReq);
         }
 
-        if (tokens?.tokenDeAcesso == undefined) {
-            var router = inject(Router);
-            router.navigate(['login']);
-        }
+
         const apiReq = req.clone({
             url: `https://apollo-api-stg.coralcloud.app/${req.url}`,
             headers: req.headers.set('Authorization', 'Bearer ' + tokens?.tokenDeAcesso),
