@@ -13,10 +13,14 @@
             {{senhaError()}}
         </mat-error>
     </mat-form-field>
-
+    @if(loading()){
+    <mat-spinner></mat-spinner>
+    }@else{
     <div class="row">
         <app-filled-button [label]="'Avançar'" [color]="'red'"
             [enabled]="avancaEnable()"
             (onTap)="onAvancarTap()"></app-filled-button>
     </div>
+    }
+
 </div>

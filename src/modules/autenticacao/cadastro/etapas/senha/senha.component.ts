@@ -8,13 +8,14 @@ import { FilledButtonComponent } from "../../../../core/common_components/filled
 import { CadastroComponent } from "../../cadastro.component";
 import { Router } from "@angular/router";
 import { AutenticacaoService } from "../../../services/autenticacao.service";
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
 
 @Component(
     {
         selector: 'senha-app',
         templateUrl: './senha.component.html',
         styleUrls: ['./senha.component.scss'],
-        imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, MatSelectModule, FilledButtonComponent],
+        imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, MatSelectModule, FilledButtonComponent, MatProgressSpinner],
     }
 )
 export class SenhaComponent {
@@ -56,7 +57,7 @@ export class SenhaComponent {
             sobrenome: this.formGroup.get('sobrenome')?.value,
             senha: this.formGroup.get('senha')?.value,
             documento: this.formGroup.get('cpf')?.value,
-            dataNascimento: this.formatDate(`${ano}-${mes}-${dia}`),
+            dataNascimento: this.formatDateFromParts(ano, mes, dia),
             telefone: this.formGroup.get('telefone')?.value,
             empresaId: 1,
         }).subscribe((value) => {
@@ -76,6 +77,26 @@ export class SenhaComponent {
             month = '0' + month;
         if (day.length < 2)
             day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
+    formatDateFromParts(yearPart: any, monthPart: any, dayPart: any): string {
+        const y = parseInt(String(yearPart ?? '').trim(), 10);
+        const m = parseInt(String(monthPart ?? '').trim(), 10);
+        const d = parseInt(String(dayPart ?? '').trim(), 10);
+
+        if (isNaN(y) || isNaN(m) || isNaN(d)) {
+            return '';
+        }
+
+        const dt = new Date(y, m - 1, d);
+        const year = dt.getFullYear();
+        let month = String(dt.getMonth() + 1);
+        let day = String(dt.getDate());
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
 
         return [year, month, day].join('-');
     }
