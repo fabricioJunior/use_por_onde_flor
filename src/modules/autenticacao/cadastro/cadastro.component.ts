@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { NomeComponent } from "./etapas/nome/nome.component";
 import { LogoComponent } from "../../core/common_components/logo.component";
 import { FilledButtonComponent } from "../../core/common_components/filled.button.component";
 import { InformacoesBasicasComponent } from "./etapas/informacoes_basicas/informacoes.basicas.component";
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { NavigationEnd } from '@angular/router';
+import { NavigationStart, Router, RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { cpf } from 'cpf-cnpj-validator';
@@ -18,9 +18,10 @@ import { LocalStorageService } from '../../core/local_storage/local-storage.serv
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
-export class CadastroComponent implements OnInit {
+export class CadastroComponent implements OnInit, OnDestroy {
 
     private readonly cadastroDraftKey = 'cadastro_draft';
+    private routerEventsSubscription?: Subscription;
 
     cadastroFromGroup = new FormGroup(
         {
@@ -36,7 +37,7 @@ export class CadastroComponent implements OnInit {
         }
     );
 
-    constructor(private localStorageService: LocalStorageService) {
+    constructor(private localStorageService: LocalStorageService, private router: Router) {
 
     }
 
@@ -45,6 +46,16 @@ export class CadastroComponent implements OnInit {
         this.cadastroFromGroup.valueChanges.subscribe(() => {
             this.salvarDraftCadastro();
         });
+
+        this.routerEventsSubscription = this.router.events.subscribe((event) => {
+            if (event instanceof NavigationStart && !event.url.startsWith('/cadastro')) {
+                this.limparDraftCadastro();
+            }
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.routerEventsSubscription?.unsubscribe();
     }
 
     limparDraftCadastro() {
