@@ -1,4 +1,4 @@
-import { Component, signal } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -18,7 +18,7 @@ import { MatProgressSpinner } from "@angular/material/progress-spinner";
         imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, MatSelectModule, FilledButtonComponent, MatProgressSpinner],
     }
 )
-export class SenhaComponent {
+export class SenhaComponent implements OnInit {
 
 
     formGroup: FormGroup;
@@ -27,12 +27,39 @@ export class SenhaComponent {
     avancaEnable = signal(false);
 
 
-    constructor(cadastroComponent: CadastroComponent, private router: Router, private loginService: AutenticacaoService) {
+    constructor(private cadastroComponent: CadastroComponent, private router: Router, private loginService: AutenticacaoService) {
         this.formGroup = cadastroComponent.cadastroFromGroup;
 
         this.formGroup.get('senha')?.statusChanges.subscribe((value) => {
             this.atualizarSenhaError();
         });
+
+        this.atualizarSenhaError();
+    }
+
+    ngOnInit(): void {
+        if (!this.temDadosMinimosCadastroValidos()) {
+            this.router.navigate(['/cadastro']);
+        }
+    }
+
+    private temDadosMinimosCadastroValidos(): boolean {
+        const nomeControl = this.formGroup.get('nome');
+        const sobrenomeControl = this.formGroup.get('sobrenome');
+        const telefoneControl = this.formGroup.get('telefone');
+        const emailControl = this.formGroup.get('email');
+        const cpfControl = this.formGroup.get('cpf');
+
+        return !!nomeControl?.value
+            && !!sobrenomeControl?.value
+            && !!telefoneControl?.value
+            && !!emailControl?.value
+            && !!cpfControl?.value
+            && !nomeControl.invalid
+            && !sobrenomeControl.invalid
+            && !telefoneControl.invalid
+            && !emailControl.invalid
+            && !cpfControl.invalid;
     }
 
     atualizarSenhaError() {
@@ -62,6 +89,7 @@ export class SenhaComponent {
             empresaId: 1,
         }).subscribe((value) => {
             this.loading.set(false);
+            this.cadastroComponent.limparDraftCadastro();
             this.router.navigate(['/cadastro/fim']);
         });
 

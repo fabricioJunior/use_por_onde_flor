@@ -3,7 +3,10 @@ import { inject, Injectable } from "@angular/core";
 import { LocalStorageService } from "../../modules/core/local_storage/local-storage.service";
 import { TokensDto } from "../../modules/autenticacao/data/dto/tokens.dto";
 import { Router } from "@angular/router";
+import { url } from "node:inspector";
 
+
+const serveUrl = 'https://apollo-use-por-onde-for.coralcloud.app';
 @Injectable()
 export class ConfigService {
     configUrl = 'assets/config.json';
@@ -30,7 +33,7 @@ export const ApiBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
 
         if (req.url == 'v1/pessoas-usuarios/perfil') {
             const apiReq = req.clone({
-                url: `https://apollo-api-stg.coralcloud.app/${req.url}`,
+                url: `${serveUrl}/${req.url}`,
                 headers: req.headers,
             },);
             console.log("url", req.url);
@@ -41,7 +44,7 @@ export const ApiBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
 
 
         const apiReq = req.clone({
-            url: `https://apollo-api-stg.coralcloud.app/${req.url}`,
+            url: `${serveUrl}/${req.url}`,
             headers: req.headers.set('Authorization', 'Bearer ' + tokens?.tokenDeAcesso),
         },);
         return next(apiReq);

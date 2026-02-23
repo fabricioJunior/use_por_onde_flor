@@ -8,6 +8,7 @@ import { NavigationEnd } from '@angular/router';
 
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { cpf } from 'cpf-cnpj-validator';
+import { LocalStorageService } from '../../core/local_storage/local-storage.service';
 
 @Component({
     selector: 'app-cadastro',
@@ -18,6 +19,8 @@ import { cpf } from 'cpf-cnpj-validator';
     standalone: true,
 })
 export class CadastroComponent implements OnInit {
+
+    private readonly cadastroDraftKey = 'cadastro_draft';
 
     cadastroFromGroup = new FormGroup(
         {
@@ -33,11 +36,33 @@ export class CadastroComponent implements OnInit {
         }
     );
 
-    constructor() {
+    constructor(private localStorageService: LocalStorageService) {
 
     }
 
     ngOnInit(): void {
+        this.restaurarDraftCadastro();
+        this.cadastroFromGroup.valueChanges.subscribe(() => {
+            this.salvarDraftCadastro();
+        });
+    }
+
+    limparDraftCadastro() {
+        this.localStorageService.remove(this.cadastroDraftKey);
+    }
+
+    private salvarDraftCadastro() {
+        this.localStorageService.set(this.cadastroDraftKey, this.cadastroFromGroup.getRawValue());
+    }
+
+    private restaurarDraftCadastro() {
+        const draft = this.localStorageService.get<Record<string, unknown>>(this.cadastroDraftKey);
+        if (!draft || typeof draft !== 'object') {
+            return;
+        }
+
+        this.cadastroFromGroup.patchValue(draft, { emitEvent: false });
+        this.cadastroFromGroup.updateValueAndValidity({ emitEvent: false });
 
     }
 
