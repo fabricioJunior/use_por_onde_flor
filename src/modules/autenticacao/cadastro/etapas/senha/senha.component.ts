@@ -9,6 +9,7 @@ import { CadastroComponent } from "../../cadastro.component";
 import { Router } from "@angular/router";
 import { AutenticacaoService } from "../../../services/autenticacao.service";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { recuperarEmpresaAtual, resolverEmpresaId } from "../../../../../app/config/config.service";
 
 @Component(
     {
@@ -25,6 +26,7 @@ export class SenhaComponent implements OnInit {
     loading = signal(false);
     senhaError = signal('');
     avancaEnable = signal(false);
+    private readonly empresaId = resolverEmpresaId(recuperarEmpresaAtual());
 
 
     constructor(private cadastroComponent: CadastroComponent, private router: Router, private loginService: AutenticacaoService) {
@@ -86,7 +88,7 @@ export class SenhaComponent implements OnInit {
             documento: this.formGroup.get('cpf')?.value,
             dataNascimento: this.formatDateFromParts(ano, mes, dia),
             telefone: this.formGroup.get('telefone')?.value,
-            empresaId: 1,
+            empresaId: this.empresaId,
         }).subscribe((value) => {
             this.loading.set(false);
             this.cadastroComponent.limparDraftCadastro();
