@@ -1,13 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { NomeComponent } from "./etapas/nome/nome.component";
 import { LogoComponent } from "../../core/common_components/logo.component";
 import { FilledButtonComponent } from "../../core/common_components/filled.button.component";
 import { InformacoesBasicasComponent } from "./etapas/informacoes_basicas/informacoes.basicas.component";
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { NavigationEnd } from '@angular/router';
+import { NavigationStart, Router, RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { cpf } from 'cpf-cnpj-validator';
+import { LocalStorageService } from '../../core/local_storage/local-storage.service';
 
 @Component({
     selector: 'app-cadastro',
@@ -17,7 +18,10 @@ import { cpf } from 'cpf-cnpj-validator';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
-export class CadastroComponent implements OnInit {
+export class CadastroComponent implements OnInit, OnDestroy {
+
+    private readonly cadastroDraftKey = 'cadastro_draft';
+    private routerEventsSubscription?: Subscription;
 
     cadastroFromGroup = new FormGroup(
         {
@@ -33,11 +37,43 @@ export class CadastroComponent implements OnInit {
         }
     );
 
-    constructor() {
+    constructor(private localStorageService: LocalStorageService, private router: Router) {
 
     }
 
     ngOnInit(): void {
+        this.restaurarDraftCadastro();
+        this.cadastroFromGroup.valueChanges.subscribe(() => {
+            this.salvarDraftCadastro();
+        });
+
+        this.routerEventsSubscription = this.router.events.subscribe((event) => {
+            if (event instanceof NavigationStart && !event.url.startsWith('/cadastro')) {
+                this.limparDraftCadastro();
+            }
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.routerEventsSubscription?.unsubscribe();
+    }
+
+    limparDraftCadastro() {
+        this.localStorageService.remove(this.cadastroDraftKey);
+    }
+
+    private salvarDraftCadastro() {
+        this.localStorageService.set(this.cadastroDraftKey, this.cadastroFromGroup.getRawValue());
+    }
+
+    private restaurarDraftCadastro() {
+        const draft = this.localStorageService.get<Record<string, unknown>>(this.cadastroDraftKey);
+        if (!draft || typeof draft !== 'object') {
+            return;
+        }
+
+        this.cadastroFromGroup.patchValue(draft, { emitEvent: false });
+        this.cadastroFromGroup.updateValueAndValidity({ emitEvent: false });
 
     }
 

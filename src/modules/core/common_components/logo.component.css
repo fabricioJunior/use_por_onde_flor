@@ -5,4 +5,5 @@
     background-position: center center;
     background: url('/logo.png') center center no-repeat;
     background-size: contain;
+  cursor: pointer;
   }  

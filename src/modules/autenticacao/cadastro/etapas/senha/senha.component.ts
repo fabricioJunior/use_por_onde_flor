@@ -1,4 +1,4 @@
-import { Component, signal } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -9,6 +9,7 @@ import { CadastroComponent } from "../../cadastro.component";
 import { Router } from "@angular/router";
 import { AutenticacaoService } from "../../../services/autenticacao.service";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { recuperarEmpresaAtual, resolverEmpresaId } from "../../../../../app/config/config.service";
 
 @Component(
     {
@@ -18,21 +19,49 @@ import { MatProgressSpinner } from "@angular/material/progress-spinner";
         imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, MatSelectModule, FilledButtonComponent, MatProgressSpinner],
     }
 )
-export class SenhaComponent {
+export class SenhaComponent implements OnInit {
 
 
     formGroup: FormGroup;
     loading = signal(false);
     senhaError = signal('');
     avancaEnable = signal(false);
+    private readonly empresaId = resolverEmpresaId(recuperarEmpresaAtual());
 
 
-    constructor(cadastroComponent: CadastroComponent, private router: Router, private loginService: AutenticacaoService) {
+    constructor(private cadastroComponent: CadastroComponent, private router: Router, private loginService: AutenticacaoService) {
         this.formGroup = cadastroComponent.cadastroFromGroup;
 
         this.formGroup.get('senha')?.statusChanges.subscribe((value) => {
             this.atualizarSenhaError();
         });
+
+        this.atualizarSenhaError();
+    }
+
+    ngOnInit(): void {
+        if (!this.temDadosMinimosCadastroValidos()) {
+            this.router.navigate(['/cadastro']);
+        }
+    }
+
+    private temDadosMinimosCadastroValidos(): boolean {
+        const nomeControl = this.formGroup.get('nome');
+        const sobrenomeControl = this.formGroup.get('sobrenome');
+        const telefoneControl = this.formGroup.get('telefone');
+        const emailControl = this.formGroup.get('email');
+        const cpfControl = this.formGroup.get('cpf');
+
+        return !!nomeControl?.value
+            && !!sobrenomeControl?.value
+            && !!telefoneControl?.value
+            && !!emailControl?.value
+            && !!cpfControl?.value
+            && !nomeControl.invalid
+            && !sobrenomeControl.invalid
+            && !telefoneControl.invalid
+            && !emailControl.invalid
+            && !cpfControl.invalid;
     }
 
     atualizarSenhaError() {
@@ -59,9 +88,10 @@ export class SenhaComponent {
             documento: this.formGroup.get('cpf')?.value,
             dataNascimento: this.formatDateFromParts(ano, mes, dia),
             telefone: this.formGroup.get('telefone')?.value,
-            empresaId: 1,
+            empresaId: this.empresaId,
         }).subscribe((value) => {
             this.loading.set(false);
+            this.cadastroComponent.limparDraftCadastro();
             this.router.navigate(['/cadastro/fim']);
         });
 

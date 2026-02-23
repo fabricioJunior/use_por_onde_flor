@@ -53,10 +53,33 @@ export class InformacoesContatoComponent implements OnInit {
 
     }
     ngOnInit(): void {
-        if (this.formGroup.get('sobrenome')?.value == null || this.formGroup.get('nome')?.value == null) {
-
+        if (!this.temDadosBasicosValidos()) {
+            this.router.navigate(['/cadastro']);
         }
     }
+
+    private temDadosBasicosValidos(): boolean {
+        const nomeControl = this.formGroup.get('nome');
+        const sobrenomeControl = this.formGroup.get('sobrenome');
+        const diaControl = this.formGroup.get('dia');
+        const mesControl = this.formGroup.get('mes');
+        const anoControl = this.formGroup.get('ano');
+        const cpfControl = this.formGroup.get('cpf');
+
+        return !!nomeControl?.value
+            && !!sobrenomeControl?.value
+            && !!diaControl?.value
+            && !!mesControl?.value
+            && !!anoControl?.value
+            && !!cpfControl?.value
+            && !nomeControl.invalid
+            && !sobrenomeControl.invalid
+            && !diaControl.invalid
+            && !mesControl.invalid
+            && !anoControl.invalid
+            && !cpfControl.invalid;
+    }
+
     atualizarErrorEmail() {
         var cpfInvalid = this.formGroup.get('email')?.invalid;
         if (cpfInvalid) {

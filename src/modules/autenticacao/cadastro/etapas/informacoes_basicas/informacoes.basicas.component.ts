@@ -51,11 +51,19 @@ export class InformacoesBasicasComponent implements OnInit {
         });
     }
     ngOnInit(): void {
-        console.log(this.formGroup.get('sobrenome')?.value);
-        if (this.formGroup.get('sobrenome')?.value == null || this.formGroup.get('nome') == null) {
-
+        if (!this.temDadosDeNomeValidos()) {
             this.router.navigate(['/cadastro']);
         }
+    }
+
+    private temDadosDeNomeValidos(): boolean {
+        const nomeControl = this.formGroup.get('nome');
+        const sobrenomeControl = this.formGroup.get('sobrenome');
+
+        return !!nomeControl?.value
+            && !!sobrenomeControl?.value
+            && !nomeControl.invalid
+            && !sobrenomeControl.invalid;
     }
 
     atualizarErrorEmData() {

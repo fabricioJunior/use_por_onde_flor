@@ -2,7 +2,8 @@ import { HttpClient, HttpInterceptorFn } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { LocalStorageService } from "../../modules/core/local_storage/local-storage.service";
 import { TokensDto } from "../../modules/autenticacao/data/dto/tokens.dto";
-import { Router } from "@angular/router";
+import { environment } from "../../environments/environment";
+
 
 @Injectable()
 export class ConfigService {
@@ -13,6 +14,57 @@ export class ConfigService {
     }
 
 
+}
+
+export function recuperarEmpresaAtual(): string | null {
+    if (typeof window === 'undefined') {
+        return null;
+    }
+
+    const empresaQuery = new URLSearchParams(window.location.search).get('empresa');
+    if (empresaQuery && empresaQuery.trim() !== '') {
+        return empresaQuery.trim();
+    }
+
+    const empresaStorageRaw = localStorage.getItem('empresa');
+    if (!empresaStorageRaw) {
+        return null;
+    }
+
+    try {
+        const empresaStorage = JSON.parse(empresaStorageRaw);
+        if (typeof empresaStorage === 'string') {
+            return empresaStorage.trim();
+        }
+
+        if (empresaStorage && typeof empresaStorage.nome === 'string') {
+            return empresaStorage.nome.trim();
+        }
+    } catch {
+        return empresaStorageRaw.trim();
+    }
+
+    return null;
+}
+
+export function resolverEmpresaId(empresa: string | null): number {
+    const empresaNormalizada = (empresa ?? '').trim().toLowerCase();
+
+    if (!empresaNormalizada) {
+        return environment.empresaPadraoId;
+    }
+
+    const empresaMapeada = environment.empresas[empresaNormalizada];
+    if (empresaMapeada != null) {
+        return empresaMapeada;
+    }
+
+    const empresaIdNumerico = Number(empresaNormalizada);
+    if (Number.isInteger(empresaIdNumerico) && empresaIdNumerico > 0) {
+        return empresaIdNumerico;
+    }
+
+    return environment.empresaPadraoId;
 }
 
 export const ApiBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
@@ -30,7 +82,7 @@ export const ApiBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
 
         if (req.url == 'v1/pessoas-usuarios/perfil') {
             const apiReq = req.clone({
-                url: `https://apollo-api-stg.coralcloud.app/${req.url}`,
+                url: `${environment.serverUrl}/${req.url}`,
                 headers: req.headers,
             },);
             console.log("url", req.url);
@@ -41,7 +93,7 @@ export const ApiBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
 
 
         const apiReq = req.clone({
-            url: `https://apollo-api-stg.coralcloud.app/${req.url}`,
+            url: `${environment.serverUrl}/${req.url}`,
             headers: req.headers.set('Authorization', 'Bearer ' + tokens?.tokenDeAcesso),
         },);
         return next(apiReq);
