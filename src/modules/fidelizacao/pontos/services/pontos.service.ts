@@ -3,7 +3,7 @@ import { PontosDataSource } from "../data/pontos.data.source";
 import { PontoDto } from "../data/dto/ponto.dto";
 import { LocalStorageService } from "../../../core/local_storage/local-storage.service";
 import { UsuarioDto } from "../../../autenticacao/data/dto/usuario.dto";
-import { PontosDto } from "../data/dto/pontos.dto";
+import { calcularSaldoPontos, PontosDto } from "../data/dto/pontos.dto";
 
 
 @Injectable()
@@ -13,8 +13,13 @@ export class PontosService {
 
     }
 
-    recuperarPontos(): Promise<PontosDto> {
-        return this.pontosDataSource.recuperarPontos();
+    async recuperarPontos(): Promise<PontosDto> {
+        const pontos = await this.pontosDataSource.recuperarPontos();
+
+        return {
+            ...pontos,
+            saldoPontos: calcularSaldoPontos(pontos.historico)
+        };
     }
 
     async recuperarUsuario(): Promise<UsuarioDto> {
