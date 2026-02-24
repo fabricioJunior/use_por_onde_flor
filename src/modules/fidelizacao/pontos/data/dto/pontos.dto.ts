@@ -36,11 +36,11 @@ export function calcularSaldoPontos(historico?: PontosHistoricoDto[]): number {
         const tipo = ponto.tipo?.trim().toLowerCase();
         const quantidade = Math.abs(ponto.quantidade ?? 0);
 
-        if (tipo === 'Crédito') {
+        if (tipo === 'crédito') {
             return saldo + quantidade;
         }
 
-        if (tipo === 'Débito') {
+        if (tipo === 'débito') {
             return saldo - quantidade;
         }
 
