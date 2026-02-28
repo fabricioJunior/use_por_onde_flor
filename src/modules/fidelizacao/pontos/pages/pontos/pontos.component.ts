@@ -10,6 +10,7 @@ import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { UsuarioDto } from "../../../../autenticacao/data/dto/usuario.dto";
 import { Router } from "@angular/router";
 import { AutenticacaoService } from "../../../../autenticacao/services/autenticacao.service";
+import { TextButtonComponent } from "../../../../core/common_components/text.button.component";
 
 @Component(
     {
@@ -18,7 +19,7 @@ import { AutenticacaoService } from "../../../../autenticacao/services/autentica
         styleUrls: ['./pontos.component.scss'],
         changeDetection: ChangeDetectionStrategy.OnPush,
         standalone: true,
-        imports: [LogoComponent, PontoComponent, MatIconModule, MatButtonModule, MatProgressSpinner],
+        imports: [LogoComponent, PontoComponent, MatIconModule, MatButtonModule, MatProgressSpinner, TextButtonComponent],
     }
 )
 export class PontosComponent implements OnInit {
@@ -26,6 +27,7 @@ export class PontosComponent implements OnInit {
 
     historicoDePontos = signal<PontosDto | null>(null);
     pessoa = signal<UsuarioDto | null>(null);
+    exibirCupomLiveHoje = this.isDiaDoCupomLive();
 
 
     async carregarPontos() {
@@ -38,6 +40,19 @@ export class PontosComponent implements OnInit {
     logout() {
         this.autenticacaoService.logout();
         this.router.navigate(['/login']);
+    }
+
+    onRegulamentoTap = () => {
+        this.router.navigate(['/regulamento']);
+    };
+
+    private isDiaDoCupomLive(): boolean {
+        const hoje = new Date();
+        const dia = hoje.getDate();
+        const mes = hoje.getMonth() + 1;
+        const ano = hoje.getFullYear();
+
+        return dia === 28 && mes === 2 && ano === 2026;
     }
 
     constructor(private pontosService: PontosService, private router: Router, private autenticacaoService: AutenticacaoService) {

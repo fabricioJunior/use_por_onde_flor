@@ -34,6 +34,7 @@ export class CadastroComponent implements OnInit, OnDestroy {
             email: new FormControl(null, [Validators.required, Validators.email]),
             cpf: new FormControl(null, [Validators.required, Validators.minLength(11), cpfValidator()]),
             senha: new FormControl(null, [Validators.required, Validators.minLength(6)]),
+            aceitouRegulamento: new FormControl(false, [Validators.requiredTrue]),
         }
     );
 

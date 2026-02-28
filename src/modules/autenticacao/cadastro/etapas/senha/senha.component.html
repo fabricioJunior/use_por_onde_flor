@@ -13,6 +13,21 @@
             {{senhaError()}}
         </mat-error>
     </mat-form-field>
+
+    <mat-checkbox class="aceite-regulamento"
+        formControlName="aceitouRegulamento">
+        Declaro que li o regulamento do cartão fidelidade.
+    </mat-checkbox>
+    <button class="btn-regulamento" mat-button type="button"
+        (click)="abrirRegulamento()">
+        Ver regulamento
+    </button>
+
+    @if(formGroup.get('aceitouRegulamento')?.value !== true){
+    <p class="aceite-error">Você deve aceitar o regulamento do cartão
+        fidelidade.</p>
+    }
+
     @if(loading()){
     <mat-spinner></mat-spinner>
     }@else{

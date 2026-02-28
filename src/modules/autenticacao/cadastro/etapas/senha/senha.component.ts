@@ -10,13 +10,15 @@ import { Router } from "@angular/router";
 import { AutenticacaoService } from "../../../services/autenticacao.service";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { recuperarEmpresaAtual, resolverEmpresaId } from "../../../../../app/config/config.service";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component(
     {
         selector: 'senha-app',
         templateUrl: './senha.component.html',
         styleUrls: ['./senha.component.scss'],
-        imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, MatSelectModule, FilledButtonComponent, MatProgressSpinner],
+        imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, MatSelectModule, FilledButtonComponent, MatProgressSpinner, MatCheckboxModule, MatButtonModule],
     }
 )
 export class SenhaComponent implements OnInit {
@@ -33,6 +35,10 @@ export class SenhaComponent implements OnInit {
         this.formGroup = cadastroComponent.cadastroFromGroup;
 
         this.formGroup.get('senha')?.statusChanges.subscribe((value) => {
+            this.atualizarSenhaError();
+        });
+
+        this.formGroup.get('aceitouRegulamento')?.valueChanges.subscribe(() => {
             this.atualizarSenhaError();
         });
 
@@ -66,9 +72,10 @@ export class SenhaComponent implements OnInit {
 
     atualizarSenhaError() {
         var senhaInvalid = this.formGroup.get('senha')?.invalid;
-        if (senhaInvalid) {
+        var aceitouRegulamento = this.formGroup.get('aceitouRegulamento')?.value === true;
+        if (senhaInvalid || !aceitouRegulamento) {
             this.avancaEnable.set(false);
-            this.senhaError.set('Informe uma senha válida');
+            this.senhaError.set(senhaInvalid ? 'Informe uma senha válida' : 'Você deve aceitar o regulamento do cartão fidelidade');
         } else {
             this.avancaEnable.set(true);
             this.senhaError.set('');
@@ -95,6 +102,10 @@ export class SenhaComponent implements OnInit {
             this.router.navigate(['/cadastro/fim']);
         });
 
+    }
+
+    abrirRegulamento() {
+        this.router.navigate(['/regulamento']);
     }
 
     formatDate(date: string): string {

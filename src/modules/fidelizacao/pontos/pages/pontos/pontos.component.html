@@ -41,10 +41,19 @@
                     [enable]="(historicoDePontos()?.saldoPontos ?? 0) >= 10"></ponto-app>
             </div>
 
-            <p>1 ponto a cada 100,00, validos por 1 ano</p>
-            <h3>Ganhe 20% de desconto a cada 10 pontos</h3>
+            <p>1 ponto a cada R$ 100,00, válido por 1 ano.</p>
+            <h3>Ganhe 20% de desconto a cada 10 pontos.</h3>
+            @if(exibirCupomLiveHoje){
+            <p class="cupom-live">CUPOM DA LIVE: LIVE022026</p>
+            }
         </div>
         }
 
+    </div>
+
+    <div class="footer-regulamento">
+        <app-text-button
+            [label]="'Regulamento'"
+            [action]="onRegulamentoTap"></app-text-button>
     </div>
 </div>
