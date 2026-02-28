@@ -20,6 +20,7 @@ import { RecuperarSenhaComponent } from '../modules/autenticacao/login/recuperar
 import { MudarSenhaComponent } from '../modules/autenticacao/login/mudar_senha/mudar.senha.component';
 import { AutenticacaoService } from '../modules/autenticacao/services/autenticacao.service';
 import { inject } from '@angular/core';
+import { RegulamentoComponent } from '../modules/fidelizacao/pontos/pages/regulamento/regulamento.component';
 
 
 export const autenticacaoGuard: CanMatchFn = (route: Route, segments: UrlSegment[]) => {
@@ -59,6 +60,9 @@ export const routes: Routes = [
         path: 'home', component: PontosComponent,
         canMatch: [autenticacaoGuard]
 
+    },
+    {
+        path: 'regulamento', component: RegulamentoComponent,
     },
     {
         path: 'cadastro', component: CadastroComponent,

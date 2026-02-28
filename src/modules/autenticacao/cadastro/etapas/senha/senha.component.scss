@@ -1,13 +1,30 @@
-.row{
+.row {
     display: flex;
     justify-content: end;
     align-items: end;
 }
 
-mat-form-field{
+mat-form-field {
     width: 100%;
-  }
+}
 
-  #acao-container {
+#acao-container {
     padding-bottom: 40px;
+}
+
+.aceite-regulamento {
+    margin: 4px 0 8px;
+}
+
+.btn-regulamento {
+    align-self: flex-start;
+    padding-left: 0;
+    margin-bottom: 8px;
+}
+
+.aceite-error {
+    margin: 0 0 12px;
+    color: #b3261e;
+    font-size: 12px;
+    line-height: 1.33;
 }
