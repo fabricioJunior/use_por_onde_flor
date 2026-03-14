@@ -2,7 +2,7 @@
     <app-logo> </app-logo>
     <h1>Processando...</h1>
     <mat-spinner></mat-spinner>
-    @if(!pagamentoPendente()){
-    <h1>Pagamento finalizado</h1>
+    @if(fluxoInvalido()){
+    <h1>Nao foi possivel processar este pagamento.</h1>
     }
 </div>

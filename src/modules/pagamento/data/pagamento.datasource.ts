@@ -5,16 +5,18 @@ import { PagamentoPendenteDto } from "./dto/pagamento.pendente.dto";
 import { Injectable } from "@angular/core";
 import { PagamentoFinalizadoDto } from "./dto/pagamento.finalizado.dto";
 import { PagamentoDto } from "./dto/pagamento.dto";
+import { UrlComprovanteDto } from "./dto/url.comprovante.dto";
+import { environment } from "../../../environments/environment";
 //http://localhost:4200/pagamento?idPedido=6395
 //
 @Injectable()
 export class PagamentoDatasource {
-    url = 'https://estoque.coralcloud.app/';
-    //url = 'http://localhost:5080/';
+    url = `${environment.pagamentoApiUrl}/`;
+
     constructor(private http: HttpClient) { }
 
     getUrlPagamento(idPedido?: string, orderNsu?: string, valor?: number, identificador?: string): Observable<String> {
-        var uri = this.url + 'pagamento/url?';
+        var uri = this.url + '/v1/pagamentos-avulsos/public/comprovante/{id}';
         if (idPedido) {
             uri = uri + 'idPedido=' + idPedido + '&';
         }
@@ -60,9 +62,14 @@ export class PagamentoDatasource {
         return this.http.get<PagamentoPendenteDto>(uri);
     }
 
-    getPagamento(orderNsu: string): Observable<PagamentoDto> {
-        var uri = this.url + 'pagamento/pagamentoOnline?orderNsu=' + orderNsu;
-        return this.http.get<PagamentoDto>(uri);
+    getPagamento(orderNsu: string): Observable<UrlComprovanteDto> {
+        var uri = this.url + `v1/pagamentos-avulsos/public/comprovante/${orderNsu}`;
+        return this.http.get<UrlComprovanteDto>(uri);
+    }
+
+    getUrlPagamentoPorOrderNsu(orderNsu: string): Observable<{ urlDePagamento: string }> {
+        var uri = this.url + `v1/pagamentos-avulsos/public/pagamento/${orderNsu}`;
+        return this.http.get<{ urlDePagamento: string }>(uri);
     }
 
 

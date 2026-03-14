@@ -73,7 +73,7 @@ export const ApiBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
     var tokens = localStorageService.get<TokensDto>('token') as TokensDto || undefined;
     console.log('acesso no config');
     console.log(tokens);
-    if (req.url.includes('http') || req.url.includes('pagamento')) {
+    if (req.url.includes('http') || req.url.includes('pagamento') || req.url.includes('pagamentos-avulsos')) {
         console.log("url", req.url);
         return next(req);
     } else {

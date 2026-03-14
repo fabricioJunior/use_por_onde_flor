@@ -1,10 +1,8 @@
-import { AfterViewInit, Component, OnInit, signal } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { LogoComponent } from "../../../core/common_components/logo.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { PagamentoService } from "../../services/pagamento.service";
-import { PagamentoPendenteDto } from "../../data/dto/pagamento.pendente.dto";
-import { PagamentoFinalizadoDto } from "../../data/dto/pagamento.finalizado.dto";
 import { firstValueFrom } from "rxjs";
 
 @Component({
@@ -16,67 +14,36 @@ import { firstValueFrom } from "rxjs";
 export class PagamentoStatusComponent implements OnInit {
 
 
-    pagamentoPendente = signal(true);
+    fluxoInvalido = signal(false);
     constructor(private router: ActivatedRoute, private pagamentoService: PagamentoService) {
 
     }
 
     async ngOnInit(): Promise<void> {
-        var idPedido = this.router.snapshot.queryParams['idPedido'];
-        var orderNsu = this.router.snapshot.queryParams['orderNsu'];
-        if (orderNsu) {
-            this.redirecionarParaPagamentoByOrdeNsu(orderNsu);
-        } else if (idPedido != null) {
-            this.redirecionarParaPagamento(idPedido);
-        } else {
-            var receiptUrl = this.router.snapshot.queryParams['receipt_url'];
-            var transactionId = this.router.snapshot.queryParams['transaction_id'];
-            var capture_method = this.router.snapshot.queryParams['capture_method'];
-            var order_nsu = this.router.snapshot.queryParams['order_nsu'];
-            var pagamento = new PagamentoFinalizadoDto({
-                comprovanteDePagamento: receiptUrl,
-                transanctionId: transactionId,
-                formaDePagamento: capture_method,
-                idPedido: order_nsu,
-                orderNsu: order_nsu,
-            });
-            await this.delay(1000);
-            var observable = await this.pagamentoService.finalizarPedido(pagamento);
-            var result = await firstValueFrom(observable);
-            document.location.href = result.comprovante?.toString() ?? 'www.useporondeflor.com.br';
+        var receiptUrl = this.router.snapshot.queryParams['receipt_url'];
+        var orderNsu = this.router.snapshot.queryParams['order_nsu'];
+
+        if (receiptUrl) {
+            document.location.href = receiptUrl;
+            return;
         }
 
-
-    }
-    delay(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-    redirecionarParaComprovante() { }
-
-    async redirecionarParaPagamentoByOrdeNsu(orderNsu: string) {
-        var pagamento = await firstValueFrom(this.pagamentoService.getPagamento(orderNsu));
-        if (pagamento?.pendente ?? false) {
-            document.location.href = pagamento.urlPagamento!;
-        } else if (pagamento.urlComprovante != null) {
-            document.location.href = pagamento.urlPagamento!;
+        if (!orderNsu) {
+            this.fluxoInvalido.set(true);
+            return;
         }
-    }
-    async redirecionarParaPagamento(idPedido: string) {
-        var pagamentoPendenteDto = await this.pagamentoService.getPedidoPendente(idPedido);
-        console.log(pagamentoPendenteDto);
 
-        if (pagamentoPendenteDto?.pendente ?? false) {
-            this.pagamentoService.getUrlPagamento(idPedido).subscribe((value) => {
-                document.location.href = value.toString();
-            });
-        } else {
-
-            if (pagamentoPendenteDto.comprovante != null) {
-                document.location.href = pagamentoPendenteDto.comprovante?.toString();
-            } else {
-                this.pagamentoPendente.set(false);
+        try {
+            var response = await firstValueFrom(this.pagamentoService.getUrlPagamentoPorOrderNsu(orderNsu));
+            if (response?.urlDePagamento) {
+                document.location.href = response.urlDePagamento;
+                return;
             }
+        } catch (error) {
+            console.error('Erro ao obter a URL de pagamento por order_nsu', error);
         }
+
+        this.fluxoInvalido.set(true);
     }
     // Component logic goes here
     //http://localhost:4200/pagamento?capture_method=pix&transaction_id=6a2b67ec-5d41-4e9d-979b-e63675f8c96b&transaction_nsu=6a2b67ec-5d41-4e9d-979b-e63675f8c96b&slug=21TGnE5n3v&order_nsu=7629&receipt_url=https:%2F%2Frecibo.infinitepay.io%2F6a2b67ec-5d41-4e9d-979b-e63675f8c96b

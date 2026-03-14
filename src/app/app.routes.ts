@@ -100,6 +100,9 @@ export const routes: Routes = [
 
     },
     {
+        path: 'pagamentoAvulso', component: PagamentoStatusComponent,
+    },
+    {
         path: 'pagamentos', component: PagamentosComponent,
         canMatch: [autenticacaoGuard]
     },

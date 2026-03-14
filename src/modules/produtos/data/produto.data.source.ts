@@ -3,11 +3,12 @@ import { ProdutoDto } from "./dtos/produto.dto";
 import { firstValueFrom } from "rxjs";
 import { CruzamentoCoresETamanhosDto } from "./dtos/cor.tamanho";
 import { Inject, Injectable } from "@angular/core";
+import { environment } from "../../../environments/environment";
 @Injectable()
 export class ProdutoDataSource {
 
-    url = 'https://estoque.coralcloud.app/';
-    // url = 'http://localhost:5080/'
+    url = `${environment.estoqueApiUrl}/`;
+
     constructor(private http: HttpClient) {
 
 

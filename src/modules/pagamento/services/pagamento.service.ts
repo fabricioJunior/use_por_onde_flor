@@ -10,6 +10,10 @@ import { Md5 } from 'ts-md5';
 export class PagamentoService {
     constructor(private pagamentoDatasource: PagamentoDatasource) { }
 
+    getUrlPagamentoPorOrderNsu(orderNsu: string): Observable<{ urlDePagamento: string }> {
+        return this.pagamentoDatasource.getUrlPagamentoPorOrderNsu(orderNsu);
+    }
+
     getUrlPagamento(idPedido: string): Observable<String> {
         return this.pagamentoDatasource.getUrlPagamento(idPedido);
     }
