@@ -17,6 +17,14 @@
             <div class="gallery-panel">
                 <div class="main-image-card" (touchstart)="onTouchStart($event)"
                     (touchend)="onTouchEnd($event)">
+                    @if(fotoSelecionada() &&
+                    !imagemIndisponivel(fotoSelecionada())) {
+                    <button type="button" class="fullscreen-button"
+                        (click)="abrirTelaCheia()"
+                        aria-label="Ver imagem em tela cheia">
+                        <mat-icon>fullscreen</mat-icon>
+                    </button>
+                    }
                     @if(fotoSelecionada(); as foto) {
                     @if(!imagemIndisponivel(foto)) {
                     <img [src]="foto.url" [alt]="recuperarTituloDaImagem(foto)"
@@ -97,4 +105,21 @@
         }
         }
     </div>
+
+    @if(visualizandoTelaCheia() && fotoSelecionada(); as fotoExpandida) {
+    <div class="fullscreen-overlay" (click)="fecharTelaCheia()"
+        (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+        <button type="button" class="fullscreen-close"
+            (click)="fecharTelaCheia(); $event.stopPropagation()"
+            aria-label="Fechar visualização">
+            <mat-icon>close</mat-icon>
+        </button>
+
+        <img [src]="fotoExpandida.url"
+            [alt]="recuperarTituloDaImagem(fotoExpandida)"
+            (click)="$event.stopPropagation()"
+            (touchstart)="$event.stopPropagation(); onTouchStart($event)"
+            (touchend)="$event.stopPropagation(); onTouchEnd($event)">
+    </div>
+    }
 </div>

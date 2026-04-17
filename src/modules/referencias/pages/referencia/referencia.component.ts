@@ -21,6 +21,7 @@ export class ReferenciaComponent implements OnInit {
     midias = signal<ReferenciaMidiaDto[]>([]);
     fotoSelecionada = signal<ReferenciaMidiaDto | null>(null);
     midiasComErro = signal<Record<number, boolean>>({});
+    visualizandoTelaCheia = signal(false);
     private touchStartX: number | null = null;
     private readonly swipeThreshold = 40;
 
@@ -68,6 +69,16 @@ export class ReferenciaComponent implements OnInit {
 
     selecionarMidia(midia: ReferenciaMidiaDto) {
         this.fotoSelecionada.set(midia);
+    }
+
+    abrirTelaCheia() {
+        if (this.fotoSelecionada() && !this.imagemIndisponivel(this.fotoSelecionada())) {
+            this.visualizandoTelaCheia.set(true);
+        }
+    }
+
+    fecharTelaCheia() {
+        this.visualizandoTelaCheia.set(false);
     }
 
     onTouchStart(event: TouchEvent) {
