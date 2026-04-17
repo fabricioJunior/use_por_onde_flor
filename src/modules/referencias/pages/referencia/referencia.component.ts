@@ -21,6 +21,8 @@ export class ReferenciaComponent implements OnInit {
     midias = signal<ReferenciaMidiaDto[]>([]);
     fotoSelecionada = signal<ReferenciaMidiaDto | null>(null);
     midiasComErro = signal<Record<number, boolean>>({});
+    private touchStartX: number | null = null;
+    private readonly swipeThreshold = 40;
 
     constructor(
         private route: ActivatedRoute,
@@ -66,6 +68,57 @@ export class ReferenciaComponent implements OnInit {
 
     selecionarMidia(midia: ReferenciaMidiaDto) {
         this.fotoSelecionada.set(midia);
+    }
+
+    onTouchStart(event: TouchEvent) {
+        this.touchStartX = event.touches[0]?.clientX ?? null;
+    }
+
+    onTouchEnd(event: TouchEvent) {
+        if (this.touchStartX == null) {
+            return;
+        }
+
+        const touchEndX = event.changedTouches[0]?.clientX ?? this.touchStartX;
+        const deltaX = touchEndX - this.touchStartX;
+        this.touchStartX = null;
+
+        if (Math.abs(deltaX) < this.swipeThreshold) {
+            return;
+        }
+
+        if (deltaX < 0) {
+            this.irParaProximaImagem();
+            return;
+        }
+
+        this.irParaImagemAnterior();
+    }
+
+    irParaProximaImagem() {
+        const midias = this.midias();
+        const atual = this.fotoSelecionada();
+
+        if (!midias.length || !atual) {
+            return;
+        }
+
+        const indiceAtual = midias.findIndex((item) => item.id === atual.id);
+        const proximoIndice = indiceAtual >= 0 ? (indiceAtual + 1) % midias.length : 0;
+        this.fotoSelecionada.set(midias[proximoIndice]);
+    }
+
+    irParaImagemAnterior() {
+        const midias = this.midias();
+        const atual = this.fotoSelecionada();
+
+        if (!midias.length || !atual) {
+            return;
+        }
+
+        const indiceAtual = midias.findIndex((item) => item.id === atual.id);
+        const indiceAnterior = indiceAtual > 0 ? indiceAtual - 1 : midias.length - 1;
+        this.fotoSelecionada.set(midias[indiceAnterior]);
     }
 
     onErroCarregarMidia(midia: ReferenciaMidiaDto | null) {

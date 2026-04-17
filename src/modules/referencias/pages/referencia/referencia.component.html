@@ -15,7 +15,8 @@
         @if (referencia(); as item) {
         <section class="hero-card">
             <div class="gallery-panel">
-                <div class="main-image-card">
+                <div class="main-image-card" (touchstart)="onTouchStart($event)"
+                    (touchend)="onTouchEnd($event)">
                     @if(fotoSelecionada(); as foto) {
                     @if(!imagemIndisponivel(foto)) {
                     <img [src]="foto.url" [alt]="recuperarTituloDaImagem(foto)"
