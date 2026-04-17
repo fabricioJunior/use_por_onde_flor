@@ -21,6 +21,7 @@ import { MudarSenhaComponent } from '../modules/autenticacao/login/mudar_senha/m
 import { AutenticacaoService } from '../modules/autenticacao/services/autenticacao.service';
 import { inject } from '@angular/core';
 import { RegulamentoComponent } from '../modules/fidelizacao/pontos/pages/regulamento/regulamento.component';
+import { ReferenciaComponent } from '../modules/referencias/pages/referencia/referencia.component';
 
 
 export const autenticacaoGuard: CanMatchFn = (route: Route, segments: UrlSegment[]) => {
@@ -98,6 +99,12 @@ export const routes: Routes = [
     {
         path: 'produto/:referencia', component: ProdutoComponent,
 
+    },
+    {
+        path: 'referencias/:referencia', component: ReferenciaComponent,
+    },
+    {
+        path: 'referencia/:referencia', component: ReferenciaComponent,
     },
     {
         path: 'pagamentoAvulso', component: PagamentoStatusComponent,

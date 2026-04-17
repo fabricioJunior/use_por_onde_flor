@@ -18,6 +18,8 @@ import { ProdutoService } from '../modules/produtos/services/produto.service';
 import { PontosService } from '../modules/fidelizacao/pontos/services/pontos.service';
 import { PontosDataSource } from '../modules/fidelizacao/pontos/data/pontos.data.source';
 import { RecuperarSenhaDataSource } from '../modules/autenticacao/data/recuperar.senha.data.source';
+import { ReferenciaDataSource } from '../modules/referencias/data/referencia.data.source';
+import { ReferenciaService } from '../modules/referencias/services/referencia.service';
 const maskConfig: Partial<NgxMaskConfig> = {
   validation: false,
 };
@@ -41,7 +43,9 @@ export const appConfig: ApplicationConfig = {
     { provide: ProdutoService },
     { provide: PontosService },
     { provide: PontosDataSource, },
-    { provide: RecuperarSenhaDataSource }
+    { provide: RecuperarSenhaDataSource },
+    { provide: ReferenciaDataSource },
+    { provide: ReferenciaService }
 
   ]
 };

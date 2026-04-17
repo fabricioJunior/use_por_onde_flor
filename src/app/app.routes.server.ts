@@ -12,6 +12,14 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
+    path: 'referencias/:referencia',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'referencia/:referencia',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'pagamento/:orderNsu',
     renderMode: RenderMode.Client,
   }

@@ -73,31 +73,23 @@ export const ApiBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
     var tokens = localStorageService.get<TokensDto>('token') as TokensDto || undefined;
     console.log('acesso no config');
     console.log(tokens);
+
     if (req.url.includes('http') || req.url.includes('pagamento') || req.url.includes('pagamentos-avulsos')) {
         console.log("url", req.url);
         return next(req);
-    } else {
-
-
-
-        if (req.url == 'v1/pessoas-usuarios/perfil') {
-            const apiReq = req.clone({
-                url: `${environment.serverUrl}/${req.url}`,
-                headers: req.headers,
-            },);
-            console.log("url", req.url);
-            console.log("Tokens:", tokens);
-            console.log("Tokens:", apiReq);
-            return next(apiReq);
-        }
-
-
-        const apiReq = req.clone({
-            url: `${environment.serverUrl}/${req.url}`,
-            headers: req.headers.set('Authorization', 'Bearer ' + tokens?.tokenDeAcesso),
-        },);
-        return next(apiReq);
     }
 
+    const isPublicReferenciaRoute = req.url.startsWith('v1/referencias/');
+    const isPerfilRoute = req.url == 'v1/pessoas-usuarios/perfil';
 
+    const headers = (isPublicReferenciaRoute || isPerfilRoute || !tokens?.tokenDeAcesso)
+        ? req.headers
+        : req.headers.set('Authorization', 'Bearer ' + tokens.tokenDeAcesso);
+
+    const apiReq = req.clone({
+        url: `${environment.serverUrl}/${req.url}`,
+        headers: headers,
+    },);
+
+    return next(apiReq);
 };
