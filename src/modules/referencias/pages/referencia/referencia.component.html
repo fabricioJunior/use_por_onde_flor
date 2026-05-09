@@ -1,0 +1,125 @@
+<div class="page-shell">
+    <div class="page-content">
+        @if(loading()) {
+        <section class="state-card loading-card">
+            <mat-spinner diameter="42"></mat-spinner>
+            <p>Carregando referência...</p>
+        </section>
+        } @else if (errorMessage()) {
+        <section class="state-card error-card">
+            <mat-icon>error_outline</mat-icon>
+            <h2>Não foi possível exibir a referência</h2>
+            <p>{{ errorMessage() }}</p>
+        </section>
+        } @else {
+        @if (referencia(); as item) {
+        <section class="hero-card">
+            <div class="gallery-panel">
+                <div class="main-image-card" (touchstart)="onTouchStart($event)"
+                    (touchend)="onTouchEnd($event)">
+                    @if(fotoSelecionada() &&
+                    !imagemIndisponivel(fotoSelecionada())) {
+                    <button type="button" class="fullscreen-button"
+                        (click)="abrirTelaCheia()"
+                        aria-label="Ver imagem em tela cheia">
+                        <mat-icon>fullscreen</mat-icon>
+                    </button>
+                    }
+                    @if(fotoSelecionada(); as foto) {
+                    @if(!imagemIndisponivel(foto)) {
+                    <img [src]="foto.url" [alt]="recuperarTituloDaImagem(foto)"
+                        (error)="onErroCarregarMidia(foto)">
+                    } @else {
+                    <div class="image-placeholder">
+                        <span>{{ recuperarIniciais() }}</span>
+                        <p>Imagem indisponível</p>
+                        <small>Formato não suportado ou arquivo inválido</small>
+                    </div>
+                    }
+                    } @else {
+                    <div class="image-placeholder">
+                        <span>{{ recuperarIniciais() }}</span>
+                        <p>Imagem indisponível</p>
+                        <small>Formato não suportado ou arquivo inválido</small>
+                    </div>
+                    }
+                </div>
+
+                @if(midias().length > 1) {
+                <div class="thumb-list">
+                    @for(midia of midias(); track midia.id) {
+                    <button type="button" class="thumb-button"
+                        [class.active]="midia === fotoSelecionada()"
+                        (click)="selecionarMidia(midia)">
+                        @if(!imagemIndisponivel(midia)) {
+                        <img [src]="midia.url"
+                            [alt]="recuperarTituloDaImagem(midia)"
+                            (error)="onErroCarregarMidia(midia)">
+                        } @else {
+                        <span class="thumb-fallback">Sem foto</span>
+                        }
+                    </button>
+                    }
+                </div>
+                }
+            </div>
+
+            <div class="details-panel">
+                <div class="eyebrow">Referência</div>
+                <h1>{{ item.nome }}</h1>
+
+                <div class="meta-wrap">
+                    @if(item.categoria?.nome) {
+                    <span class="tag">{{ item.categoria?.nome }}</span>
+                    }
+                    @if(item.subCategoria?.nome) {
+                    <span class="tag soft">{{ item.subCategoria?.nome }}</span>
+                    }
+                    @if(item.idExterno) {
+                    <span class="tag outline">Cód. {{ item.idExterno }}</span>
+                    }
+                </div>
+
+                <p class="intro-text">
+                    {{ item.descricao ||
+                    'Sem descrição disponível.'
+                    }}
+                </p>
+
+                <div class="info-grid">
+                    <article class="info-box">
+                        <span class="info-title">Composição</span>
+                        <p>{{ item.composicao || 'Informação não disponível.'
+                            }}</p>
+                    </article>
+
+                    <article class="info-box">
+                        <span class="info-title">Cuidados</span>
+                        <p>{{ item.cuidados ||
+                            'Consulte a etiqueta da peça para orientações de lavagem e conservação.'
+                            }}</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+        }
+        }
+    </div>
+
+    @if(visualizandoTelaCheia() && fotoSelecionada(); as fotoExpandida) {
+    <div class="fullscreen-overlay" (click)="fecharTelaCheia()"
+        (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+        <button type="button" class="fullscreen-close"
+            (click)="fecharTelaCheia(); $event.stopPropagation()"
+            aria-label="Fechar visualização">
+            <mat-icon>close</mat-icon>
+        </button>
+
+        <img [src]="fotoExpandida.url"
+            [alt]="recuperarTituloDaImagem(fotoExpandida)"
+            (click)="$event.stopPropagation()"
+            (touchstart)="$event.stopPropagation(); onTouchStart($event)"
+            (touchend)="$event.stopPropagation(); onTouchEnd($event)">
+    </div>
+    }
+</div>

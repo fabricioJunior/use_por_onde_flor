@@ -3,8 +3,30 @@
     @if(loading()){
     <p>Carregando...</p>
     }@else if(dataSource != null){
-    <!--  -->
-    <h3>{{this.dataSource.descricao}}</h3>
+    <div class="header-card">
+        <div>
+            <span class="eyebrow">Produto</span>
+            <h3>{{ this.dataSource.descricao }}</h3>
+        </div>
+
+        <div class="actions">
+            <a mat-flat-button color="primary" [routerLink]="linkDaReferencia">
+                <mat-icon>open_in_new</mat-icon>
+                Acessar referência
+            </a>
+
+            <button mat-stroked-button type="button"
+                (click)="copiarLinkDaReferencia()">
+                <mat-icon>content_copy</mat-icon>
+                Copiar link
+            </button>
+        </div>
+
+        @if(linkCopiado()) {
+        <span class="copy-feedback">Link copiado com sucesso.</span>
+        }
+    </div>
+
     <div class="table-container">
         <table>
             <thead>
@@ -20,10 +42,9 @@
                 <tr *ngFor="let cor of dataSource.cores">
                     <td>{{cor}}</td>
 
-                    <td
-                        *ngFor="let tamanho of dataSource.tamanhos">
-                        {{dataSource.corTamanhoParaQuantidade![`${cor}_${tamanho}`]
-                        }}</td>
+                    <td *ngFor="let tamanho of dataSource.tamanhos">
+                        {{dataSource.corTamanhoParaQuantidade![`${cor}_${tamanho}`]}}
+                    </td>
                 </tr>
             </tbody>
         </table>
