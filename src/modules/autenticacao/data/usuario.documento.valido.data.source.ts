@@ -5,8 +5,7 @@ import { Injectable } from "@angular/core";
 
 @Injectable()
 export class UsuarioDocumentoValidoDataSource extends RemoteDataSourceBase<InfoValidaDto> {
-    override path = 'v1/pessoas-usuarios/verificar-documento/{documento}'
-
+    override path = 'v1/pessoas-usuarios/documento-existe/{documento}'
 
     documentoValido(documento: string): Observable<InfoValidaDto> {
         return this.get(
@@ -18,5 +17,3 @@ export class UsuarioDocumentoValidoDataSource extends RemoteDataSourceBase<InfoV
         );
     }
 }
-
-//https://apollo-api-stg.coralcloud.app/https://apol…soas-usuarios/verificar-documento/%7Bdocumento%7D

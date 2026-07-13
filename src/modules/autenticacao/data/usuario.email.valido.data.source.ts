@@ -5,7 +5,7 @@ import { Injectable } from "@angular/core";
 
 @Injectable()
 export class UsuarioEmailValidoDataSource extends RemoteDataSourceBase<InfoValidaDto> {
-    override path = 'v1/pessoas-usuarios/verificar-email/{email}';
+    override path = 'v1/pessoas-usuarios/email-existe/{email}';
 
 
     emailValido(email: string): Observable<InfoValidaDto> {
