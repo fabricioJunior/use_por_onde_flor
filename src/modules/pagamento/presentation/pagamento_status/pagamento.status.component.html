@@ -2,6 +2,9 @@
     <app-logo> </app-logo>
     <h1>Processando...</h1>
     <mat-spinner></mat-spinner>
+    @if(pagamentoExpirado()){
+    <h1>Pagamento expirado.</h1>
+    }
     @if(fluxoInvalido()){
     <h1>Nao foi possivel processar este pagamento.</h1>
     }

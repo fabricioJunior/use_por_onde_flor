@@ -4,6 +4,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { ActivatedRoute } from "@angular/router";
 import { PagamentoService } from "../../services/pagamento.service";
 import { firstValueFrom } from "rxjs";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
     selector: 'app-pagamento',
@@ -15,6 +16,7 @@ export class PagamentoStatusComponent implements OnInit {
 
 
     fluxoInvalido = signal(false);
+    pagamentoExpirado = signal(false);
     constructor(private router: ActivatedRoute, private pagamentoService: PagamentoService) {
 
     }
@@ -40,6 +42,10 @@ export class PagamentoStatusComponent implements OnInit {
                 return;
             }
         } catch (error) {
+            if (error instanceof HttpErrorResponse && error.status === 410) {
+                this.pagamentoExpirado.set(true);
+                return;
+            }
             console.error('Erro ao obter a URL de pagamento por order_nsu', error);
         }
 
