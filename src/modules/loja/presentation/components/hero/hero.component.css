@@ -18,25 +18,25 @@
     gap: var(--space-5);
 }
 
-.loja-hero-eyebrow {
-    font: var(--text-eyebrow);
-    color: var(--brand-primary-deep);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-eyebrow);
-}
-
 .loja-hero-titulo {
     font: var(--text-display);
-    color: var(--text-primary);
+    color: var(--brand-primary);
     margin: 0;
     letter-spacing: var(--tracking-tight);
 }
 
-.loja-hero-texto {
+.loja-hero-subtitulo {
     font: var(--text-body-lg);
-    color: var(--text-secondary);
+    color: var(--brand-primary-deep);
     margin: 0;
     max-width: 420px;
+}
+
+.loja-hero-palavras-chave {
+    font: var(--text-body);
+    font-weight: 600;
+    color: var(--brand-primary);
+    margin: 0;
 }
 
 @media (min-width: 900px) {

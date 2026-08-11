@@ -10,9 +10,11 @@ export function Hero({ onCta }) {
         <span style={{ fontFamily: 'monospace', fontSize: '12px', color: 'var(--text-muted)' }}>foto de campanha — still, fundo neutro</span>
       </div>
       <div style={{ background: 'var(--brand-tint)', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'var(--container-padding)', gap: 'var(--space-5)' }}>
-        <span style={{ font: 'var(--text-eyebrow)', color: 'var(--brand-primary-deep)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-eyebrow)' }}>Coleção atual</span>
-        <h1 style={{ font: 'var(--text-display)', color: 'var(--text-primary)', margin: 0, letterSpacing: 'var(--tracking-tight)' }}>Peças atemporais para o dia a dia</h1>
-        <p style={{ font: 'var(--text-body-lg)', color: 'var(--text-secondary)', margin: 0, maxWidth: '420px' }}>Cortes básicos, tecidos naturais e uma paleta que atravessa estações.</p>
+        <h1 style={{ font: 'var(--text-display)', color: 'var(--brand-primary)', margin: 0, letterSpacing: 'var(--tracking-tight)' }}>Peças atemporais para o dia a dia</h1>
+        <p style={{ font: 'var(--text-h3)', color: 'var(--brand-primary-deep)', margin: 0, fontWeight: 400 }}>Para mulheres que vivem o básico com estilo</p>
+        <p style={{ font: 'var(--text-body-lg)', color: 'var(--text-secondary)', margin: 0, maxWidth: '420px' }}>
+          <strong style={{ color: 'var(--brand-primary)', fontWeight: 600 }}>Atemporal</strong> · <strong style={{ color: 'var(--brand-primary)', fontWeight: 600 }}>Jeans</strong> · <strong style={{ color: 'var(--brand-primary)', fontWeight: 600 }}>Casual</strong> · <strong style={{ color: 'var(--brand-primary)', fontWeight: 600 }}>Elegante</strong>
+        </p>
         <button onClick={onCta} style={{
           font: 'var(--text-button)', textTransform: 'uppercase', letterSpacing: '0.04em', color: '#fff',
           background: 'var(--brand-primary-deep)', border: 'none', borderRadius: 'var(--radius-sm)',

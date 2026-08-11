@@ -1,15 +1,15 @@
 :root {
   /* Brand hues — sampled directly from the logo, do not alter */
-  --color-green-50: #EAF5F0;
-  --color-green-100: #D3EBE0;
-  --color-green-200: #B4DDCB;
-  --color-green-300: #9ED2BE;
-  --color-green-400: #79C1A8;
-  --color-green-500: #58B098; /* logo circle */
-  --color-green-600: #3E9280;
-  --color-green-700: #207068; /* logo dark script / dot */
-  --color-green-800: #17544F;
-  --color-green-900: #103C38;
+  --color-green-50: #EAF0EB;
+  --color-green-100: #D6E1D7;
+  --color-green-200: #BECBC0;
+  --color-green-300: #A3B5A6;
+  --color-green-400: #8AA48D;
+  --color-green-500: #709274; /* logo — verde exato extraído */
+  --color-green-600: #5F7F63;
+  --color-green-700: #4E6C52; /* logo dark script / dot */
+  --color-green-800: #3D5641;
+  --color-green-900: #2C3F2F;
 
   /* Warm neutrals — sophisticated, low-chroma, not stark */
   --color-neutral-0: #FFFFFF;
