@@ -1,0 +1,43 @@
+.ui-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: var(--font-sans);
+}
+
+label {
+    font: var(--text-body-sm);
+    color: var(--text-secondary);
+}
+
+input {
+    font: var(--text-body);
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-default);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    outline: none;
+    font-family: inherit;
+}
+
+input.error {
+    border-color: var(--state-error);
+}
+
+input:focus-visible {
+    border-color: var(--brand-primary-deep);
+}
+
+input:disabled {
+    opacity: 0.6;
+}
+
+.helper {
+    font: var(--text-caption);
+    color: var(--text-muted);
+}
+
+.helper.error {
+    color: var(--state-error);
+}
