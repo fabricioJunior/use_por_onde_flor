@@ -1,15 +1,9 @@
 <div class="loja-shell">
-    <header class="loja-header">
-        <a routerLink="/loja" class="loja-logo">Por Onde Flor</a>
-        <a routerLink="/carrinho" class="loja-sacola">
-            Sacola
-            @if (itensNoCarrinho() > 0) {
-            <span class="loja-sacola-badge">{{ itensNoCarrinho() }}</span>
-            }
-        </a>
-    </header>
+    <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
 
-    <main class="loja-content">
+    <loja-hero (verColecao)="scrollParaProdutos()"></loja-hero>
+
+    <main class="loja-content" id="produtos" #produtos>
         @if (loading()) {
         <div class="loja-estado">
             <mat-spinner diameter="42"></mat-spinner>
@@ -33,11 +27,13 @@
 
         @if (temMaisPaginas()) {
         <div class="loja-carregar-mais">
-            <button type="button" (click)="carregarMais()" [disabled]="carregandoMais()">
+            <ui-button variant="secondary" [disabled]="carregandoMais()" (clicked)="carregarMais()">
                 @if (carregandoMais()) { Carregando... } @else { Ver mais produtos }
-            </button>
+            </ui-button>
         </div>
         }
         }
     </main>
+
+    <loja-footer></loja-footer>
 </div>

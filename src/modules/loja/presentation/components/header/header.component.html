@@ -1,0 +1,18 @@
+<header class="loja-header">
+    <div class="loja-header-inner">
+        <a routerLink="/loja" class="loja-logo-link">
+            <img src="/logo-primary-color.png" alt="Por Onde Flor" class="loja-logo-img">
+        </a>
+        <nav class="loja-nav">
+            <a routerLink="/loja">Novidades</a>
+            <a routerLink="/loja">Roupas</a>
+            <a routerLink="/loja">Acessórios</a>
+        </nav>
+        <a routerLink="/carrinho" class="loja-sacola">
+            Sacola
+            @if (itensNoCarrinho > 0) {
+            <span class="loja-sacola-badge">{{ itensNoCarrinho }}</span>
+            }
+        </a>
+    </div>
+</header>

@@ -1,0 +1,22 @@
+.ui-tabs {
+    display: flex;
+    gap: 28px;
+    border-bottom: 1px solid var(--border-subtle);
+    font-family: var(--font-sans);
+}
+
+.tab {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 0 12px 0;
+    font: var(--text-body-sm);
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+}
+
+.tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--brand-primary-deep);
+}

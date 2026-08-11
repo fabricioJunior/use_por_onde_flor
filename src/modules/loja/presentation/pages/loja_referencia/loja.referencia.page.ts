@@ -9,6 +9,7 @@ import { EcommerceReferenciaDto, EcommerceReferenciaProdutoDto } from "../../../
 import { ReferenciaMidiaDto } from "../../../../referencias/data/referencia.data.source";
 import { CarrinhoFacadeService } from "../../../../carrinho/services/carrinho.facade.service";
 import { ButtonComponent } from "../../components/ui/button/button.component";
+import { ToastService } from "../../components/ui/toast/toast.service";
 
 @Component({
     selector: 'loja-referencia-page',
@@ -58,6 +59,7 @@ export class LojaReferenciaPage implements OnInit {
         private lojaDataSource: LojaDataSource,
         private midiaDataSource: ReferenciaMidiaPublicaDataSource,
         private carrinhoFacadeService: CarrinhoFacadeService,
+        private toastService: ToastService,
     ) { }
 
     ngOnInit(): void {
@@ -131,6 +133,7 @@ export class LojaReferenciaPage implements OnInit {
         try {
             await this.carrinhoFacadeService.adicionar(produto.produtoId, 1);
             this.adicionado.set(true);
+            this.toastService.show('Produto adicionado à sacola', 'success');
         } finally {
             this.adicionando.set(false);
         }

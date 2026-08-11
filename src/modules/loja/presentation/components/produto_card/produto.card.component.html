@@ -1,5 +1,8 @@
 <article class="produto-card" (click)="abrir.emit()">
     <div class="produto-foto">
+        @if (novo) {
+        <ui-badge tone="brand" class="produto-badge-novo">Novo</ui-badge>
+        }
         @if (referencia.media_url) {
         <img [src]="referencia.media_url" [alt]="referencia.nome">
         } @else {

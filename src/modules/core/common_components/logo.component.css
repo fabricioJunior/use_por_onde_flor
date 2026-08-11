@@ -3,7 +3,7 @@
     height: 112px;
     background-repeat:no-repeat;
     background-position: center center;
-    background: url('/logo.png') center center no-repeat;
+    background: url('/logo-primary-color.png') center center no-repeat;
     background-size: contain;
   cursor: pointer;
   }  

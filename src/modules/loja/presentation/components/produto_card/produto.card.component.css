@@ -28,6 +28,13 @@
     color: var(--text-muted);
 }
 
+.produto-badge-novo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+}
+
 .produto-nome {
     font: var(--text-body);
     color: var(--text-primary);

@@ -4,43 +4,6 @@
     background: var(--surface-page);
 }
 
-.loja-header {
-    border-bottom: 1px solid var(--border-subtle);
-    background: var(--surface-card);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-4) var(--container-padding);
-}
-
-.loja-logo {
-    font: var(--text-h3);
-    color: var(--text-primary);
-    text-decoration: none;
-}
-
-.loja-sacola {
-    position: relative;
-    font: var(--text-body-sm);
-    color: var(--text-primary);
-    text-decoration: none;
-}
-
-.loja-sacola-badge {
-    position: absolute;
-    top: -8px;
-    right: -14px;
-    background: var(--brand-primary-deep);
-    color: var(--text-on-brand);
-    border-radius: var(--radius-circle);
-    width: 16px;
-    height: 16px;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .loja-content {
     max-width: var(--container-max);
     margin: 0 auto;
@@ -67,23 +30,6 @@
     display: flex;
     justify-content: center;
     margin-top: var(--space-6);
-}
-
-.loja-carregar-mais button {
-    font: var(--text-button);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    background: transparent;
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-sm);
-    padding: 12px 24px;
-    cursor: pointer;
-    color: var(--text-primary);
-}
-
-.loja-carregar-mais button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
 @media (min-width: 640px) {

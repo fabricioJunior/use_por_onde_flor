@@ -1,0 +1,31 @@
+.ui-dialog {
+    background: var(--surface-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-6);
+    min-width: 360px;
+    max-width: 480px;
+    font-family: var(--font-sans);
+}
+
+.title {
+    font: var(--text-h3);
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+}
+
+.body {
+    font: var(--text-body);
+    color: var(--text-secondary);
+}
+
+.actions {
+    margin-top: var(--space-5);
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.actions:empty {
+    display: none;
+}
