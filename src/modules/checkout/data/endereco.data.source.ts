@@ -9,7 +9,7 @@ import { EnderecoDto } from "./dtos/endereco.dto";
 // persistido a tempo de cadastrar endereço, então "entrega" fica restrito a quem está logado.
 @Injectable({ providedIn: 'root' })
 export class EnderecoDataSource extends RemoteDataSourceBase<EnderecoDto> {
-    path = 'pessoas/{pessoaId}/enderecos';
+    path = 'v1/pessoas/{pessoaId}/enderecos';
 
     constructor(http: HttpClient) {
         super(http);

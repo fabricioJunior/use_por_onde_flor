@@ -7,7 +7,7 @@ import { CheckoutRequestDto, CheckoutResponseDto } from "./dtos/checkout.dto";
 
 @Injectable({ providedIn: 'root' })
 export class CheckoutDataSource extends RemoteDataSourceBase<CheckoutResponseDto> {
-    path = 'e-commerce/{ecommerceId}/checkout';
+    path = 'v1/e-commerce/{ecommerceId}/checkout';
 
     constructor(http: HttpClient) {
         super(http);

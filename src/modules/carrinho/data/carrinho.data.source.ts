@@ -13,7 +13,7 @@ export interface ValidarCarrinhoResponseDto {
 // Endpoints exigem `@ApiPessoa()` -- só chamar quando `AutenticacaoService.estaAutenticado()`.
 @Injectable({ providedIn: 'root' })
 export class CarrinhoDataSource extends RemoteDataSourceBase<any> {
-    path = 'carrinho';
+    path = 'v1/carrinho';
 
     constructor(http: HttpClient) {
         super(http);

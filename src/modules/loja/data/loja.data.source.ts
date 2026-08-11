@@ -9,7 +9,7 @@ import { EcommerceReferenciaDto, EcommerceReferenciaProdutoDto, PaginationDto } 
 // `options.path` (RemoteDataSourceBase concatena path + pathArguments + suffix).
 @Injectable({ providedIn: 'root' })
 export class LojaDataSource extends RemoteDataSourceBase<any> {
-    path = 'e-commerce/{ecommerceId}';
+    path = 'v1/e-commerce/{ecommerceId}';
 
     constructor(http: HttpClient) {
         super(http);
