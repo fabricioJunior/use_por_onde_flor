@@ -1,0 +1,81 @@
+<div class="pagina-shell">
+    @if (loading()) {
+    <div class="pagina-estado">
+        <mat-spinner diameter="42"></mat-spinner>
+        <p>Carregando produto...</p>
+    </div>
+    } @else if (erro()) {
+    <div class="pagina-estado">
+        <p>{{ erro() }}</p>
+    </div>
+    } @else {
+    @if (referencia(); as item) {
+    <div class="pagina-conteudo">
+        <div class="galeria">
+            <div class="foto-principal">
+                @if (fotoSelecionada(); as foto) {
+                <img [src]="foto.url" [alt]="item.nome">
+                } @else {
+                <span class="foto-placeholder">Sem foto</span>
+                }
+            </div>
+            @if (midias().length > 1) {
+            <div class="thumb-lista">
+                @for (midia of midias(); track midia.id) {
+                <button type="button" class="thumb" [class.ativo]="midia === fotoSelecionada()"
+                    (click)="selecionarMidia(midia)">
+                    <img [src]="midia.url" [alt]="item.nome">
+                </button>
+                }
+            </div>
+            }
+        </div>
+
+        <div class="detalhes">
+            <h1>{{ item.nome }}</h1>
+            <p class="preco">{{ formatarPreco(item.valor) }}</p>
+            <p class="descricao">{{ item.descricao || 'Sem descrição disponível.' }}</p>
+
+            @if (cores().length > 0) {
+            <div class="seletor">
+                <span class="seletor-titulo">Cor</span>
+                <div class="seletor-opcoes">
+                    @for (cor of cores(); track cor) {
+                    <button type="button" class="opcao" [class.ativo]="corSelecionada() === cor"
+                        (click)="selecionarCor(cor)">{{ cor }}</button>
+                    }
+                </div>
+            </div>
+            }
+
+            @if (tamanhosParaCorAtual().length > 0) {
+            <div class="seletor">
+                <span class="seletor-titulo">Tamanho</span>
+                <div class="seletor-opcoes">
+                    @for (tamanho of tamanhosParaCorAtual(); track tamanho) {
+                    <button type="button" class="opcao" [class.ativo]="tamanhoSelecionado() === tamanho"
+                        (click)="selecionarTamanho(tamanho)">{{ tamanho }}</button>
+                    }
+                </div>
+            </div>
+            }
+
+            @if (produtosDisponiveis().length === 0) {
+            <p class="aviso">Produto indisponível no momento.</p>
+            }
+
+            @if (adicionado()) {
+            <div class="confirmacao">
+                <p>Adicionado à sacola.</p>
+                <ui-button variant="secondary" size="sm" (clicked)="irParaCarrinho()">Ver sacola</ui-button>
+            </div>
+            } @else {
+            <ui-button size="lg" [disabled]="!produtoSelecionado() || adicionando()" (clicked)="adicionarAoCarrinho()">
+                @if (adicionando()) { Adicionando... } @else { Adicionar à sacola }
+            </ui-button>
+            }
+        </div>
+    </div>
+    }
+    }
+</div>

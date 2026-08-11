@@ -17,6 +17,7 @@ export class PagamentoStatusComponent implements OnInit {
 
     fluxoInvalido = signal(false);
     pagamentoExpirado = signal(false);
+    pedidoId = signal<string | null>(null);
     constructor(private router: ActivatedRoute, private pagamentoService: PagamentoService) {
 
     }
@@ -24,9 +25,18 @@ export class PagamentoStatusComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         var receiptUrl = this.router.snapshot.queryParams['receipt_url'];
         var orderNsu = this.router.snapshot.queryParams['order_nsu'];
+        var pedidoId = this.router.snapshot.queryParams['pedidoId'];
 
         if (receiptUrl) {
             document.location.href = receiptUrl;
+            return;
+        }
+
+        // Retorno do checkout novo (pix "já paguei" ou pedido sem cobrança online) -- não tem
+        // order_nsu de pagamento avulso, só o id do pedido criado. Não há endpoint público de
+        // status por pedidoId ainda, então só confirma o recebimento.
+        if (!orderNsu && pedidoId) {
+            this.pedidoId.set(pedidoId);
             return;
         }
 

@@ -1,0 +1,11 @@
+.ui-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+}
+
+.ui-card.elevated {
+    border: none;
+    box-shadow: var(--shadow-md);
+}

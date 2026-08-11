@@ -1,0 +1,183 @@
+<!-- @dsCard group="App mobile" viewport="430x900" subtitle="Home, produto, sacola e perfil — navegação por abas" name="App" -->
+<!-- @startingPoint section="App mobile" subtitle="Fluxo completo: home, produto, sacola, perfil" viewport="430x900" -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Por Onde Flor — App</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  body{margin:0;background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;min-height:100vh;}
+  .screen{-webkit-overflow-scrolling:touch;}
+  .screen::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/plain" id="app-src">
+const { useState } = React;
+
+const PRODUCTS = [
+  { id: 1, name: 'Vestido Linho Areia', price: 'R$ 349', badge: 'Novo' },
+  { id: 2, name: 'Calça Alfaiataria Bege', price: 'R$ 299', badge: null },
+  { id: 3, name: 'Camisa Seda Off-white', price: 'R$ 259', badge: null },
+  { id: 4, name: 'Blazer Atemporal Verde', price: 'R$ 429', badge: 'Novo' },
+];
+
+function Placeholder({ label, ratio }) {
+  return (
+    <div style={{ aspectRatio: ratio || '3/4', background: 'repeating-linear-gradient(135deg, var(--color-neutral-100) 0 10px, var(--color-neutral-200) 10px 20px)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius-md)' }}>
+      <span style={{ fontFamily: 'monospace', fontSize: '10px', color: 'var(--text-muted)' }}>{label}</span>
+    </div>
+  );
+}
+
+function TopBar({ title }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '52px', borderBottom: '1px solid var(--border-subtle)', position: 'relative', flexShrink: 0 }}>
+      <span style={{ font: 'var(--text-h3)', color: 'var(--text-primary)', fontWeight: 500 }}>{title}</span>
+    </div>
+  );
+}
+
+function HomeScreen({ onOpenProduct }) {
+  return (
+    <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <img src="../../assets/logo/logo-primary-color.png" style={{ height: '48px', alignSelf: 'center' }} />
+      <input placeholder="Buscar peças" style={{ padding: '12px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-default)', font: 'var(--text-body-sm)' }} />
+      <div style={{ display: 'flex', gap: '8px', overflowX: 'auto' }}>
+        {['Novidades', 'Vestidos', 'Calças', 'Acessórios'].map((c) => (
+          <span key={c} style={{ font: 'var(--text-caption)', textTransform: 'uppercase', letterSpacing: '0.04em', padding: '8px 14px', borderRadius: 'var(--radius-pill)', background: 'var(--surface-sunken)', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{c}</span>
+        ))}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        {PRODUCTS.map((p) => (
+          <div key={p.id} onClick={() => onOpenProduct(p)} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ position: 'relative' }}>
+              <Placeholder label="foto" />
+              {p.badge && <span style={{ position: 'absolute', top: '8px', left: '8px', font: 'var(--text-caption)', background: 'var(--surface-card)', color: 'var(--brand-primary-deep)', padding: '3px 8px', borderRadius: 'var(--radius-pill)' }}>{p.badge}</span>}
+            </div>
+            <span style={{ font: 'var(--text-body-sm)', color: 'var(--text-primary)' }}>{p.name}</span>
+            <span style={{ font: 'var(--text-caption)', color: 'var(--text-secondary)' }}>{p.price}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ProductScreen({ product, onAdd }) {
+  const [size, setSize] = useState('M');
+  if (!product) return null;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Placeholder label="foto do produto" ratio="1/1" />
+      <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div>
+          <div style={{ font: 'var(--text-h3)', color: 'var(--text-primary)' }}>{product.name}</div>
+          <div style={{ font: 'var(--text-body)', color: 'var(--text-secondary)', marginTop: '4px' }}>{product.price}</div>
+        </div>
+        <div>
+          <div style={{ font: 'var(--text-caption)', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>Tamanho</div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {['P', 'M', 'G'].map((s) => (
+              <span key={s} onClick={() => setSize(s)} style={{ width: '40px', height: '40px', borderRadius: '50%', border: `1px solid ${size === s ? 'var(--brand-primary-deep)' : 'var(--border-default)'}`, background: size === s ? 'var(--brand-primary-deep)' : 'transparent', color: size === s ? '#fff' : 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', font: 'var(--text-body-sm)', cursor: 'pointer' }}>{s}</span>
+            ))}
+          </div>
+        </div>
+        <p style={{ font: 'var(--text-body-sm)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Peça atemporal em tecido natural, corte reto e caimento fluido. Combina com looks do dia a dia.</p>
+        <button onClick={() => onAdd(product, size)} style={{ font: 'var(--text-button)', textTransform: 'uppercase', letterSpacing: '0.04em', color: '#fff', background: 'var(--brand-primary-deep)', border: 'none', borderRadius: 'var(--radius-sm)', padding: '16px', cursor: 'pointer' }}>Adicionar à sacola</button>
+      </div>
+    </div>
+  );
+}
+
+function CartScreen({ items }) {
+  if (items.length === 0) {
+    return <div style={{ padding: '40px 16px', textAlign: 'center', font: 'var(--text-body)', color: 'var(--text-muted)' }}>Sua sacola está vazia.</div>;
+  }
+  return (
+    <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ width: '72px', flexShrink: 0 }}><Placeholder label="foto" /></div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+            <span style={{ font: 'var(--text-body-sm)', color: 'var(--text-primary)' }}>{it.product.name}</span>
+            <span style={{ font: 'var(--text-caption)', color: 'var(--text-secondary)' }}>Tamanho {it.size}</span>
+            <span style={{ font: 'var(--text-body-sm)', color: 'var(--text-primary)' }}>{it.product.price}</span>
+          </div>
+        </div>
+      ))}
+      <button style={{ font: 'var(--text-button)', textTransform: 'uppercase', letterSpacing: '0.04em', color: '#fff', background: 'var(--brand-primary-deep)', border: 'none', borderRadius: 'var(--radius-sm)', padding: '16px', cursor: 'pointer', marginTop: '8px' }}>Finalizar compra</button>
+    </div>
+  );
+}
+
+function ProfileScreen() {
+  const rows = ['Meus pedidos', 'Endereços', 'Formas de pagamento', 'Favoritos', 'Sair'];
+  return (
+    <div style={{ padding: '16px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 0 20px' }}>
+        <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'var(--brand-tint)' }} />
+        <div style={{ font: 'var(--text-h3)', color: 'var(--text-primary)' }}>Olá, Camila</div>
+      </div>
+      {rows.map((r) => (
+        <div key={r} style={{ padding: '16px 0', borderBottom: '1px solid var(--border-subtle)', font: 'var(--text-body)', color: 'var(--text-primary)' }}>{r}</div>
+      ))}
+    </div>
+  );
+}
+
+function TabBar({ active, onChange, cartCount }) {
+  const tabs = [{ key: 'home', label: 'Início' }, { key: 'cart', label: 'Sacola', badge: cartCount }, { key: 'profile', label: 'Perfil' }];
+  return (
+    <div style={{ display: 'flex', borderTop: '1px solid var(--border-subtle)', flexShrink: 0, background: 'var(--surface-card)' }}>
+      {tabs.map((t) => (
+        <div key={t.key} onClick={() => onChange(t.key)} style={{ flex: 1, textAlign: 'center', padding: '14px 0', cursor: 'pointer', position: 'relative' }}>
+          <span style={{ font: 'var(--text-caption)', color: active === t.key ? 'var(--brand-primary-deep)' : 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{t.label}</span>
+          {t.badge > 0 && <span style={{ position: 'absolute', top: '8px', right: '30%', background: 'var(--brand-primary-deep)', color: '#fff', borderRadius: '50%', width: '15px', height: '15px', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t.badge}</span>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function App() {
+  const [tab, setTab] = useState('home');
+  const [product, setProduct] = useState(null);
+  const [cart, setCart] = useState([]);
+
+  const openProduct = (p) => { setProduct(p); setTab('product'); };
+  const addToCart = (p, size) => { setCart((c) => [...c, { product: p, size }]); setTab('cart'); };
+
+  let content;
+  if (tab === 'home') content = <HomeScreen onOpenProduct={openProduct} />;
+  else if (tab === 'product') content = <ProductScreen product={product} onAdd={addToCart} />;
+  else if (tab === 'cart') content = <CartScreen items={cart} />;
+  else content = <ProfileScreen />;
+
+  const title = { home: 'Por Onde Flor', product: 'Produto', cart: 'Sacola', profile: 'Perfil' }[tab];
+
+  return (
+    <div style={{ width: '390px', height: '844px', borderRadius: '44px', border: '10px solid var(--color-neutral-900)', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--surface-card)', boxShadow: 'var(--shadow-lg)', fontFamily: 'var(--font-sans)' }}>
+      <TopBar title={title} />
+      <div className="screen" style={{ flex: 1, overflowY: 'auto' }}>{content}</div>
+      <TabBar active={tab === 'product' ? 'home' : tab} onChange={setTab} cartCount={cart.length} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<script>
+(function(){
+  var src = document.getElementById('app-src').textContent;
+  var out = Babel.transform(src, {presets: [['react', {runtime: 'classic'}]]}).code;
+  (new Function(out))();
+})();
+</script>
+</body>
+</html>

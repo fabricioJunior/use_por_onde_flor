@@ -1,0 +1,149 @@
+<!-- @dsCard group="Site institucional" viewport="1440x900" subtitle="Home — header, hero, grade de produtos, footer" name="Home" -->
+<!-- @startingPoint section="Site institucional" subtitle="Home completa com header, hero e grade de produtos" viewport="1440x900" -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Por Onde Flor — Site institucional</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>body{margin:0;background:var(--surface-page);}</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/plain" id="app-src">
+const { useState } = React;
+
+function Header({ cartCount, onOpenCart }) {
+  const linkStyle = { color: 'var(--text-primary)', font: 'var(--text-body-sm)', textDecoration: 'none', letterSpacing: '0.02em' };
+  return (
+    <header style={{ borderBottom: '1px solid var(--border-subtle)', background: 'var(--surface-card)' }}>
+      <div style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: '0 var(--container-padding)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '84px' }}>
+        <img src="../../assets/logo/logo-primary-color.png" alt="Por Onde Flor" style={{ height: '56px' }} />
+        <nav style={{ display: 'flex', gap: '32px' }}>
+          <a href="#" style={linkStyle}>Novidades</a>
+          <a href="#" style={linkStyle}>Roupas</a>
+          <a href="#" style={linkStyle}>Acessórios</a>
+          <a href="#" style={linkStyle}>Sobre</a>
+        </nav>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+          <span style={{ font: 'var(--text-body-sm)', color: 'var(--text-secondary)', cursor: 'pointer' }}>Buscar</span>
+          <span onClick={onOpenCart} style={{ position: 'relative', font: 'var(--text-body-sm)', color: 'var(--text-primary)', cursor: 'pointer' }}>
+            Sacola
+            {cartCount > 0 && (
+              <span style={{ position: 'absolute', top: '-8px', right: '-14px', background: 'var(--brand-primary-deep)', color: '#fff', borderRadius: '50%', width: '16px', height: '16px', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartCount}</span>
+            )}
+          </span>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '560px' }}>
+      <div style={{ background: 'repeating-linear-gradient(135deg, var(--color-neutral-100) 0 14px, var(--color-neutral-200) 14px 28px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontFamily: 'monospace', fontSize: '12px', color: 'var(--text-muted)' }}>foto de campanha — still, fundo neutro</span>
+      </div>
+      <div style={{ background: 'var(--brand-tint)', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'var(--container-padding)', gap: 'var(--space-5)' }}>
+        <span style={{ font: 'var(--text-eyebrow)', color: 'var(--brand-primary-deep)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-eyebrow)' }}>Coleção atual</span>
+        <h1 style={{ font: 'var(--text-display)', color: 'var(--text-primary)', margin: 0, letterSpacing: 'var(--tracking-tight)' }}>Peças atemporais para o dia a dia</h1>
+        <p style={{ font: 'var(--text-body-lg)', color: 'var(--text-secondary)', margin: 0, maxWidth: '420px' }}>Cortes básicos, tecidos naturais e uma paleta que atravessa estações.</p>
+        <button style={{ font: 'var(--text-button)', textTransform: 'uppercase', letterSpacing: '0.04em', color: '#fff', background: 'var(--brand-primary-deep)', border: 'none', borderRadius: 'var(--radius-sm)', padding: '16px 32px', width: 'fit-content', cursor: 'pointer' }}>Ver coleção</button>
+      </div>
+    </section>
+  );
+}
+
+const PRODUCTS = [
+  { name: 'Vestido Linho Areia', price: 'R$ 349', badge: 'Novo' },
+  { name: 'Calça Alfaiataria Bege', price: 'R$ 299', badge: null },
+  { name: 'Camisa Seda Off-white', price: 'R$ 259', badge: null },
+  { name: 'Blazer Atemporal Verde', price: 'R$ 429', badge: 'Novo' },
+];
+
+function ProductGrid({ onAdd }) {
+  return (
+    <section style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: 'var(--space-9) var(--container-padding)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 'var(--space-6)' }}>
+        <h2 style={{ font: 'var(--text-h2)', color: 'var(--text-primary)', margin: 0 }}>Novidades</h2>
+        <a href="#" style={{ font: 'var(--text-body-sm)', color: 'var(--link-color)' }}>Ver tudo</a>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-5)' }}>
+        {PRODUCTS.map((p) => (
+          <div key={p.name} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+            <div style={{ position: 'relative', aspectRatio: '3/4', background: 'repeating-linear-gradient(135deg, var(--color-neutral-100) 0 12px, var(--color-neutral-200) 12px 24px)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius-md)' }}>
+              <span style={{ fontFamily: 'monospace', fontSize: '11px', color: 'var(--text-muted)' }}>foto do produto</span>
+              {p.badge && <span style={{ position: 'absolute', top: '10px', left: '10px', font: 'var(--text-caption)', textTransform: 'uppercase', letterSpacing: '0.06em', background: 'var(--surface-card)', color: 'var(--brand-primary-deep)', padding: '4px 10px', borderRadius: 'var(--radius-pill)' }}>{p.badge}</span>}
+            </div>
+            <div style={{ font: 'var(--text-body)', color: 'var(--text-primary)' }}>{p.name}</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ font: 'var(--text-body-sm)', color: 'var(--text-secondary)' }}>{p.price}</span>
+              <button onClick={() => onAdd(p)} style={{ font: 'var(--text-caption)', textTransform: 'uppercase', letterSpacing: '0.04em', background: 'none', border: '1px solid var(--border-default)', borderRadius: 'var(--radius-sm)', padding: '8px 14px', cursor: 'pointer', color: 'var(--text-primary)' }}>Adicionar</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  const col = { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', font: 'var(--text-body-sm)', color: 'var(--color-neutral-300)' };
+  const label = { color: 'var(--text-on-inverse)', font: 'var(--text-eyebrow)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-eyebrow)' };
+  return (
+    <footer style={{ background: 'var(--surface-inverse)', color: 'var(--text-on-inverse)' }}>
+      <div style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: 'var(--space-8) var(--container-padding)', display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 'var(--space-6)' }}>
+        <div>
+          <div style={{ font: 'var(--text-h3)', fontWeight: 300, marginBottom: 'var(--space-3)' }}>Por Onde Flor</div>
+          <p style={{ font: 'var(--text-body-sm)', color: 'var(--color-neutral-300)', maxWidth: '260px' }}>Moda feminina atemporal. Cortes básicos, elegância discreta.</p>
+        </div>
+        <div style={col}><span style={label}>Loja</span><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Novidades</a><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Roupas</a><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Acessórios</a></div>
+        <div style={col}><span style={label}>Ajuda</span><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Trocas e devoluções</a><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Guia de medidas</a><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Contato</a></div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          <span style={label}>Newsletter</span>
+          <input placeholder="seu e-mail" style={{ padding: '10px 12px', border: '1px solid var(--color-neutral-600)', background: 'transparent', color: 'var(--text-on-inverse)', borderRadius: 'var(--radius-sm)', font: 'var(--text-body-sm)' }} />
+        </div>
+      </div>
+      <div style={{ borderTop: '1px solid var(--color-neutral-800)', padding: 'var(--space-4) var(--container-padding)', font: 'var(--text-caption)', color: 'var(--color-neutral-400)', textAlign: 'center' }}>© 2026 Por Onde Flor</div>
+    </footer>
+  );
+}
+
+function Toast({ text }) {
+  return <div style={{ position: 'fixed', bottom: '28px', right: '28px', background: 'var(--color-green-800)', color: '#fff', font: 'var(--text-body-sm)', padding: '14px 20px', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-lg)' }}>{text}</div>;
+}
+
+function App() {
+  const [cartCount, setCartCount] = useState(0);
+  const [toast, setToast] = useState(null);
+  const addToCart = (p) => {
+    setCartCount((c) => c + 1);
+    setToast(`${p.name} adicionado à sacola`);
+    setTimeout(() => setToast(null), 2200);
+  };
+  return (
+    <div style={{ fontFamily: 'var(--font-sans)' }}>
+      <Header cartCount={cartCount} onOpenCart={() => {}} />
+      <Hero />
+      <ProductGrid onAdd={addToCart} />
+      <Footer />
+      {toast && <Toast text={toast} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<script>
+(function(){
+  var src = document.getElementById('app-src').textContent;
+  var out = Babel.transform(src, {presets: [['react', {runtime: 'classic'}]]}).code;
+  (new Function(out))();
+})();
+</script>
+</body>
+</html>

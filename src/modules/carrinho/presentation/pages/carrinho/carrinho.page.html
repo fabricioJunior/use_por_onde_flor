@@ -1,0 +1,47 @@
+<div class="carrinho-shell">
+    <h1>Sacola</h1>
+
+    @if (loading()) {
+    <div class="carrinho-estado">
+        <mat-spinner diameter="42"></mat-spinner>
+    </div>
+    } @else if (itens().length === 0) {
+    <div class="carrinho-estado">
+        <p>Sua sacola está vazia.</p>
+        <a routerLink="/loja">Voltar para a loja</a>
+    </div>
+    } @else {
+    <div class="carrinho-lista">
+        @for (item of itens(); track item.produtoId) {
+        <div class="carrinho-item">
+            <div class="carrinho-item-foto">
+                @if (item.imagemUrl) {
+                <img [src]="item.imagemUrl" [alt]="item.nome">
+                } @else {
+                <span>Produto #{{ item.produtoId }}</span>
+                }
+            </div>
+            <div class="carrinho-item-info">
+                <span class="carrinho-item-nome">{{ item.nome || ('Produto #' + item.produtoId) }}</span>
+                @if (item.valor != null) {
+                <span class="carrinho-item-preco">{{ formatarPreco(item.valor) }}</span>
+                }
+            </div>
+            <div class="carrinho-item-quantidade">
+                <button type="button" (click)="alterarQuantidade(item, item.quantidade! - 1)">-</button>
+                <span>{{ item.quantidade }}</span>
+                <button type="button" (click)="alterarQuantidade(item, item.quantidade! + 1)">+</button>
+            </div>
+            <button type="button" class="carrinho-item-remover" (click)="remover(item)">Remover</button>
+        </div>
+        }
+    </div>
+
+    <div class="carrinho-resumo">
+        <span>Total</span>
+        <strong>{{ formatarPreco(total()) }}</strong>
+    </div>
+
+    <ui-button size="lg" (clicked)="irParaCheckout()">Finalizar compra</ui-button>
+    }
+</div>

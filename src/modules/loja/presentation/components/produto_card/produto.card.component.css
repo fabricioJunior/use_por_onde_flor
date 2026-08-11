@@ -1,0 +1,46 @@
+.produto-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    cursor: pointer;
+}
+
+.produto-foto {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    background: var(--surface-sunken);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.produto-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.produto-foto-placeholder {
+    font: var(--text-caption);
+    color: var(--text-muted);
+}
+
+.produto-nome {
+    font: var(--text-body);
+    color: var(--text-primary);
+}
+
+.produto-rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.produto-preco {
+    font: var(--text-body-sm);
+    color: var(--text-secondary);
+}

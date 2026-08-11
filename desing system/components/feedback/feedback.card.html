@@ -1,0 +1,17 @@
+<!-- @dsCard group="Components" viewport="700x220" name="Feedback: Toast, Tooltip" -->
+<link rel="stylesheet" href="../../styles.css">
+<script src="../../_ds_bundle.js"></script>
+<div id="root"></div>
+<script type="text/babel">
+const { Toast, Tooltip, Button } = window.PorOndeFlor;
+function Demo() {
+  return (
+    <div style={{fontFamily:'var(--font-sans)',padding:'40px',background:'var(--surface-page)',display:'flex',gap:'24px',alignItems:'center'}}>
+      <Toast tone="success">Item adicionado à sacola</Toast>
+      <Toast tone="neutral">Cupom aplicado</Toast>
+      <Tooltip label="Guia de medidas"><Button variant="ghost" size="sm">Tamanhos</Button></Tooltip>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>

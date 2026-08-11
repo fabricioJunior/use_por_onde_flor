@@ -22,6 +22,10 @@ import { AutenticacaoService } from '../modules/autenticacao/services/autenticac
 import { inject } from '@angular/core';
 import { RegulamentoComponent } from '../modules/fidelizacao/pontos/pages/regulamento/regulamento.component';
 import { ReferenciaComponent } from '../modules/referencias/pages/referencia/referencia.component';
+import { LojaHomePage } from '../modules/loja/presentation/pages/loja_home/loja.home.page';
+import { LojaReferenciaPage } from '../modules/loja/presentation/pages/loja_referencia/loja.referencia.page';
+import { CarrinhoPage } from '../modules/carrinho/presentation/pages/carrinho/carrinho.page';
+import { CheckoutPage } from '../modules/checkout/presentation/pages/checkout/checkout.page';
 
 
 export const autenticacaoGuard: CanMatchFn = (route: Route, segments: UrlSegment[]) => {
@@ -90,7 +94,21 @@ export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
 
     {
-        path: 'pagamento', component: PagamentoStatusComponent, canMatch: [autenticacaoGuard]
+        // Público -- é o retorno do gateway de pagamento avulso E do checkout novo (guest ou
+        // logado), então não pode exigir sessão.
+        path: 'pagamento', component: PagamentoStatusComponent,
+    },
+    {
+        path: 'loja', component: LojaHomePage,
+    },
+    {
+        path: 'loja/referencia/:id', component: LojaReferenciaPage,
+    },
+    {
+        path: 'carrinho', component: CarrinhoPage,
+    },
+    {
+        path: 'checkout', component: CheckoutPage,
     },
     {
         path: 'produtos', component: ProdutosComponent,

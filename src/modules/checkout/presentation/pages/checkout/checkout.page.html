@@ -1,0 +1,110 @@
+<div class="checkout-shell">
+    <h1>Finalizar compra</h1>
+
+    @if (loading()) {
+    <div class="checkout-estado">
+        <mat-spinner diameter="42"></mat-spinner>
+    </div>
+    } @else {
+    @if (resposta(); as pix) {
+    <div class="checkout-pix">
+        <p>Pedido #{{ pix.pedidoId }} criado! Finalize o pagamento via Pix para confirmar.</p>
+        @if (pix.cobranca?.qrCodePix) {
+        <img class="checkout-pix-qrcode" [src]="pix.cobranca!.qrCodePix" alt="QR Code Pix">
+        }
+        @if (pix.cobranca?.chavePixCopiaECola) {
+        <div class="checkout-pix-copia">
+            <span>{{ pix.cobranca!.chavePixCopiaECola }}</span>
+            <button type="button" [cdkCopyToClipboard]="pix.cobranca!.chavePixCopiaECola!">Copiar</button>
+        </div>
+        }
+        <ui-button (clicked)="irParaConfirmacao()">Já paguei</ui-button>
+    </div>
+    } @else {
+
+    @if (lojaFechada()) {
+    <p class="checkout-aviso">Loja fechada no momento. Tente novamente mais tarde.</p>
+    } @else if (itens().length === 0) {
+    <p class="checkout-aviso">Sua sacola está vazia. <a routerLink="/loja">Ir para a loja</a></p>
+    } @else {
+
+    @if (!autenticado) {
+    <section class="checkout-secao">
+        <h2>Seus dados</h2>
+        <p class="checkout-hint">Já tem conta? <a routerLink="/login">Entrar</a></p>
+        <form [formGroup]="clienteForm" class="checkout-form">
+            <input placeholder="Nome completo" formControlName="nome">
+            <input placeholder="CPF" mask="000.000.000-00" formControlName="documento">
+            <input placeholder="E-mail" type="email" formControlName="email">
+            <input placeholder="Telefone" mask="(00) 00000-0000" formControlName="telefone">
+        </form>
+    </section>
+    }
+
+    <section class="checkout-secao">
+        <h2>Entrega</h2>
+        <div class="checkout-opcoes">
+            <button type="button" class="opcao" [class.ativo]="modalidadeEntrega() === 'retirada'"
+                (click)="selecionarModalidade('retirada')">Retirar na loja</button>
+            <button type="button" class="opcao" [class.ativo]="modalidadeEntrega() === 'entrega'"
+                [disabled]="!autenticado" (click)="selecionarModalidade('entrega')">Receber em casa</button>
+        </div>
+        @if (!autenticado) {
+        <p class="checkout-hint">Faça login para receber em casa.</p>
+        }
+
+        @if (modalidadeEntrega() === 'entrega' && autenticado) {
+        @if (enderecos().length > 0 && !mostrarNovoEndereco()) {
+        <div class="checkout-enderecos">
+            @for (endereco of enderecos(); track endereco.id) {
+            <button type="button" class="opcao endereco" [class.ativo]="enderecoSelecionadoId() === endereco.id"
+                (click)="enderecoSelecionadoId.set(endereco.id!)">
+                {{ endereco.logradouro }}, {{ endereco.numero }} - {{ endereco.bairro }}, {{ endereco.municipio }}/{{ endereco.uf }}
+            </button>
+            }
+            <button type="button" class="checkout-link" (click)="mostrarNovoEndereco.set(true)">+ Novo endereço</button>
+        </div>
+        } @else {
+        <form [formGroup]="enderecoForm" class="checkout-form">
+            <input placeholder="CEP" formControlName="cep">
+            <input placeholder="Logradouro" formControlName="logradouro">
+            <input placeholder="Número" formControlName="numero">
+            <input placeholder="Complemento" formControlName="complemento">
+            <input placeholder="Bairro" formControlName="bairro">
+            <input placeholder="Cidade" formControlName="municipio">
+            <input placeholder="UF" maxlength="2" formControlName="uf">
+        </form>
+        @if (enderecos().length > 0) {
+        <button type="button" class="checkout-link" (click)="mostrarNovoEndereco.set(false)">Usar endereço salvo</button>
+        }
+        }
+        }
+    </section>
+
+    <section class="checkout-secao">
+        <h2>Resumo</h2>
+        <div class="checkout-resumo">
+            @for (item of itens(); track item.produtoId) {
+            <div class="checkout-resumo-item">
+                <span>{{ item.nome || ('Produto #' + item.produtoId) }} x{{ item.quantidade }}</span>
+                <span>{{ formatarPreco((item.valor ?? 0) * (item.quantidade ?? 0)) }}</span>
+            </div>
+            }
+            <div class="checkout-resumo-total">
+                <span>Total</span>
+                <strong>{{ formatarPreco(total()) }}</strong>
+            </div>
+        </div>
+    </section>
+
+    @if (erro()) {
+    <p class="checkout-aviso">{{ erro() }}</p>
+    }
+
+    <ui-button size="lg" [disabled]="!podeFinalizar() || finalizando()" (clicked)="finalizar()">
+        @if (finalizando()) { Processando... } @else { Finalizar e pagar }
+    </ui-button>
+    }
+    }
+    }
+</div>

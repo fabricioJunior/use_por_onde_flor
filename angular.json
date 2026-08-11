@@ -28,6 +28,10 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
+              "desing system/tokens/colors.css",
+              "desing system/tokens/typography.css",
+              "desing system/tokens/spacing.css",
+              "desing system/tokens/effects.css",
               "src/styles.scss"
             ],
             "scripts": [],
