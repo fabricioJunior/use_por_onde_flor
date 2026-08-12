@@ -30,14 +30,14 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
     buscarReferencia(id: string): Observable<EcommerceReferenciaDto> {
         return this.get({
             pathArguments: this.ecommerceArgs(),
-            path: `/referencias/${id}`,
+            path: `/catalogos/referencias/${id}`,
         });
     }
 
     listarProdutos(referenciaId: string): Observable<EcommerceReferenciaProdutoDto[]> {
         return this.getList({
             pathArguments: this.ecommerceArgs(),
-            path: `/referencias/${referenciaId}/produtos`,
+            path: `/catalogos/referencias/${referenciaId}/produtos`,
         });
     }
 
