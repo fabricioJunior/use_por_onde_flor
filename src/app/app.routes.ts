@@ -34,7 +34,8 @@ export const autenticacaoGuard: CanMatchFn = (route: Route, segments: UrlSegment
 
     const estaAutenticado = authService.estaAutenticado();
     if (!estaAutenticado) {
-        router.navigate(['/login']);
+        const returnUrl = '/' + segments.map(s => s.path).join('/');
+        router.navigate(['/login'], { queryParams: { returnUrl } });
         return false;
     }
     return true;

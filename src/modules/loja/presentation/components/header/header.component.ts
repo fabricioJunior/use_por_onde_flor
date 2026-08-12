@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, Input } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { AutenticacaoService } from "../../../../autenticacao/services/autenticacao.service";
 import { LocalStorageService } from "../../../../core/local_storage/local-storage.service";
 import { UsuarioDto } from "../../../../autenticacao/data/dto/usuario.dto";
@@ -16,7 +16,7 @@ import { UsuarioDto } from "../../../../autenticacao/data/dto/usuario.dto";
 export class HeaderComponent {
     @Input() itensNoCarrinho = 0;
 
-    constructor(private autenticacaoService: AutenticacaoService, private localStorageService: LocalStorageService) { }
+    constructor(private autenticacaoService: AutenticacaoService, private localStorageService: LocalStorageService, public router: Router) { }
 
     estaAutenticado(): boolean {
         return this.autenticacaoService.estaAutenticado();

@@ -9,7 +9,7 @@ import { merge } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EmailComponent } from "./etapas/email/email.component";
 import { LoginSenhaComponent } from "./etapas/senha/senha.component";
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 @Component({
     selector: 'Login',
     templateUrl: './login.component.html',
@@ -27,9 +27,12 @@ export class LoginComponent implements OnInit {
         }
     );
 
-    constructor(private router: Router) { }
-    ngOnInit(): void {
+    // URL pra onde voltar após login (ex: veio do checkout finalizar compra).
+    returnUrl = signal<string | null>(null);
 
+    constructor(private router: Router, private route: ActivatedRoute) { }
+    ngOnInit(): void {
+        this.returnUrl.set(this.route.snapshot.queryParamMap.get('returnUrl'));
     }
 
 

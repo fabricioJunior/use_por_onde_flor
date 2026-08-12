@@ -62,7 +62,7 @@ export class CheckoutPage implements OnInit {
         private lojaDataSource: LojaDataSource,
         private checkoutDataSource: CheckoutDataSource,
         private enderecoDataSource: EnderecoDataSource,
-        private router: Router,
+        public router: Router,
     ) {
         this.autenticado = this.autenticacaoService.estaAutenticado();
 

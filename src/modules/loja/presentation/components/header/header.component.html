@@ -27,7 +27,7 @@
                 </div>
             </details>
             } @else {
-            <a routerLink="/login" class="loja-login-link">Login</a>
+            <a routerLink="/login" [queryParams]="{returnUrl: router.url}" class="loja-login-link">Login</a>
             }
         </div>
     </div>

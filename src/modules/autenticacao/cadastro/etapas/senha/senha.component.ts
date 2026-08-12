@@ -75,7 +75,7 @@ export class SenhaComponent implements OnInit {
         var aceitouRegulamento = this.formGroup.get('aceitouRegulamento')?.value === true;
         if (senhaInvalid || !aceitouRegulamento) {
             this.avancaEnable.set(false);
-            this.senhaError.set(senhaInvalid ? 'Informe uma senha válida' : 'Você deve aceitar o regulamento do cartão fidelidade');
+            this.senhaError.set(senhaInvalid ? 'Informe uma senha válida' : 'Você deve aceitar o regulamento do site');
         } else {
             this.avancaEnable.set(true);
             this.senhaError.set('');

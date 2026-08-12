@@ -26,7 +26,7 @@ export class LoginSenhaComponent implements OnInit {
 
 
     formGroup: FormGroup;
-    constructor(loginComponent: LoginComponent, private loginService: AutenticacaoService, private router: Router) {
+    constructor(private loginComponent: LoginComponent, private loginService: AutenticacaoService, private router: Router) {
         this.formGroup = loginComponent.loginGroup;
 
         merge(this.formGroup.get('senha')!.statusChanges, this.formGroup.get('senha')!.valueChanges)
@@ -63,7 +63,7 @@ export class LoginSenhaComponent implements OnInit {
             this.formGroup.get('senha')?.value,
         );
         if (sucess) {
-            this.router.navigate(['/home']);
+            this.router.navigateByUrl(this.loginComponent.returnUrl() ?? '/home');
         } else {
             this.errorMessage.set('Senha incorreta, tente novamente');
         }

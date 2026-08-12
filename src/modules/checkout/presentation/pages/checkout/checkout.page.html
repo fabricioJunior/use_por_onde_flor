@@ -31,7 +31,7 @@
     @if (!autenticado) {
     <section class="checkout-secao">
         <h2>Seus dados</h2>
-        <p class="checkout-hint">Já tem conta? <a routerLink="/login">Entrar</a></p>
+        <p class="checkout-hint">Já tem conta? <a routerLink="/login" [queryParams]="{returnUrl: router.url}">Entrar</a></p>
         <form [formGroup]="clienteForm" class="checkout-form">
             <input placeholder="Nome completo" formControlName="nome">
             <input placeholder="CPF" mask="000.000.000-00" formControlName="documento">
