@@ -30,27 +30,52 @@ export class LojaReferenciaPage implements OnInit {
     tamanhoSelecionado = signal<string | null>(null);
     adicionando = signal(false);
     adicionado = signal(false);
+    quantidade = signal(1);
 
     produtosDisponiveis = computed(() => this.produtos().filter((produto) => produto.disponivel));
 
-    cores = computed(() => Array.from(new Set(this.produtosDisponiveis().map((produto) => produto.corNome).filter(Boolean))));
+    // Preserva a ordem que a API já manda (saldo desc, alfabética) -- não usar Set+sort.
+    private static primeiraOcorrencia(valores: string[]): string[] {
+        const vistos = new Set<string>();
+        const ordenado: string[] = [];
+        for (const valor of valores) {
+            if (valor && !vistos.has(valor)) {
+                vistos.add(valor);
+                ordenado.push(valor);
+            }
+        }
+        return ordenado;
+    }
+
+    cores = computed(() => LojaReferenciaPage.primeiraOcorrencia(this.produtos().map((produto) => produto.corNome)));
 
     tamanhosParaCorAtual = computed(() => {
         const cor = this.corSelecionada();
-        return Array.from(new Set(
-            this.produtosDisponiveis()
+        return LojaReferenciaPage.primeiraOcorrencia(
+            this.produtos()
                 .filter((produto) => !cor || produto.corNome === cor)
-                .map((produto) => produto.tamanhoNome)
-                .filter(Boolean),
-        ));
+                .map((produto) => produto.tamanhoNome),
+        );
     });
+
+    corDisponivel(cor: string): boolean {
+        return this.produtos().some((produto) => produto.corNome === cor && produto.disponivel);
+    }
+
+    tamanhoDisponivel(tamanho: string): boolean {
+        const cor = this.corSelecionada();
+        return this.produtos().some((produto) =>
+            (!cor || produto.corNome === cor) && produto.tamanhoNome === tamanho && produto.disponivel,
+        );
+    }
 
     produtoSelecionado = computed(() => {
         const cor = this.corSelecionada();
         const tamanho = this.tamanhoSelecionado();
-        return this.produtosDisponiveis().find((produto) =>
+        const candidatos = this.produtos().filter((produto) =>
             (!cor || produto.corNome === cor) && (!tamanho || produto.tamanhoNome === tamanho),
-        ) ?? null;
+        );
+        return candidatos.find((produto) => produto.disponivel) ?? null;
     });
 
     constructor(
@@ -81,11 +106,15 @@ export class LojaReferenciaPage implements OnInit {
         }
 
         try {
-            const [referencia, produtos, midias] = await Promise.all([
+            // referencia/produtos usam o id de rota (ecommerceReferenciaId). Mídias usam o
+            // referenciaId real do produto, que só vem dentro de `referencia` -- por isso
+            // busca mídias só depois, com `referencia.referenciaId`, não com `id`.
+            const [referencia, produtos] = await Promise.all([
                 firstValueFrom(this.lojaDataSource.buscarReferencia(id)),
                 firstValueFrom(this.lojaDataSource.listarProdutos(id)),
-                firstValueFrom(this.midiaDataSource.listar(id)).catch(() => [] as ReferenciaMidiaDto[]),
             ]);
+            const midias = await firstValueFrom(this.midiaDataSource.listar(referencia.referenciaId.toString()))
+                .catch(() => [] as ReferenciaMidiaDto[]);
 
             this.referencia.set(referencia);
             this.produtos.set(produtos);
@@ -93,6 +122,7 @@ export class LojaReferenciaPage implements OnInit {
             this.midias.set(midiasComUrl);
             this.fotoSelecionada.set(midiasComUrl.find((midia) => midia.isDefault) ?? midiasComUrl[0] ?? null);
 
+            this.quantidade.set(1);
             const disponiveis = produtos.filter((produto) => produto.disponivel);
             if (disponiveis.length === 1) {
                 this.corSelecionada.set(disponiveis[0].corNome);
@@ -111,16 +141,33 @@ export class LojaReferenciaPage implements OnInit {
     }
 
     selecionarCor(cor: string): void {
+        if (!this.corDisponivel(cor)) {
+            return;
+        }
         this.corSelecionada.set(cor);
         this.tamanhoSelecionado.set(null);
+        this.quantidade.set(1);
     }
 
     selecionarTamanho(tamanho: string): void {
+        if (!this.tamanhoDisponivel(tamanho)) {
+            return;
+        }
         this.tamanhoSelecionado.set(tamanho);
+        this.quantidade.set(1);
     }
 
     formatarPreco(valor: number | undefined): string {
         return (valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    incrementarQuantidade(): void {
+        const max = this.produtoSelecionado()?.saldo ?? 1;
+        this.quantidade.update((atual) => Math.min(atual + 1, max));
+    }
+
+    decrementarQuantidade(): void {
+        this.quantidade.update((atual) => Math.max(atual - 1, 1));
     }
 
     async adicionarAoCarrinho(): Promise<void> {
@@ -131,7 +178,7 @@ export class LojaReferenciaPage implements OnInit {
 
         this.adicionando.set(true);
         try {
-            await this.carrinhoFacadeService.adicionar(produto.produtoId, 1);
+            await this.carrinhoFacadeService.adicionar(produto.produtoId, this.quantidade());
             this.adicionado.set(true);
             this.toastService.show('Produto adicionado à sacola', 'success');
         } finally {

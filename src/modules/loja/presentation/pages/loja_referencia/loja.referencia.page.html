@@ -37,31 +37,46 @@
             <p class="descricao">{{ item.descricao || 'Sem descrição disponível.' }}</p>
 
             @if (cores().length > 0) {
-            <div class="seletor">
-                <span class="seletor-titulo">Cor</span>
+            <section class="secao-variacao">
+                <h2 class="secao-titulo">Cor</h2>
                 <div class="seletor-opcoes">
                     @for (cor of cores(); track cor) {
                     <button type="button" class="opcao" [class.ativo]="corSelecionada() === cor"
+                        [class.esgotado]="!corDisponivel(cor)" [disabled]="!corDisponivel(cor)"
                         (click)="selecionarCor(cor)">{{ cor }}</button>
                     }
                 </div>
-            </div>
+            </section>
             }
 
             @if (tamanhosParaCorAtual().length > 0) {
-            <div class="seletor">
-                <span class="seletor-titulo">Tamanho</span>
+            <section class="secao-variacao">
+                <h2 class="secao-titulo">Tamanho</h2>
                 <div class="seletor-opcoes">
                     @for (tamanho of tamanhosParaCorAtual(); track tamanho) {
                     <button type="button" class="opcao" [class.ativo]="tamanhoSelecionado() === tamanho"
+                        [class.esgotado]="!tamanhoDisponivel(tamanho)" [disabled]="!tamanhoDisponivel(tamanho)"
                         (click)="selecionarTamanho(tamanho)">{{ tamanho }}</button>
                     }
                 </div>
-            </div>
+            </section>
             }
 
             @if (produtosDisponiveis().length === 0) {
             <p class="aviso">Produto indisponível no momento.</p>
+            }
+
+            @if (produtoSelecionado(); as selecionado) {
+            <div class="quantidade">
+                <span class="seletor-titulo">Quantidade</span>
+                <div class="quantidade-stepper">
+                    <button type="button" class="stepper-botao" [disabled]="quantidade() <= 1"
+                        (click)="decrementarQuantidade()">−</button>
+                    <span class="quantidade-valor">{{ quantidade() }}</span>
+                    <button type="button" class="stepper-botao" [disabled]="quantidade() >= selecionado.saldo"
+                        (click)="incrementarQuantidade()">+</button>
+                </div>
+            </div>
             }
 
             @if (adicionado()) {

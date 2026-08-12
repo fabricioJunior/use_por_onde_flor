@@ -93,15 +93,17 @@ h1 {
     white-space: pre-line;
 }
 
-.seletor {
+.secao-variacao {
     margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-default);
 }
 
-.seletor-titulo {
-    display: block;
+.secao-titulo {
     font: var(--text-body-sm);
+    font-weight: 600;
     color: var(--text-secondary);
-    margin-bottom: var(--space-2);
+    margin: 0 0 var(--space-2);
 }
 
 .seletor-opcoes {
@@ -124,6 +126,46 @@ h1 {
     border-color: var(--brand-primary-deep);
     background: var(--brand-tint);
     color: var(--brand-primary-deep);
+}
+
+.opcao.esgotado {
+    opacity: 0.45;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.quantidade {
+    margin-bottom: var(--space-5);
+}
+
+.quantidade-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.stepper-botao {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-default);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    font: var(--text-body);
+    cursor: pointer;
+    line-height: 1;
+}
+
+.stepper-botao:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.quantidade-valor {
+    font: var(--text-body);
+    color: var(--text-primary);
+    min-width: 1.5em;
+    text-align: center;
 }
 
 .aviso {

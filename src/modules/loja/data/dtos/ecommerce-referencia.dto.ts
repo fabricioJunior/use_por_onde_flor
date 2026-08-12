@@ -22,6 +22,7 @@ export interface EcommerceReferenciaProdutoDto {
     corNome: string;
     tamanhoNome: string;
     disponivel: boolean;
+    saldo: number;
 }
 
 export interface PaginationMetaDto {
