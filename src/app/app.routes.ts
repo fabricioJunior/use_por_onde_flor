@@ -91,7 +91,7 @@ export const routes: Routes = [
 
         ]
     },
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: '', redirectTo: 'loja', pathMatch: 'full' },
 
     {
         // Público -- é o retorno do gateway de pagamento avulso E do checkout novo (guest ou
@@ -133,6 +133,18 @@ export const routes: Routes = [
     },
     {
         path: 'pagamento/:orderNsu', component: PagamentoComponent,
+        canMatch: [autenticacaoGuard]
+    },
+    {
+        // Lazy: só carrega o bundle de pedidos quando o cliente acessa, mantém o initial bundle
+        // dentro do budget do build.
+        path: 'pedidos',
+        loadComponent: () => import('../modules/pedidos/presentation/pages/pedidos/pedidos.page').then(m => m.PedidosPage),
+        canMatch: [autenticacaoGuard]
+    },
+    {
+        path: 'pedidos/:id',
+        loadComponent: () => import('../modules/pedidos/presentation/pages/pedido_detalhe/pedido.detalhe.page').then(m => m.PedidoDetalhePage),
         canMatch: [autenticacaoGuard]
     },
 

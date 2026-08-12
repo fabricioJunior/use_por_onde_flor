@@ -1,0 +1,40 @@
+<loja-header></loja-header>
+
+<div class="pedidos-shell">
+    <h1>Meus pedidos</h1>
+
+    @if (loading()) {
+    <p class="pedidos-estado">Carregando pedidos...</p>
+    } @else if (erro()) {
+    <p class="pedidos-estado">Não foi possível carregar seus pedidos. Tente novamente mais tarde.</p>
+    } @else if (itens().length === 0) {
+    <p class="pedidos-estado">Você ainda não fez nenhum pedido.</p>
+    } @else {
+    <div class="pedidos-lista">
+        @for (pedido of itens(); track pedido.id) {
+        <a class="pedido-item" [routerLink]="['/pedidos', pedido.id]">
+            @if (pedido.imagemCapa) {
+            <img [src]="pedido.imagemCapa" alt="" class="pedido-item-imagem">
+            } @else {
+            <span class="pedido-item-imagem pedido-item-imagem-placeholder">Sem foto</span>
+            }
+            <div class="pedido-item-info">
+                <span class="pedido-item-situacao">{{ pedido.situacao }}</span>
+                <span class="pedido-item-data">{{ pedido.data | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <span class="pedido-item-valor">{{ formatarPreco(pedido.valorTotal) }}</span>
+        </a>
+        }
+    </div>
+
+    @if (temMais()) {
+    <div class="pedidos-carregar-mais">
+        <ui-button variant="secondary" [disabled]="carregandoMais()" (clicked)="carregarMais()">
+            @if (carregandoMais()) { Carregando... } @else { Carregar mais }
+        </ui-button>
+    </div>
+    }
+    }
+</div>
+
+<loja-footer></loja-footer>

@@ -8,11 +8,27 @@
             <a routerLink="/loja">Roupas</a>
             <a routerLink="/loja">Acessórios</a>
         </nav>
-        <a routerLink="/carrinho" class="loja-sacola">
-            Sacola
-            @if (itensNoCarrinho > 0) {
-            <span class="loja-sacola-badge">{{ itensNoCarrinho }}</span>
+        <div class="loja-header-acoes">
+            <a routerLink="/carrinho" class="loja-sacola">
+                Sacola
+                @if (itensNoCarrinho > 0) {
+                <span class="loja-sacola-badge">{{ itensNoCarrinho }}</span>
+                }
+            </a>
+            @if (estaAutenticado()) {
+            <details class="loja-conta">
+                <summary class="loja-conta-resumo">
+                    <span class="loja-conta-icone">&#128100;</span>
+                    {{ nomeDoUsuario() }}
+                </summary>
+                <div class="loja-conta-menu">
+                    <a routerLink="/home">Cartão fidelidade</a>
+                    <a routerLink="/pedidos">Meus pedidos</a>
+                </div>
+            </details>
+            } @else {
+            <a routerLink="/login" class="loja-login-link">Login</a>
             }
-        </a>
+        </div>
     </div>
 </header>

@@ -22,6 +22,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
+    path: 'pedidos/:id',
+    renderMode: RenderMode.Client,
+  },
+  {
     // Sem parâmetro, mas dependem de dados dinâmicos (catálogo/carrinho/status da loja) --
     // renderizar no cliente evita bater na API real durante o prerender do build.
     path: 'loja',

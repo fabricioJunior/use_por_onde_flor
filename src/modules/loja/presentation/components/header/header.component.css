@@ -58,6 +58,61 @@
     justify-content: center;
 }
 
+.loja-header-acoes {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.loja-login-link {
+    font: var(--text-body-sm);
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.loja-conta {
+    position: relative;
+}
+
+.loja-conta-resumo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font: var(--text-body-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+    list-style: none;
+}
+
+.loja-conta-resumo::-webkit-details-marker {
+    display: none;
+}
+
+.loja-conta-menu {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    min-width: 180px;
+    padding: var(--space-2) 0;
+    z-index: 10;
+}
+
+.loja-conta-menu a {
+    padding: var(--space-2) var(--space-4);
+    color: var(--text-primary);
+    text-decoration: none;
+    font: var(--text-body-sm);
+}
+
+.loja-conta-menu a:hover {
+    background: var(--surface-hover, var(--border-subtle));
+}
+
 @media (max-width: 720px) {
     .loja-nav {
         display: none;
