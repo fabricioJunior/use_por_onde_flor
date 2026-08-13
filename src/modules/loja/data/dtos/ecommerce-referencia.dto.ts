@@ -14,6 +14,9 @@ export interface EcommerceReferenciaDto {
     rascunho?: boolean;
     // GROUP_CONCAT de produtoId disponíveis, separados por vírgula. Null quando nenhum disponível.
     produtosDisponiveisIds?: string | null;
+    // Soma do saldo real dos produtos disponíveis (view_estoque_produtos) -- "disponivel" no vínculo
+    // é flag manual do admin, independente de estoque; precisa checar as duas coisas.
+    saldo?: number;
     // Calculado no front (PromocaoPrecoService) a partir de GET /e-commerce/{id}/promocoes -- não
     // vem da API. Presente só quando há promoção ativa aplicável, sempre menor que `valor`.
     valorPromocional?: number;

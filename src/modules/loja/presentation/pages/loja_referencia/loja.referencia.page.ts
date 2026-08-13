@@ -64,7 +64,13 @@ export class LojaReferenciaPage implements OnInit {
 
     tamanhoSelecionadoLabel = computed(() => this.tamanhoSelecionado() ?? 'Selecione um tamanho');
 
-    produtosDisponiveis = computed(() => this.produtos().filter((produto) => produto.disponivel));
+    // "disponivel" é flag manual do admin (vínculo produto<->e-commerce), independente do saldo
+    // real -- produto pode estar disponivel=true com saldo=0. Selecionável exige as duas coisas.
+    private temEstoque(produto: EcommerceReferenciaProdutoDto): boolean {
+        return produto.disponivel && produto.saldo > 0;
+    }
+
+    produtosDisponiveis = computed(() => this.produtos().filter((produto) => this.temEstoque(produto)));
 
     // Preserva a ordem que a API já manda (saldo desc, alfabética) -- não usar Set+sort.
     private static primeiraOcorrencia(valores: string[]): string[] {
@@ -99,13 +105,13 @@ export class LojaReferenciaPage implements OnInit {
     }
 
     corDisponivel(cor: string): boolean {
-        return this.produtos().some((produto) => produto.corNome === cor && produto.disponivel);
+        return this.produtos().some((produto) => produto.corNome === cor && this.temEstoque(produto));
     }
 
     tamanhoDisponivel(tamanho: string): boolean {
         const cor = this.corSelecionada();
         return this.produtos().some((produto) =>
-            (!cor || produto.corNome === cor) && produto.tamanhoNome === tamanho && produto.disponivel,
+            (!cor || produto.corNome === cor) && produto.tamanhoNome === tamanho && this.temEstoque(produto),
         );
     }
 
@@ -115,7 +121,7 @@ export class LojaReferenciaPage implements OnInit {
         const candidatos = this.produtos().filter((produto) =>
             (!cor || produto.corNome === cor) && (!tamanho || produto.tamanhoNome === tamanho),
         );
-        return candidatos.find((produto) => produto.disponivel) ?? null;
+        return candidatos.find((produto) => this.temEstoque(produto)) ?? null;
     });
 
     constructor(
@@ -165,7 +171,7 @@ export class LojaReferenciaPage implements OnInit {
             this.rolarThumbParaAtiva();
 
             this.quantidade.set(1);
-            const disponiveis = produtos.filter((produto) => produto.disponivel);
+            const disponiveis = produtos.filter((produto) => this.temEstoque(produto));
             if (disponiveis.length === 1) {
                 this.corSelecionada.set(disponiveis[0].corNome);
                 this.tamanhoSelecionado.set(disponiveis[0].tamanhoNome);

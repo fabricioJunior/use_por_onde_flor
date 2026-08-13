@@ -139,6 +139,9 @@ export class LojaHomePage implements OnInit {
     }
 
     private produtoIdUnicoDisponivel(referencia: EcommerceReferenciaDto): number | null {
+        if (!referencia.saldo || referencia.saldo <= 0) {
+            return null;
+        }
         const ids = (referencia.produtosDisponiveisIds ?? '').split(',').map((id) => id.trim()).filter(Boolean);
         return ids.length === 1 ? Number(ids[0]) : null;
     }
