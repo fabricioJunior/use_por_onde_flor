@@ -8,6 +8,7 @@ import { NgxMaskDirective, provideNgxMask } from "ngx-mask";
 import { cpf } from "cpf-cnpj-validator";
 import { debounceTime, distinctUntilChanged, firstValueFrom } from "rxjs";
 import { CarrinhoFacadeService } from "../../../../carrinho/services/carrinho.facade.service";
+import { CarrinhoDataSource } from "../../../../carrinho/data/carrinho.data.source";
 import { CarrinhoItemViewDto } from "../../../../carrinho/data/dtos/carrinho-item-view.dto";
 import { AutenticacaoService } from "../../../../autenticacao/services/autenticacao.service";
 import { LocalStorageService } from "../../../../core/local_storage/local-storage.service";
@@ -77,6 +78,7 @@ export class CheckoutPage implements OnInit {
     constructor(
         private formBuilder: FormBuilder,
         private carrinhoFacadeService: CarrinhoFacadeService,
+        private carrinhoDataSource: CarrinhoDataSource,
         private autenticacaoService: AutenticacaoService,
         private localStorageService: LocalStorageService,
         private lojaDataSource: LojaDataSource,
@@ -122,9 +124,21 @@ export class CheckoutPage implements OnInit {
         try {
             // Chamadas separadas: falha em status() (ex: loja sem caixa configurado) não pode
             // esconder os itens da sacola, que vêm de uma fonte totalmente independente.
-            const itens = this.compraDireta
+            let itens = this.compraDireta
                 ? await this.carregarItemCompraDireta(this.compraDireta)
                 : await this.carrinhoFacadeService.listar();
+
+            // Carrinho persistido (logado) pode ter item que ficou sem saldo desde que foi
+            // adicionado -- valida e remove antes de deixar seguir pro pagamento, em vez de só
+            // descobrir no 400 do POST /checkout.
+            if (this.autenticado && !this.compraDireta) {
+                const { itensRemovidos } = await firstValueFrom(this.carrinhoDataSource.validar());
+                if (itensRemovidos.length > 0) {
+                    itens = await this.carrinhoFacadeService.listar();
+                    this.erro.set(`Alguns itens saíram da sacola por falta de estoque: ${itensRemovidos.map((i) => i.motivo).join(', ')}`);
+                }
+            }
+
             this.itens.set(itens);
 
             try {
@@ -332,7 +346,8 @@ export class CheckoutPage implements OnInit {
             this.router.navigate(['/pagamento'], { queryParams: { pedidoId: resposta.pedidoId } });
         } catch (error) {
             console.error('Erro ao finalizar checkout', error);
-            this.erro.set('Não foi possível finalizar seu pedido. Tente novamente.');
+            const mensagemApi = (error as any)?.error?.message;
+            this.erro.set(typeof mensagemApi === 'string' ? mensagemApi : 'Não foi possível finalizar seu pedido. Tente novamente.');
         } finally {
             this.finalizando.set(false);
         }

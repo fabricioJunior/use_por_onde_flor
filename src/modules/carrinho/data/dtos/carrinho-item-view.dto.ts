@@ -9,4 +9,5 @@ export interface CarrinhoItemViewDto {
     tamanhoNome?: string;
     valor?: number;
     imagemUrl?: string;
+    saldo?: number;
 }

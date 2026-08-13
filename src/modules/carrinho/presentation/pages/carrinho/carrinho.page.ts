@@ -39,7 +39,8 @@ export class CarrinhoPage implements OnInit {
             await this.remover(item);
             return;
         }
-        await this.carrinhoFacadeService.adicionar(item.produtoId!, quantidade);
+        const limite = item.saldo ?? quantidade;
+        await this.carrinhoFacadeService.adicionar(item.produtoId!, Math.min(quantidade, limite));
         await this.carregar();
     }
 
