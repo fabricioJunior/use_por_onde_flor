@@ -47,18 +47,15 @@
             <button type="button" class="opcao" [class.ativo]="modalidadeEntrega() === 'retirada'"
                 (click)="selecionarModalidade('retirada')">Retirar na loja</button>
             <button type="button" class="opcao" [class.ativo]="modalidadeEntrega() === 'entrega'"
-                [disabled]="!autenticado" (click)="selecionarModalidade('entrega')">Receber em casa</button>
+                (click)="selecionarModalidade('entrega')">Receber em casa</button>
         </div>
-        @if (!autenticado) {
-        <p class="checkout-hint">Faça login para receber em casa.</p>
-        }
 
-        @if (modalidadeEntrega() === 'entrega' && autenticado) {
-        @if (enderecos().length > 0 && !mostrarNovoEndereco()) {
+        @if (modalidadeEntrega() === 'entrega') {
+        @if (autenticado && enderecos().length > 0 && !mostrarNovoEndereco()) {
         <div class="checkout-enderecos">
             @for (endereco of enderecos(); track endereco.id) {
             <button type="button" class="opcao endereco" [class.ativo]="enderecoSelecionadoId() === endereco.id"
-                (click)="enderecoSelecionadoId.set(endereco.id!)">
+                (click)="selecionarEndereco(endereco)">
                 {{ endereco.logradouro }}, {{ endereco.numero }} - {{ endereco.bairro }}, {{ endereco.municipio }}/{{ endereco.uf }}
             </button>
             }
@@ -74,10 +71,30 @@
             <input placeholder="Cidade" formControlName="municipio">
             <input placeholder="UF" maxlength="2" formControlName="uf">
         </form>
-        @if (enderecos().length > 0) {
+        @if (autenticado && enderecos().length > 0) {
         <button type="button" class="checkout-link" (click)="mostrarNovoEndereco.set(false)">Usar endereço salvo</button>
         }
         }
+
+        <div class="checkout-frete">
+            @if (carregandoFrete()) {
+            <p class="checkout-hint">Calculando frete...</p>
+            } @else if (erroFrete()) {
+            <p class="checkout-aviso">{{ erroFrete() }}</p>
+            } @else if (opcoesFrete().length > 0) {
+            <div class="checkout-opcoes-frete">
+                @for (opcao of opcoesFrete(); track opcao.serviceId) {
+                <button type="button" class="opcao frete" [class.ativo]="freteSelecionado()?.serviceId === opcao.serviceId"
+                    (click)="selecionarFrete(opcao)">
+                    <span>{{ opcao.carrier }} - {{ opcao.service }}</span>
+                    <span>{{ formatarPreco(opcao.customPrice ?? opcao.price) }} · {{ opcao.customDeliveryTime ?? opcao.deliveryTime }} dias úteis</span>
+                </button>
+                }
+            </div>
+            } @else {
+            <p class="checkout-hint">Informe o CEP acima pra calcular o frete.</p>
+            }
+        </div>
         }
     </section>
 
@@ -88,6 +105,12 @@
             <div class="checkout-resumo-item">
                 <span>{{ item.nome || ('Produto #' + item.produtoId) }} x{{ item.quantidade }}</span>
                 <span>{{ formatarPreco((item.valor ?? 0) * (item.quantidade ?? 0)) }}</span>
+            </div>
+            }
+            @if (freteSelecionado(); as frete) {
+            <div class="checkout-resumo-item">
+                <span>Frete ({{ frete.carrier }})</span>
+                <span>{{ formatarPreco(frete.customPrice ?? frete.price) }}</span>
             </div>
             }
             <div class="checkout-resumo-total">

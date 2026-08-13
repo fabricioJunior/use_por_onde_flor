@@ -6,7 +6,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { ClipboardModule } from "@angular/cdk/clipboard";
 import { NgxMaskDirective, provideNgxMask } from "ngx-mask";
 import { cpf } from "cpf-cnpj-validator";
-import { firstValueFrom } from "rxjs";
+import { debounceTime, distinctUntilChanged, firstValueFrom } from "rxjs";
 import { CarrinhoFacadeService } from "../../../../carrinho/services/carrinho.facade.service";
 import { CarrinhoItemViewDto } from "../../../../carrinho/data/dtos/carrinho-item-view.dto";
 import { AutenticacaoService } from "../../../../autenticacao/services/autenticacao.service";
@@ -17,7 +17,10 @@ import { CheckoutDataSource } from "../../../data/checkout.data.source";
 import { EnderecoDataSource } from "../../../data/endereco.data.source";
 import { EnderecoDto } from "../../../data/dtos/endereco.dto";
 import { CheckoutCobrancaDto, ModalidadeEntregaPedido } from "../../../data/dtos/checkout.dto";
+import { OpcaoFreteDto } from "../../../data/dtos/frete.dto";
 import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
+
+const CEP_VALIDO = /^\d{5}-?\d{3}$/;
 
 function cpfValidator(control: { value: string }) {
     if (!control.value) {
@@ -51,7 +54,20 @@ export class CheckoutPage implements OnInit {
 
     autenticado: boolean;
 
-    total = computed(() => this.itens().reduce((soma, item) => soma + (item.valor ?? 0) * (item.quantidade ?? 0), 0));
+    opcoesFrete = signal<OpcaoFreteDto[]>([]);
+    freteSelecionado = signal<OpcaoFreteDto | null>(null);
+    carregandoFrete = signal(false);
+    erroFrete = signal('');
+    private ultimoCepCotado = '';
+
+    valorFrete = computed(() => {
+        const frete = this.freteSelecionado();
+        return frete ? frete.customPrice ?? frete.price : 0;
+    });
+
+    total = computed(() =>
+        this.itens().reduce((soma, item) => soma + (item.valor ?? 0) * (item.quantidade ?? 0), 0) + this.valorFrete(),
+    );
 
     clienteForm: ReturnType<FormBuilder['group']>;
     enderecoForm: ReturnType<FormBuilder['group']>;
@@ -93,6 +109,12 @@ export class CheckoutPage implements OnInit {
             municipio: ['', Validators.required],
             uf: ['', Validators.required],
         });
+
+        // Só recalcula quando o CEP muda de verdade (não em toda tecla de logradouro/número/etc) --
+        // evita chamada à toa a cada alteração irrelevante do formulário.
+        this.enderecoForm.get('cep')!.valueChanges
+            .pipe(debounceTime(600), distinctUntilChanged())
+            .subscribe((cep) => this.calcularFrete(cep));
     }
 
     async ngOnInit(): Promise<void> {
@@ -141,10 +163,87 @@ export class CheckoutPage implements OnInit {
 
     selecionarModalidade(modalidade: ModalidadeEntregaPedido): void {
         this.modalidadeEntrega.set(modalidade);
+
+        if (modalidade === 'retirada') {
+            this.opcoesFrete.set([]);
+            this.freteSelecionado.set(null);
+            this.erroFrete.set('');
+            return;
+        }
+
+        const cepAtual = this.mostrarNovoEndereco()
+            ? this.enderecoForm.get('cep')!.value
+            : this.enderecos().find((endereco) => endereco.id === this.enderecoSelecionadoId())?.cep;
+        this.calcularFrete(cepAtual);
+    }
+
+    selecionarEndereco(endereco: EnderecoDto): void {
+        this.enderecoSelecionadoId.set(endereco.id!);
+        this.calcularFrete(endereco.cep);
+    }
+
+    selecionarFrete(opcao: OpcaoFreteDto): void {
+        this.freteSelecionado.set(opcao);
+    }
+
+    private async calcularFrete(cepBruto: string | null | undefined): Promise<void> {
+        const cep = (cepBruto ?? '').trim();
+        this.erroFrete.set('');
+
+        if (!CEP_VALIDO.test(cep)) {
+            this.opcoesFrete.set([]);
+            this.freteSelecionado.set(null);
+            return;
+        }
+
+        if (cep === this.ultimoCepCotado) {
+            return;
+        }
+        this.ultimoCepCotado = cep;
+
+        if (this.itens().length === 0) {
+            return;
+        }
+
+        this.carregandoFrete.set(true);
+        this.freteSelecionado.set(null);
+        try {
+            const opcoes = await firstValueFrom(this.checkoutDataSource.cotarFrete({
+                itens: this.itens().map((item) => ({ produtoId: item.produtoId!, quantidade: item.quantidade! })),
+                cepDestino: cep,
+            }));
+            this.opcoesFrete.set(opcoes);
+            if (opcoes.length === 1) {
+                this.freteSelecionado.set(opcoes[0]);
+            } else if (opcoes.length === 0) {
+                this.erroFrete.set('Nenhuma opção de frete disponível para esse CEP.');
+            }
+        } catch (error) {
+            console.error('Erro ao cotar frete', error);
+            this.opcoesFrete.set([]);
+            this.erroFrete.set('Não foi possível calcular o frete pra esse CEP. Tente novamente.');
+        } finally {
+            this.carregandoFrete.set(false);
+        }
     }
 
     formatarPreco(valor: number | undefined): string {
         return (valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    private montarEnderecoInline() {
+        const valores = this.enderecoForm.getRawValue();
+        return {
+            principal: true,
+            tipoEndereco: 'Residencial' as const,
+            cep: valores.cep ?? undefined,
+            logradouro: valores.logradouro ?? undefined,
+            numero: valores.numero ?? undefined,
+            complemento: valores.complemento ?? undefined,
+            bairro: valores.bairro ?? undefined,
+            municipio: valores.municipio ?? undefined,
+            uf: (valores.uf as any) ?? undefined,
+        };
     }
 
     podeFinalizar(): boolean {
@@ -155,10 +254,10 @@ export class CheckoutPage implements OnInit {
             return false;
         }
         if (this.modalidadeEntrega() === 'entrega') {
-            if (!this.autenticado) {
+            if (!this.freteSelecionado()) {
                 return false;
             }
-            if (this.mostrarNovoEndereco()) {
+            if (this.mostrarNovoEndereco() || !this.autenticado) {
                 return this.enderecoForm.valid;
             }
             return this.enderecoSelecionadoId() != null;
@@ -176,9 +275,15 @@ export class CheckoutPage implements OnInit {
 
         try {
             let enderecoEntregaId: number | undefined;
+            let enderecoEntrega: ReturnType<typeof this.montarEnderecoInline> | undefined;
 
             if (this.modalidadeEntrega() === 'entrega') {
-                if (this.mostrarNovoEndereco()) {
+                if (!this.autenticado) {
+                    // Guest nunca tem pessoa antes do checkout -- não dá pra pré-criar endereço
+                    // (exige pessoaId existente). Manda os dados brutos, o backend cria pessoa +
+                    // endereço antes do pedido (ver EcommerceCheckoutService.checkout).
+                    enderecoEntrega = this.montarEnderecoInline();
+                } else if (this.mostrarNovoEndereco()) {
                     const pessoa = this.localStorageService.get<UsuarioDto>('usuario_da_sessao') as UsuarioDto | null;
                     const valores = this.enderecoForm.getRawValue();
                     const novoEndereco = await firstValueFrom(this.enderecoDataSource.criar(pessoa!.id!, {
@@ -208,6 +313,8 @@ export class CheckoutPage implements OnInit {
                 cliente: this.autenticado ? undefined : this.clienteForm.getRawValue() as any,
                 modalidadeEntrega: this.modalidadeEntrega(),
                 enderecoEntregaId,
+                enderecoEntrega,
+                freteEscolhido: this.freteSelecionado() ?? undefined,
             }));
 
             this.carrinhoFacadeService.limparLocal();
