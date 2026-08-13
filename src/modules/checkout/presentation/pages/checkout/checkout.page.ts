@@ -40,6 +40,10 @@ export class CheckoutPage implements OnInit {
     erro = signal('');
     lojaFechada = signal(false);
     itens = signal<CarrinhoItemViewDto[]>([]);
+    // Presente quando veio do botão "Comprar agora" (ver LojaReferenciaPage/ProdutoCardComponent) --
+    // nesse caso `itens` não vem do carrinho persistido, é só esse produto, e o carrinho salvo da
+    // pessoa não deve ser tocado (nem lido, nem limpo) no finalizar().
+    private compraDireta: { produtoId: number; quantidade: number } | null = null;
     enderecos = signal<EnderecoDto[]>([]);
     enderecoSelecionadoId = signal<number | null>(null);
     mostrarNovoEndereco = signal(false);
@@ -66,6 +70,13 @@ export class CheckoutPage implements OnInit {
     ) {
         this.autenticado = this.autenticacaoService.estaAutenticado();
 
+        // getCurrentNavigation() só existe durante a navegação em si -- precisa ler aqui no
+        // constructor, no ngOnInit já voltaria null.
+        const state = this.router.getCurrentNavigation()?.extras?.state as { produtoId?: number; quantidade?: number } | undefined;
+        if (state?.produtoId != null && state.quantidade != null) {
+            this.compraDireta = { produtoId: state.produtoId, quantidade: state.quantidade };
+        }
+
         this.clienteForm = this.formBuilder.group({
             nome: ['', Validators.required],
             documento: ['', [Validators.required, cpfValidator]],
@@ -89,7 +100,9 @@ export class CheckoutPage implements OnInit {
         try {
             // Chamadas separadas: falha em status() (ex: loja sem caixa configurado) não pode
             // esconder os itens da sacola, que vêm de uma fonte totalmente independente.
-            const itens = await this.carrinhoFacadeService.listar();
+            const itens = this.compraDireta
+                ? await this.carregarItemCompraDireta(this.compraDireta)
+                : await this.carrinhoFacadeService.listar();
             this.itens.set(itens);
 
             try {
@@ -119,6 +132,11 @@ export class CheckoutPage implements OnInit {
         } finally {
             this.loading.set(false);
         }
+    }
+
+    private async carregarItemCompraDireta(compra: { produtoId: number; quantidade: number }): Promise<CarrinhoItemViewDto[]> {
+        const detalhe = await firstValueFrom(this.lojaDataSource.produto(compra.produtoId));
+        return [{ ...detalhe, quantidade: compra.quantidade }];
     }
 
     selecionarModalidade(modalidade: ModalidadeEntregaPedido): void {
@@ -180,8 +198,13 @@ export class CheckoutPage implements OnInit {
                 }
             }
 
+            // itens explícito sempre que guest OU "comprar agora" (mesmo logado, pra não
+            // sobrescrever/limpar o carrinho salvo -- ver EcommerceCheckoutService.checkout no
+            // apollo-api). Só omite (backend usa o carrinho persistido) no checkout normal logado.
+            const enviarItensExplicitos = !this.autenticado || !!this.compraDireta;
+
             const resposta = await firstValueFrom(this.checkoutDataSource.finalizar({
-                itens: this.autenticado ? undefined : this.itens().map((item) => ({ produtoId: item.produtoId!, quantidade: item.quantidade! })),
+                itens: enviarItensExplicitos ? this.itens().map((item) => ({ produtoId: item.produtoId!, quantidade: item.quantidade! })) : undefined,
                 cliente: this.autenticado ? undefined : this.clienteForm.getRawValue() as any,
                 modalidadeEntrega: this.modalidadeEntrega(),
                 enderecoEntregaId,

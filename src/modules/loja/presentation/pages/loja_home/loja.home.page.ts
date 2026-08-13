@@ -115,14 +115,31 @@ export class LojaHomePage implements OnInit {
     async adicionarAoCarrinho(referencia: EcommerceReferenciaDto): Promise<void> {
         // ponytail: referência com mais de um SKU (cor/tamanho) exige escolha na página de detalhe --
         // aqui só adiciona direto quando há exatamente um produto disponível.
-        const idsDisponiveis = (referencia.produtosDisponiveisIds ?? '').split(',').map((id) => id.trim()).filter(Boolean);
-        if (idsDisponiveis.length !== 1) {
+        const idsDisponiveis = this.produtoIdUnicoDisponivel(referencia);
+        if (idsDisponiveis == null) {
             this.router.navigate(['/loja/referencia', referencia.id]);
             return;
         }
 
-        await this.carrinhoFacadeService.adicionar(Number(idsDisponiveis[0]), 1);
+        await this.carrinhoFacadeService.adicionar(idsDisponiveis, 1);
         await this.atualizarContagemCarrinho();
         this.toastService.show('Produto adicionado à sacola', 'success');
+    }
+
+    comprarAgora(referencia: EcommerceReferenciaDto): void {
+        // Mesma regra do adicionar: com mais de um SKU precisa escolher cor/tamanho na página de
+        // detalhe primeiro (lá tem o próprio botão "Comprar agora").
+        const produtoId = this.produtoIdUnicoDisponivel(referencia);
+        if (produtoId == null) {
+            this.router.navigate(['/loja/referencia', referencia.id]);
+            return;
+        }
+
+        this.router.navigate(['/checkout'], { state: { produtoId, quantidade: 1 } });
+    }
+
+    private produtoIdUnicoDisponivel(referencia: EcommerceReferenciaDto): number | null {
+        const ids = (referencia.produtosDisponiveisIds ?? '').split(',').map((id) => id.trim()).filter(Boolean);
+        return ids.length === 1 ? Number(ids[0]) : null;
     }
 }

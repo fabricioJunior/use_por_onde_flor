@@ -42,9 +42,18 @@
 
 .produto-rodape {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     gap: var(--space-2);
+}
+
+.produto-rodape ui-button {
+    display: block;
+}
+
+/* ButtonComponent renderiza o <button> real dentro do próprio template encapsulado -- precisa
+   ::ng-deep pra esticar (fullWidth não existe como @Input no ui-button hoje). */
+.produto-rodape ::ng-deep ui-button .ui-button {
+    width: 100%;
 }
 
 .produto-precos {

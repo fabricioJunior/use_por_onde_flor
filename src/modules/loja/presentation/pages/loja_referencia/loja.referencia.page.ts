@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, signal, computed } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild, signal, computed } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { firstValueFrom } from "rxjs";
@@ -10,6 +10,7 @@ import { ReferenciaMidiaDto } from "../../../../referencias/data/referencia.data
 import { CarrinhoFacadeService } from "../../../../carrinho/services/carrinho.facade.service";
 import { ButtonComponent } from "../../components/ui/button/button.component";
 import { ToastService } from "../../components/ui/toast/toast.service";
+import { corEhClara, corParaHex, normalizarNomeCor } from "../../utils/cor-apresentacao.util";
 
 @Component({
     selector: 'loja-referencia-page',
@@ -19,6 +20,9 @@ import { ToastService } from "../../components/ui/toast/toast.service";
     styleUrl: './loja.referencia.page.css',
 })
 export class LojaReferenciaPage implements OnInit {
+    @ViewChild('secaoCor') secaoCorRef?: ElementRef<HTMLElement>;
+    @ViewChild('secaoTamanho') secaoTamanhoRef?: ElementRef<HTMLElement>;
+
     loading = signal(true);
     erro = signal('');
     referencia = signal<EcommerceReferenciaDto | null>(null);
@@ -31,6 +35,16 @@ export class LojaReferenciaPage implements OnInit {
     adicionando = signal(false);
     adicionado = signal(false);
     quantidade = signal(1);
+    mensagemValidacao = signal<string | null>(null);
+
+    normalizarNomeCor = normalizarNomeCor;
+
+    corSelecionadaLabel = computed(() => {
+        const cor = this.corSelecionada();
+        return cor ? normalizarNomeCor(cor) : 'Selecione uma cor';
+    });
+
+    tamanhoSelecionadoLabel = computed(() => this.tamanhoSelecionado() ?? 'Selecione um tamanho');
 
     produtosDisponiveis = computed(() => this.produtos().filter((produto) => produto.disponivel));
 
@@ -57,6 +71,14 @@ export class LojaReferenciaPage implements OnInit {
                 .map((produto) => produto.tamanhoNome),
         );
     });
+
+    corHex(cor: string): string | null {
+        return corParaHex(normalizarNomeCor(cor));
+    }
+
+    corEhClara(cor: string): boolean {
+        return corEhClara(this.corHex(cor));
+    }
 
     corDisponivel(cor: string): boolean {
         return this.produtos().some((produto) => produto.corNome === cor && produto.disponivel);
@@ -144,6 +166,7 @@ export class LojaReferenciaPage implements OnInit {
         if (!this.corDisponivel(cor)) {
             return;
         }
+        this.mensagemValidacao.set(null);
         this.corSelecionada.set(cor);
         this.tamanhoSelecionado.set(null);
         this.quantidade.set(1);
@@ -153,8 +176,34 @@ export class LojaReferenciaPage implements OnInit {
         if (!this.tamanhoDisponivel(tamanho)) {
             return;
         }
+        this.mensagemValidacao.set(null);
         this.tamanhoSelecionado.set(tamanho);
         this.quantidade.set(1);
+    }
+
+    // Retorna true quando pode seguir (produto totalmente selecionado). Quando falta cor/tamanho,
+    // mostra mensagem específica perto do seletor e rola até lá -- não depende só do botão
+    // desabilitado (que muitas vezes passa despercebido).
+    private validarSelecao(): boolean {
+        if (this.produtosDisponiveis().length === 0) {
+            return false; // sem estoque em nenhuma combinação -- aviso "indisponível" já cobre isso
+        }
+        if (!this.corSelecionada()) {
+            this.mensagemValidacao.set('Selecione uma cor.');
+            this.secaoCorRef?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return false;
+        }
+        if (!this.tamanhoSelecionado()) {
+            this.mensagemValidacao.set('Selecione um tamanho.');
+            this.secaoTamanhoRef?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return false;
+        }
+        if (!this.produtoSelecionado()) {
+            this.mensagemValidacao.set('Essa combinação está indisponível no momento.');
+            return false;
+        }
+        this.mensagemValidacao.set(null);
+        return true;
     }
 
     formatarPreco(valor: number | undefined): string {
@@ -170,11 +219,19 @@ export class LojaReferenciaPage implements OnInit {
         this.quantidade.update((atual) => Math.max(atual - 1, 1));
     }
 
-    async adicionarAoCarrinho(): Promise<void> {
-        const produto = this.produtoSelecionado();
-        if (!produto) {
+    comprarAgora(): void {
+        if (!this.validarSelecao()) {
             return;
         }
+        const produto = this.produtoSelecionado()!;
+        this.router.navigate(['/checkout'], { state: { produtoId: produto.produtoId, quantidade: this.quantidade() } });
+    }
+
+    async adicionarAoCarrinho(): Promise<void> {
+        if (!this.validarSelecao()) {
+            return;
+        }
+        const produto = this.produtoSelecionado()!;
 
         this.adicionando.set(true);
         try {

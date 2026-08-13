@@ -37,25 +37,33 @@
             <p class="descricao">{{ item.descricao || 'Sem descrição disponível.' }}</p>
 
             @if (cores().length > 0) {
-            <section class="secao-variacao">
-                <h2 class="secao-titulo">Cor</h2>
-                <div class="seletor-opcoes">
+            <section class="secao-variacao" #secaoCor>
+                <h2 class="secao-titulo">Cor: <span class="secao-titulo-valor">{{ corSelecionadaLabel() }}</span></h2>
+                <div class="grade-swatches" role="group" aria-label="Selecione a cor">
                     @for (cor of cores(); track cor) {
-                    <button type="button" class="opcao" [class.ativo]="corSelecionada() === cor"
-                        [class.esgotado]="!corDisponivel(cor)" [disabled]="!corDisponivel(cor)"
-                        (click)="selecionarCor(cor)">{{ cor }}</button>
+                    <button type="button" class="swatch" [class.ativo]="corSelecionada() === cor"
+                        [class.indisponivel]="!corDisponivel(cor)" [class.clara]="corEhClara(cor)"
+                        [class.neutro]="!corHex(cor)" [style.background-color]="corHex(cor)"
+                        [disabled]="!corDisponivel(cor)" [title]="normalizarNomeCor(cor)"
+                        [attr.aria-label]="'Cor: ' + normalizarNomeCor(cor) + (corSelecionada() === cor ? ', selecionada' : '') + (corDisponivel(cor) ? '' : ', indisponível')"
+                        [attr.aria-pressed]="corSelecionada() === cor"
+                        (click)="selecionarCor(cor)">
+                        <span class="swatch-check" aria-hidden="true">✓</span>
+                    </button>
                     }
                 </div>
             </section>
             }
 
             @if (tamanhosParaCorAtual().length > 0) {
-            <section class="secao-variacao">
-                <h2 class="secao-titulo">Tamanho</h2>
-                <div class="seletor-opcoes">
+            <section class="secao-variacao" #secaoTamanho>
+                <h2 class="secao-titulo">Tamanho: <span class="secao-titulo-valor">{{ tamanhoSelecionadoLabel() }}</span></h2>
+                <div class="seletor-opcoes" role="group" aria-label="Selecione o tamanho">
                     @for (tamanho of tamanhosParaCorAtual(); track tamanho) {
                     <button type="button" class="opcao" [class.ativo]="tamanhoSelecionado() === tamanho"
                         [class.esgotado]="!tamanhoDisponivel(tamanho)" [disabled]="!tamanhoDisponivel(tamanho)"
+                        [attr.aria-label]="'Tamanho: ' + tamanho + (tamanhoSelecionado() === tamanho ? ', selecionado' : '') + (tamanhoDisponivel(tamanho) ? '' : ', indisponível')"
+                        [attr.aria-pressed]="tamanhoSelecionado() === tamanho"
                         (click)="selecionarTamanho(tamanho)">{{ tamanho }}</button>
                     }
                 </div>
@@ -64,6 +72,8 @@
 
             @if (produtosDisponiveis().length === 0) {
             <p class="aviso">Produto indisponível no momento.</p>
+            } @else if (mensagemValidacao()) {
+            <p class="aviso" role="alert">{{ mensagemValidacao() }}</p>
             }
 
             @if (produtoSelecionado(); as selecionado) {
@@ -85,9 +95,12 @@
                 <ui-button variant="secondary" size="sm" (clicked)="irParaCarrinho()">Ver sacola</ui-button>
             </div>
             } @else {
-            <ui-button size="lg" [disabled]="!produtoSelecionado() || adicionando()" (clicked)="adicionarAoCarrinho()">
-                @if (adicionando()) { Adicionando... } @else { Adicionar à sacola }
-            </ui-button>
+            <div class="acoes-compra">
+                <ui-button size="lg" variant="secondary" [disabled]="produtosDisponiveis().length === 0 || adicionando()" (clicked)="adicionarAoCarrinho()">
+                    @if (adicionando()) { Adicionando... } @else { Adicionar à sacola }
+                </ui-button>
+                <ui-button size="lg" [disabled]="produtosDisponiveis().length === 0" (clicked)="comprarAgora()">Comprar agora</ui-button>
+            </div>
             }
         </div>
     </div>
