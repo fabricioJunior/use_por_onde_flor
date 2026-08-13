@@ -11,8 +11,15 @@
     </div>
     <div class="produto-info">
         <span class="produto-nome">{{ referencia.nome }}</span>
-        <div class="produto-rodape">
+        <div class="produto-precos">
+            @if (referencia.valorPromocional != null) {
+            <span class="produto-preco-original">{{ formatarPreco(referencia.valor) }}</span>
+            <span class="produto-preco produto-preco-promocional">{{ formatarPreco(referencia.valorPromocional) }}</span>
+            } @else {
             <span class="produto-preco">{{ formatarPreco(referencia.valor) }}</span>
+            }
+        </div>
+        <div class="produto-rodape">
             <ui-button size="sm" variant="secondary" (clicked)="onAdicionarClick($event)">Adicionar</ui-button>
         </div>
     </div>

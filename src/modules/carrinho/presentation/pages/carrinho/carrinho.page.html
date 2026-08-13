@@ -18,13 +18,19 @@
                 @if (item.imagemUrl) {
                 <img [src]="item.imagemUrl" [alt]="item.nome">
                 } @else {
-                <span>Produto #{{ item.produtoId }}</span>
+                <span>Sem foto</span>
                 }
             </div>
             <div class="carrinho-item-info">
                 <span class="carrinho-item-nome">{{ item.nome || ('Produto #' + item.produtoId) }}</span>
+                @if (item.corNome || item.tamanhoNome) {
+                <span class="carrinho-item-variacao">
+                    {{ item.corNome }}{{ item.corNome && item.tamanhoNome ? ' · ' : '' }}{{ item.tamanhoNome }}
+                </span>
+                }
                 @if (item.valor != null) {
-                <span class="carrinho-item-preco">{{ formatarPreco(item.valor) }}</span>
+                <span class="carrinho-item-preco">{{ formatarPreco(item.valor) }} un.</span>
+                <span class="carrinho-item-subtotal">{{ formatarPreco(item.valor * (item.quantidade ?? 0)) }}</span>
                 }
             </div>
             <div class="carrinho-item-quantidade">

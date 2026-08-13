@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { AutenticacaoService } from "../../autenticacao/services/autenticacao.service";
+import { LojaDataSource } from "../../loja/data/loja.data.source";
 import { CarrinhoDataSource } from "../data/carrinho.data.source";
 import { CarrinhoStorageService } from "../data/carrinho.storage.service";
 import { CarrinhoItemViewDto } from "../data/dtos/carrinho-item-view.dto";
@@ -14,6 +15,7 @@ export class CarrinhoFacadeService {
         private carrinhoDataSource: CarrinhoDataSource,
         private carrinhoStorageService: CarrinhoStorageService,
         private autenticacaoService: AutenticacaoService,
+        private lojaDataSource: LojaDataSource,
     ) { }
 
     private logado(): boolean {
@@ -25,7 +27,28 @@ export class CarrinhoFacadeService {
         if (this.logado()) {
             return firstValueFrom(this.carrinhoDataSource.listar());
         }
-        return this.carrinhoStorageService.recuperarItens();
+        const itensLocais = await this.carrinhoStorageService.recuperarItens();
+        return this.enriquecerItensLocais(itensLocais);
+    }
+
+    // Storage local só tem produtoId+quantidade -- busca nome/cor/tamanho/valor/imagem em paralelo
+    // via endpoint público. Item que falhar no lookup (produto excluído, etc.) some da view em vez
+    // de quebrar a sacola inteira.
+    private async enriquecerItensLocais(itens: { produtoId?: number; quantidade?: number }[]): Promise<CarrinhoItemViewDto[]> {
+        const enriquecidos = await Promise.all(
+            itens.map(async (item) => {
+                if (item.produtoId == null) {
+                    return null;
+                }
+                try {
+                    const detalhe = await firstValueFrom(this.lojaDataSource.produto(item.produtoId));
+                    return { ...detalhe, quantidade: item.quantidade } as CarrinhoItemViewDto;
+                } catch {
+                    return null;
+                }
+            }),
+        );
+        return enriquecidos.filter((item): item is CarrinhoItemViewDto => item !== null);
     }
 
     async adicionar(produtoId: number, quantidade: number): Promise<void> {

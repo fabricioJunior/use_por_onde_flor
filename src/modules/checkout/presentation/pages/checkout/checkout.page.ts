@@ -87,12 +87,18 @@ export class CheckoutPage implements OnInit {
     async ngOnInit(): Promise<void> {
         this.loading.set(true);
         try {
-            const [status, itens] = await Promise.all([
-                firstValueFrom(this.lojaDataSource.status()),
-                this.carrinhoFacadeService.listar(),
-            ]);
-            this.lojaFechada.set(!status.aberto);
+            // Chamadas separadas: falha em status() (ex: loja sem caixa configurado) não pode
+            // esconder os itens da sacola, que vêm de uma fonte totalmente independente.
+            const itens = await this.carrinhoFacadeService.listar();
             this.itens.set(itens);
+
+            try {
+                const status = await firstValueFrom(this.lojaDataSource.status());
+                this.lojaFechada.set(!status.aberto);
+            } catch (statusError) {
+                console.error('Erro ao consultar status da loja', statusError);
+                this.lojaFechada.set(false);
+            }
 
             if (this.autenticado) {
                 const pessoa = this.localStorageService.get<UsuarioDto>('usuario_da_sessao') as UsuarioDto | null;

@@ -73,9 +73,20 @@ h1 {
     color: var(--text-primary);
 }
 
+.carrinho-item-variacao {
+    font: var(--text-caption);
+    color: var(--text-muted);
+}
+
 .carrinho-item-preco {
     font: var(--text-body-sm);
     color: var(--text-secondary);
+}
+
+.carrinho-item-subtotal {
+    font: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .carrinho-item-quantidade {

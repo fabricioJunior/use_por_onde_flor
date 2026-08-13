@@ -4,6 +4,8 @@ import { Router } from "@angular/router";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { LojaDataSource } from "../../../data/loja.data.source";
 import { EcommerceReferenciaDto } from "../../../data/dtos/ecommerce-referencia.dto";
+import { PromocaoDto } from "../../../data/dtos/promocao.dto";
+import { PromocaoPrecoService } from "../../../services/promocao-preco.service";
 import { ProdutoCardComponent } from "../../components/produto_card/produto.card.component";
 import { CarrinhoFacadeService } from "../../../../carrinho/services/carrinho.facade.service";
 import { firstValueFrom } from "rxjs";
@@ -35,23 +37,51 @@ export class LojaHomePage implements OnInit {
     temMaisPaginas = signal(false);
     itensNoCarrinho = signal(0);
     private paginaAtual = 1;
+    private mapaPromocoesPorReferencia = new Map<number, PromocaoDto>();
+    private promocoesGerais: PromocaoDto[] = [];
 
     constructor(
         private lojaDataSource: LojaDataSource,
         private carrinhoFacadeService: CarrinhoFacadeService,
+        private promocaoPrecoService: PromocaoPrecoService,
         private router: Router,
         private toastService: ToastService,
     ) { }
 
     async ngOnInit(): Promise<void> {
-        await Promise.all([this.carregarPagina(1), this.atualizarContagemCarrinho()]);
+        await Promise.all([this.carregarPromocoes(), this.atualizarContagemCarrinho()]);
+        await this.carregarPagina(1);
+    }
+
+    private async carregarPromocoes(): Promise<void> {
+        try {
+            const resposta = await firstValueFrom(this.lojaDataSource.promocoesAtivas());
+            this.mapaPromocoesPorReferencia = this.promocaoPrecoService.montarMapa(resposta.items);
+            this.promocoesGerais = this.promocaoPrecoService.promocoesGerais(resposta.items);
+        } catch (error) {
+            // Falha ao buscar promoção não pode derrubar o catálogo -- só segue sem desconto.
+            console.error('Erro ao carregar promoções ativas', error);
+        }
+    }
+
+    private aplicarPrecosPromocionais(referencias: EcommerceReferenciaDto[]): EcommerceReferenciaDto[] {
+        return referencias.map((referencia) => ({
+            ...referencia,
+            valorPromocional: this.promocaoPrecoService.calcularParaReferencia(
+                referencia.referenciaId,
+                referencia.valor,
+                this.mapaPromocoesPorReferencia,
+                this.promocoesGerais,
+            ) ?? undefined,
+        }));
     }
 
     private async carregarPagina(pagina: number): Promise<void> {
         try {
             const resposta = await firstValueFrom(this.lojaDataSource.listarReferencias(pagina, LIMITE_POR_PAGINA));
             this.paginaAtual = pagina;
-            this.referencias.update((atual) => (pagina === 1 ? resposta.items : [...atual, ...resposta.items]));
+            const itens = this.aplicarPrecosPromocionais(resposta.items);
+            this.referencias.update((atual) => (pagina === 1 ? itens : [...atual, ...itens]));
             this.temMaisPaginas.set(resposta.meta?.has_next_page ?? false);
         } catch (error) {
             console.error('Erro ao carregar catálogo da loja', error);

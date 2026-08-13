@@ -47,7 +47,24 @@
     gap: var(--space-2);
 }
 
+.produto-precos {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+}
+
 .produto-preco {
     font: var(--text-body-sm);
     color: var(--text-secondary);
+}
+
+.produto-preco-original {
+    font: var(--text-caption);
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+.produto-preco-promocional {
+    color: var(--state-error);
+    font-weight: 600;
 }

@@ -14,6 +14,9 @@ export interface EcommerceReferenciaDto {
     rascunho?: boolean;
     // GROUP_CONCAT de produtoId disponíveis, separados por vírgula. Null quando nenhum disponível.
     produtosDisponiveisIds?: string | null;
+    // Calculado no front (PromocaoPrecoService) a partir de GET /e-commerce/{id}/promocoes -- não
+    // vem da API. Presente só quando há promoção ativa aplicável, sempre menor que `valor`.
+    valorPromocional?: number;
 }
 
 export interface EcommerceReferenciaProdutoDto {
