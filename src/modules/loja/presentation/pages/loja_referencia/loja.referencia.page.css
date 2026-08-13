@@ -27,6 +27,7 @@
 }
 
 .foto-principal {
+    position: relative;
     aspect-ratio: 4 / 5;
     background: var(--surface-sunken);
     border-radius: var(--radius-lg);
@@ -34,12 +35,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    /* pan-y: deixa o scroll vertical da página passar direto; horizontal fica com o JS
+       (swipe/pan), sem o navegador brigando pelo gesto. */
+    touch-action: pan-y;
+    cursor: zoom-in;
+    user-select: none;
+}
+
+.foto-principal.zoom-ativo {
+    cursor: grab;
+    touch-action: none;
 }
 
 .foto-principal img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.15s ease-out;
+    pointer-events: none;
+}
+
+.foto-principal.zoom-ativo img {
+    transition: none;
 }
 
 .foto-placeholder {
@@ -47,20 +64,77 @@
     color: var(--text-muted);
 }
 
-.thumb-lista {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+.foto-seta {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.foto-seta-esquerda {
+    left: var(--space-3);
+}
+
+.foto-seta-direita {
+    right: var(--space-3);
+}
+
+.foto-zoom-dica {
+    position: absolute;
+    bottom: var(--space-3);
+    left: 50%;
+    transform: translateX(-50%);
+    font: var(--text-caption);
+    color: #fff;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+.tira-thumbs {
+    display: flex;
+    align-items: center;
     gap: var(--space-2);
     margin-top: var(--space-3);
 }
 
+/* Uma linha só, com scroll horizontal -- nada de quebrar em grade/múltiplas linhas. */
+.thumb-lista {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    gap: var(--space-2);
+    scrollbar-width: none;
+}
+
+.thumb-lista::-webkit-scrollbar {
+    display: none;
+}
+
 .thumb {
+    flex: 0 0 64px;
+    width: 64px;
     padding: 0;
     border: 2px solid transparent;
     border-radius: var(--radius-md);
     overflow: hidden;
     cursor: pointer;
     background: none;
+    scroll-snap-align: start;
 }
 
 .thumb img {
@@ -72,6 +146,22 @@
 
 .thumb.ativo {
     border-color: var(--brand-primary-deep);
+}
+
+.thumb-seta {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border-default);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 h1 {

@@ -22,6 +22,7 @@ import { corEhClara, corParaHex, normalizarNomeCor } from "../../utils/cor-apres
 export class LojaReferenciaPage implements OnInit {
     @ViewChild('secaoCor') secaoCorRef?: ElementRef<HTMLElement>;
     @ViewChild('secaoTamanho') secaoTamanhoRef?: ElementRef<HTMLElement>;
+    @ViewChild('thumbLista') thumbListaRef?: ElementRef<HTMLElement>;
 
     loading = signal(true);
     erro = signal('');
@@ -29,6 +30,23 @@ export class LojaReferenciaPage implements OnInit {
     produtos = signal<EcommerceReferenciaProdutoDto[]>([]);
     midias = signal<ReferenciaMidiaDto[]>([]);
     fotoSelecionada = signal<ReferenciaMidiaDto | null>(null);
+
+    zoomAtivo = signal(false);
+    panX = signal(0);
+    panY = signal(0);
+    podeRolarThumbEsquerda = signal(false);
+    podeRolarThumbDireita = signal(false);
+
+    // Estado de gesto (pointer down/move/up) -- não precisa ser signal, só usado durante o drag.
+    private gestoAtivo = false;
+    private gestoOrigemX = 0;
+    private gestoOrigemY = 0;
+    private gestoMoveu = false;
+    private panOrigemX = 0;
+    private panOrigemY = 0;
+
+    private static readonly LIMIAR_TAP_PX = 8; // abaixo disso é clique/tap, não arrasto
+    private static readonly LIMIAR_SWIPE_PX = 50; // acima disso troca de foto
 
     corSelecionada = signal<string | null>(null);
     tamanhoSelecionado = signal<string | null>(null);
@@ -143,6 +161,8 @@ export class LojaReferenciaPage implements OnInit {
             const midiasComUrl = midias.filter((midia) => midia?.url);
             this.midias.set(midiasComUrl);
             this.fotoSelecionada.set(midiasComUrl.find((midia) => midia.isDefault) ?? midiasComUrl[0] ?? null);
+            this.resetarZoom();
+            this.rolarThumbParaAtiva();
 
             this.quantidade.set(1);
             const disponiveis = produtos.filter((produto) => produto.disponivel);
@@ -160,6 +180,113 @@ export class LojaReferenciaPage implements OnInit {
 
     selecionarMidia(midia: ReferenciaMidiaDto): void {
         this.fotoSelecionada.set(midia);
+        this.resetarZoom();
+        this.rolarThumbParaAtiva();
+    }
+
+    indiceFotoAtual(): number {
+        return this.midias().findIndex((midia) => midia === this.fotoSelecionada());
+    }
+
+    fotoAnterior(): void {
+        const lista = this.midias();
+        const indice = this.indiceFotoAtual();
+        if (indice > 0) {
+            this.selecionarMidia(lista[indice - 1]);
+        }
+    }
+
+    fotoProxima(): void {
+        const lista = this.midias();
+        const indice = this.indiceFotoAtual();
+        if (indice >= 0 && indice < lista.length - 1) {
+            this.selecionarMidia(lista[indice + 1]);
+        }
+    }
+
+    private resetarZoom(): void {
+        this.zoomAtivo.set(false);
+        this.panX.set(0);
+        this.panY.set(0);
+    }
+
+    toggleZoom(): void {
+        this.zoomAtivo.update((ativo) => !ativo);
+        this.panX.set(0);
+        this.panY.set(0);
+    }
+
+    // Um único handler de pointer serve pra dois gestos, diferenciados só no fim (pointerup):
+    // - sem zoom: arrasto horizontal grande -> troca de foto (swipe).
+    // - com zoom: arrasto livre -> pan (desloca a imagem ampliada).
+    // - qualquer um com deslocamento pequeno -> tap -> alterna zoom.
+    onFotoPointerDown(event: PointerEvent): void {
+        this.gestoAtivo = true;
+        this.gestoMoveu = false;
+        this.gestoOrigemX = event.clientX;
+        this.gestoOrigemY = event.clientY;
+        this.panOrigemX = this.panX();
+        this.panOrigemY = this.panY();
+    }
+
+    onFotoPointerMove(event: PointerEvent): void {
+        if (!this.gestoAtivo) {
+            return;
+        }
+        const deltaX = event.clientX - this.gestoOrigemX;
+        const deltaY = event.clientY - this.gestoOrigemY;
+        if (Math.abs(deltaX) > LojaReferenciaPage.LIMIAR_TAP_PX || Math.abs(deltaY) > LojaReferenciaPage.LIMIAR_TAP_PX) {
+            this.gestoMoveu = true;
+        }
+        if (this.zoomAtivo()) {
+            event.preventDefault();
+            this.panX.set(this.panOrigemX + deltaX);
+            this.panY.set(this.panOrigemY + deltaY);
+        }
+    }
+
+    onFotoPointerUp(event: PointerEvent): void {
+        if (!this.gestoAtivo) {
+            return;
+        }
+        this.gestoAtivo = false;
+        const deltaX = event.clientX - this.gestoOrigemX;
+
+        if (!this.gestoMoveu) {
+            this.toggleZoom();
+            return;
+        }
+
+        if (!this.zoomAtivo() && Math.abs(deltaX) > LojaReferenciaPage.LIMIAR_SWIPE_PX) {
+            if (deltaX > 0) {
+                this.fotoAnterior();
+            } else {
+                this.fotoProxima();
+            }
+        }
+    }
+
+    private rolarThumbParaAtiva(): void {
+        setTimeout(() => {
+            const container = this.thumbListaRef?.nativeElement;
+            const ativo = container?.querySelector('.thumb.ativo') as HTMLElement | null;
+            ativo?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            this.atualizarSetasThumb();
+        });
+    }
+
+    rolarThumb(direcao: 1 | -1): void {
+        const container = this.thumbListaRef?.nativeElement;
+        container?.scrollBy({ left: direcao * 160, behavior: 'smooth' });
+    }
+
+    atualizarSetasThumb(): void {
+        const container = this.thumbListaRef?.nativeElement;
+        if (!container) {
+            return;
+        }
+        this.podeRolarThumbEsquerda.set(container.scrollLeft > 4);
+        this.podeRolarThumbDireita.set(container.scrollLeft + container.clientWidth < container.scrollWidth - 4);
     }
 
     selecionarCor(cor: string): void {

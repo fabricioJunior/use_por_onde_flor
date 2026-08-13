@@ -12,20 +12,44 @@
     @if (referencia(); as item) {
     <div class="pagina-conteudo">
         <div class="galeria">
-            <div class="foto-principal">
+            <div class="foto-principal" [class.zoom-ativo]="zoomAtivo()"
+                (pointerdown)="onFotoPointerDown($event)" (pointermove)="onFotoPointerMove($event)"
+                (pointerup)="onFotoPointerUp($event)" (pointercancel)="onFotoPointerUp($event)">
                 @if (fotoSelecionada(); as foto) {
-                <img [src]="foto.url" [alt]="item.nome">
+                <img [src]="foto.url" [alt]="item.nome"
+                    [style.transform]="zoomAtivo() ? 'scale(2) translate(' + (panX() / 2) + 'px, ' + (panY() / 2) + 'px)' : 'none'">
+                @if (midias().length > 1) {
+                @if (indiceFotoAtual() > 0) {
+                <button type="button" class="foto-seta foto-seta-esquerda" aria-label="Foto anterior"
+                    (click)="$event.stopPropagation(); fotoAnterior()">‹</button>
+                }
+                @if (indiceFotoAtual() < midias().length - 1) {
+                <button type="button" class="foto-seta foto-seta-direita" aria-label="Próxima foto"
+                    (click)="$event.stopPropagation(); fotoProxima()">›</button>
+                }
+                }
+                <span class="foto-zoom-dica" aria-hidden="true">{{ zoomAtivo() ? 'Toque para reduzir' : 'Toque para ampliar' }}</span>
                 } @else {
                 <span class="foto-placeholder">Sem foto</span>
                 }
             </div>
             @if (midias().length > 1) {
-            <div class="thumb-lista">
-                @for (midia of midias(); track midia.id) {
-                <button type="button" class="thumb" [class.ativo]="midia === fotoSelecionada()"
-                    (click)="selecionarMidia(midia)">
-                    <img [src]="midia.url" [alt]="item.nome">
-                </button>
+            <div class="tira-thumbs">
+                @if (podeRolarThumbEsquerda()) {
+                <button type="button" class="thumb-seta thumb-seta-esquerda" aria-label="Ver fotos anteriores"
+                    (click)="rolarThumb(-1)">‹</button>
+                }
+                <div class="thumb-lista" #thumbLista (scroll)="atualizarSetasThumb()">
+                    @for (midia of midias(); track midia.id) {
+                    <button type="button" class="thumb" [class.ativo]="midia === fotoSelecionada()"
+                        (click)="selecionarMidia(midia)">
+                        <img [src]="midia.url" [alt]="item.nome">
+                    </button>
+                    }
+                </div>
+                @if (podeRolarThumbDireita()) {
+                <button type="button" class="thumb-seta thumb-seta-direita" aria-label="Ver mais fotos"
+                    (click)="rolarThumb(1)">›</button>
                 }
             </div>
             }
@@ -38,19 +62,27 @@
 
             @if (cores().length > 0) {
             <section class="secao-variacao" #secaoCor>
-                <h2 class="secao-titulo">Cor: <span class="secao-titulo-valor">{{ corSelecionadaLabel() }}</span></h2>
-                <div class="grade-swatches" role="group" aria-label="Selecione a cor">
-                    @for (cor of cores(); track cor) {
-                    <button type="button" class="swatch" [class.ativo]="corSelecionada() === cor"
-                        [class.indisponivel]="!corDisponivel(cor)" [class.clara]="corEhClara(cor)"
-                        [class.neutro]="!corHex(cor)" [style.background-color]="corHex(cor)"
-                        [disabled]="!corDisponivel(cor)" [title]="normalizarNomeCor(cor)"
-                        [attr.aria-label]="'Cor: ' + normalizarNomeCor(cor) + (corSelecionada() === cor ? ', selecionada' : '') + (corDisponivel(cor) ? '' : ', indisponível')"
-                        [attr.aria-pressed]="corSelecionada() === cor"
-                        (click)="selecionarCor(cor)">
-                        <span class="swatch-check" aria-hidden="true">✓</span>
-                    </button>
-                    }
+                <h2 class="secao-titulo">
+                    Cor: <span class="secao-titulo-valor">{{ corSelecionadaLabel() }}</span>
+                    <span class="secao-titulo-contador">· {{ cores().length }} {{ cores().length === 1 ? 'opção' : 'opções' }}</span>
+                </h2>
+                <div class="tira-cores">
+                    <div class="tira-cores-scroll" #tiraCores role="group" aria-label="Selecione a cor">
+                        @for (cor of cores(); track cor) {
+                        <button type="button" class="chip-cor" [class.ativo]="corSelecionada() === cor"
+                            [class.indisponivel]="!corDisponivel(cor)"
+                            [disabled]="!corDisponivel(cor)"
+                            [attr.aria-label]="'Cor: ' + normalizarNomeCor(cor) + (corSelecionada() === cor ? ', selecionada' : '') + (corDisponivel(cor) ? '' : ', indisponível')"
+                            [attr.aria-pressed]="corSelecionada() === cor"
+                            (click)="selecionarCor(cor)">
+                            <span class="chip-cor-swatch" [class.clara]="corEhClara(cor)" [class.neutro]="!corHex(cor)"
+                                [style.background-color]="corHex(cor)">
+                                <span class="swatch-check" aria-hidden="true">✓</span>
+                            </span>
+                            <span class="chip-cor-nome">{{ normalizarNomeCor(cor) }}</span>
+                        </button>
+                        }
+                    </div>
                 </div>
             </section>
             }
