@@ -25,7 +25,7 @@ const productionConfig = {
     serverUrl: envOrDefault('SERVER_URL', 'https://apollo-use-por-onde-for.coralcloud.app'),
     pagamentoApiUrl: envOrDefault('PAGAMENTO_API_URL', envOrDefault('SERVER_URL', 'https://apollo-use-por-onde-for.coralcloud.app')),
     estoqueApiUrl: envOrDefault('ESTOQUE_API_URL', 'https://estoque.coralcloud.app'),
-    ecommerceId: Number(envOrDefault('ECOMMERCE_ID', '1')),
+    ecommerceId: Number(envOrDefault('ECOMMERCE_ID', '7')),
     ...sharedConfig,
 };
 
@@ -34,7 +34,7 @@ const developmentConfig = {
     serverUrl: envOrDefault('SERVER_URL_DEVELOPMENT', envOrDefault('SERVER_URL', 'https://apollo-api-stg.coralcloud.app')),
     pagamentoApiUrl: envOrDefault('PAGAMENTO_API_URL_DEVELOPMENT', envOrDefault('PAGAMENTO_API_URL', envOrDefault('SERVER_URL_DEVELOPMENT', 'https://apollo-use-por-onde-for.coralcloud.app'))),
     estoqueApiUrl: envOrDefault('ESTOQUE_API_URL_DEVELOPMENT', envOrDefault('ESTOQUE_API_URL', 'https://estoque.coralcloud.app')),
-    ecommerceId: Number(envOrDefault('ECOMMERCE_ID_DEVELOPMENT', envOrDefault('ECOMMERCE_ID', '1'))),
+    ecommerceId: Number(envOrDefault('ECOMMERCE_ID_DEVELOPMENT', envOrDefault('ECOMMERCE_ID', '7'))),
     ...sharedConfig,
 };
 
