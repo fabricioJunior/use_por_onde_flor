@@ -21,6 +21,7 @@ import { EnderecoDto } from "../../../data/dtos/endereco.dto";
 import { CheckoutCobrancaDto, ModalidadeEntregaPedido } from "../../../data/dtos/checkout.dto";
 import { OpcaoFreteDto } from "../../../data/dtos/frete.dto";
 import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
+import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
 
 const CEP_VALIDO = /^\d{5}-?\d{3}$/;
 
@@ -34,7 +35,7 @@ function cpfValidator(control: { value: string }) {
 @Component({
     selector: 'checkout-page',
     standalone: true,
-    imports: [CommonModule, RouterLink, ReactiveFormsModule, NgxMaskDirective, MatProgressSpinnerModule, ClipboardModule, ButtonComponent],
+    imports: [CommonModule, RouterLink, ReactiveFormsModule, NgxMaskDirective, MatProgressSpinnerModule, ClipboardModule, ButtonComponent, HeaderComponent],
     templateUrl: './checkout.page.html',
     styleUrl: './checkout.page.css',
     providers: [provideNgxMask()],
