@@ -89,7 +89,14 @@ export class CarrinhoFacadeService {
 
         for (const item of itensLocais) {
             if (item.produtoId != null && item.quantidade != null) {
-                await firstValueFrom(this.carrinhoDataSource.upsertItem({ produtoId: item.produtoId, quantidade: item.quantidade }));
+                try {
+                    await firstValueFrom(this.carrinhoDataSource.upsertItem({ produtoId: item.produtoId, quantidade: item.quantidade }));
+                } catch (error) {
+                    // Item do carrinho local pode ter ficado inválido (produto sem saldo, excluído, etc.)
+                    // -- um item ruim não pode travar a sincronização inteira (nem, por tabela, o
+                    // carregamento da página que chamou listar()/contarItens() logo em seguida).
+                    console.error('Falha ao sincronizar item do carrinho local', item, error);
+                }
             }
         }
 
