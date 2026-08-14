@@ -3,7 +3,7 @@ import { NomeComponent } from "./etapas/nome/nome.component";
 import { LogoComponent } from "../../core/common_components/logo.component";
 import { FilledButtonComponent } from "../../core/common_components/filled.button.component";
 import { InformacoesBasicasComponent } from "./etapas/informacoes_basicas/informacoes.basicas.component";
-import { NavigationStart, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
@@ -38,11 +38,15 @@ export class CadastroComponent implements OnInit, OnDestroy {
         }
     );
 
-    constructor(private localStorageService: LocalStorageService, private router: Router) {
+    // URL pra onde voltar após concluir cadastro + login (ex: veio do checkout).
+    returnUrl = signal<string | null>(null);
+
+    constructor(private localStorageService: LocalStorageService, private router: Router, private route: ActivatedRoute) {
 
     }
 
     ngOnInit(): void {
+        this.returnUrl.set(this.route.snapshot.queryParamMap.get('returnUrl'));
         this.restaurarDraftCadastro();
         this.cadastroFromGroup.valueChanges.subscribe(() => {
             this.salvarDraftCadastro();

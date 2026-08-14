@@ -73,12 +73,19 @@ export class RecuperarSenhaComponent implements OnInit {
 
     async solicitarRedefinicaoDeSenha() {
         this.carregando.set(true);
-        this.autenticacaoService.solicitaEsqueciSenha(this.emailControl.value!).then((result) => {
+        try {
+            const result = await this.autenticacaoService.solicitaEsqueciSenha(this.emailControl.value!);
             if (result.sucesso) {
                 this.emailDeRecuperacaoEnviado.set(true);
+            } else {
+                this.errorMessage.set('Não foi possível enviar o e-mail de recuperação. Tente novamente.');
             }
-
-        });
+        } catch (error) {
+            console.error('Erro ao solicitar recuperação de senha', error);
+            this.errorMessage.set('Não foi possível enviar o e-mail de recuperação. Tente novamente.');
+        } finally {
+            this.carregando.set(false);
+        }
     }
 
     irParaParaRecuperacao() {

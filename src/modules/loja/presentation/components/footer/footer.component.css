@@ -1,0 +1,60 @@
+.loja-footer {
+    background: var(--surface-inverse);
+    color: var(--text-on-inverse);
+}
+
+.loja-footer-grid {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: var(--space-8) var(--container-padding);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+}
+
+.loja-footer-marca {
+    font: var(--text-h3);
+    font-weight: 300;
+    margin-bottom: var(--space-3);
+}
+
+.loja-footer-descricao {
+    font: var(--text-body-sm);
+    color: var(--color-neutral-300);
+    max-width: 260px;
+    margin: 0;
+}
+
+.loja-footer-coluna {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    font: var(--text-body-sm);
+    color: var(--color-neutral-300);
+}
+
+.loja-footer-coluna a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.loja-footer-titulo {
+    color: var(--text-on-inverse);
+    font: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+}
+
+.loja-footer-copy {
+    border-top: 1px solid var(--color-neutral-800);
+    padding: var(--space-4) var(--container-padding);
+    font: var(--text-caption);
+    color: var(--color-neutral-400);
+    text-align: center;
+}
+
+@media (min-width: 900px) {
+    .loja-footer-grid {
+        grid-template-columns: 1.4fr 1fr 1fr;
+    }
+}

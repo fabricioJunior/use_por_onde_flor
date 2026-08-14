@@ -1,0 +1,208 @@
+:host {
+    display: block;
+    min-height: 100dvh;
+    background: var(--surface-page);
+}
+
+.checkout-shell {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--container-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+h1 {
+    font: var(--text-h1);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+h2 {
+    font: var(--text-h3);
+    color: var(--text-primary);
+    margin: 0 0 var(--space-3);
+}
+
+.checkout-estado {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-9) 0;
+}
+
+.checkout-secao {
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+}
+
+.checkout-hint {
+    font: var(--text-body-sm);
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-3);
+}
+
+.checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.checkout-form input {
+    font: var(--text-body);
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-default);
+    background: var(--surface-page);
+    color: var(--text-primary);
+}
+
+.checkout-opcoes {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.opcao {
+    font: var(--text-body-sm);
+    padding: 10px 16px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-default);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    cursor: pointer;
+    text-align: left;
+}
+
+.opcao.ativo {
+    border-color: var(--brand-primary-deep);
+    background: var(--brand-tint);
+    color: var(--brand-primary-deep);
+}
+
+.opcao:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.checkout-enderecos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.opcao.endereco {
+    width: 100%;
+    border-radius: var(--radius-md);
+}
+
+.checkout-frete {
+    margin-top: var(--space-3);
+}
+
+.checkout-opcoes-frete {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.opcao.frete {
+    width: 100%;
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2);
+    font: var(--text-body-sm);
+}
+
+.checkout-link {
+    align-self: flex-start;
+    background: none;
+    border: none;
+    color: var(--link-color);
+    cursor: pointer;
+    font: var(--text-body-sm);
+    padding: var(--space-2) 0;
+}
+
+.checkout-resumo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.checkout-resumo-item {
+    display: flex;
+    justify-content: space-between;
+    font: var(--text-body-sm);
+    color: var(--text-secondary);
+}
+
+.checkout-resumo-item-variacao {
+    display: block;
+    font: var(--text-caption);
+    color: var(--text-muted);
+}
+
+.checkout-resumo-total {
+    display: flex;
+    justify-content: space-between;
+    font: var(--text-h3);
+    color: var(--text-primary);
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.checkout-aviso {
+    font: var(--text-body-sm);
+    color: var(--state-error);
+}
+
+.checkout-pendencias {
+    margin: 0;
+    padding-left: var(--space-5);
+    font: var(--text-body-sm);
+    color: var(--state-error);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.checkout-pix {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    text-align: center;
+}
+
+.checkout-pix-qrcode {
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+}
+
+.checkout-pix-copia {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+    word-break: break-all;
+    font: var(--text-body-sm);
+    color: var(--text-secondary);
+}
+
+.checkout-pix-copia button {
+    align-self: center;
+    font: var(--text-button);
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    cursor: pointer;
+}

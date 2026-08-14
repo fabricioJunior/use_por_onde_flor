@@ -1,0 +1,79 @@
+.produto-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    cursor: pointer;
+}
+
+.produto-foto {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    background: var(--surface-sunken);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.produto-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.produto-foto-placeholder {
+    font: var(--text-caption);
+    color: var(--text-muted);
+}
+
+.produto-badge-novo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+}
+
+.produto-nome {
+    font: var(--text-body);
+    color: var(--text-primary);
+}
+
+.produto-rodape {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.produto-rodape ui-button {
+    display: block;
+}
+
+/* ButtonComponent renderiza o <button> real dentro do próprio template encapsulado -- precisa
+   ::ng-deep pra esticar (fullWidth não existe como @Input no ui-button hoje). */
+.produto-rodape ::ng-deep ui-button .ui-button {
+    width: 100%;
+}
+
+.produto-precos {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+}
+
+.produto-preco {
+    font: var(--text-body-sm);
+    color: var(--text-secondary);
+}
+
+.produto-preco-original {
+    font: var(--text-caption);
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+.produto-preco-promocional {
+    color: var(--state-error);
+    font-weight: 600;
+}

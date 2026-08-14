@@ -1,0 +1,53 @@
+.ui-button {
+    font-family: var(--font-sans);
+    font: var(--text-button);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+}
+
+.ui-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.ui-button.sm { padding: 8px 16px; font-size: 13px; }
+.ui-button.md { padding: 12px 24px; font-size: 14px; }
+.ui-button.lg { padding: 16px 32px; font-size: 15px; }
+
+.ui-button.primary {
+    background: var(--brand-primary-deep);
+    color: var(--text-on-brand);
+    border: 1px solid var(--brand-primary-deep);
+}
+
+.ui-button.primary:not(:disabled):hover {
+    background: var(--brand-primary);
+    border-color: var(--brand-primary);
+}
+
+.ui-button.secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
+}
+
+.ui-button.secondary:not(:disabled):hover {
+    background: var(--surface-sunken);
+}
+
+.ui-button.ghost {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid transparent;
+}
+
+.ui-button.ghost:not(:disabled):hover {
+    background: var(--surface-sunken);
+}

@@ -1,0 +1,31 @@
+.ui-radio {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-sans);
+    font: var(--text-body-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dot.checked {
+    border-color: var(--brand-primary-deep);
+}
+
+.inner {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--brand-primary-deep);
+}

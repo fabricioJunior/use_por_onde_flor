@@ -1,0 +1,39 @@
+<div class="loja-shell">
+    <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
+
+    <loja-hero (verColecao)="scrollParaProdutos()"></loja-hero>
+
+    <main class="loja-content" id="produtos" #produtos>
+        @if (loading()) {
+        <div class="loja-estado">
+            <mat-spinner diameter="42"></mat-spinner>
+            <p>Carregando produtos...</p>
+        </div>
+        } @else if (erro()) {
+        <div class="loja-estado">
+            <p>{{ erro() }}</p>
+        </div>
+        } @else if (referencias().length === 0) {
+        <div class="loja-estado">
+            <p>Nenhum produto disponível no momento.</p>
+        </div>
+        } @else {
+        <div class="loja-grid">
+            @for (referencia of referencias(); track referencia.id) {
+            <produto-card [referencia]="referencia" (abrir)="abrirReferencia(referencia)"
+                (adicionar)="adicionarAoCarrinho(referencia)"></produto-card>
+            }
+        </div>
+
+        @if (temMaisPaginas()) {
+        <div class="loja-carregar-mais">
+            <ui-button variant="secondary" [disabled]="carregandoMais()" (clicked)="carregarMais()">
+                @if (carregandoMais()) { Carregando... } @else { Ver mais produtos }
+            </ui-button>
+        </div>
+        }
+        }
+    </main>
+
+    <loja-footer></loja-footer>
+</div>

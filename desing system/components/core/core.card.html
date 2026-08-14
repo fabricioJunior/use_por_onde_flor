@@ -1,0 +1,30 @@
+<!-- @dsCard group="Components" viewport="700x320" name="Core: Button, Badge, Tag, Card" -->
+<link rel="stylesheet" href="../../styles.css">
+<script src="../../_ds_bundle.js"></script>
+<div id="root"></div>
+<script type="text/babel">
+const { Button, Badge, Tag, Card } = window.PorOndeFlor;
+function Demo() {
+  return (
+    <div style={{fontFamily:'var(--font-sans)',padding:'24px',background:'var(--surface-page)',display:'flex',flexDirection:'column',gap:'20px'}}>
+      <div style={{display:'flex',gap:'12px',alignItems:'center'}}>
+        <Button variant="primary">Adicionar à sacola</Button>
+        <Button variant="secondary">Ver detalhes</Button>
+        <Button variant="ghost" size="sm">Cancelar</Button>
+        <Button variant="primary" disabled>Esgotado</Button>
+      </div>
+      <div style={{display:'flex',gap:'10px',alignItems:'center'}}>
+        <Badge tone="brand">Nova coleção</Badge>
+        <Badge tone="neutral">Básico</Badge>
+        <Tag onRemove={()=>{}}>Tamanho M</Tag>
+        <Tag onRemove={()=>{}}>Verde</Tag>
+      </div>
+      <div style={{display:'flex',gap:'16px'}}>
+        <Card style={{flex:1}}><div style={{font:'var(--text-h3)',color:'var(--text-primary)'}}>Vestido Linho</div><div style={{font:'var(--text-body-sm)',color:'var(--text-secondary)',marginTop:'4px'}}>R$ 349</div></Card>
+        <Card elevated style={{flex:1}}><div style={{font:'var(--text-h3)',color:'var(--text-primary)'}}>Card elevado</div></Card>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>

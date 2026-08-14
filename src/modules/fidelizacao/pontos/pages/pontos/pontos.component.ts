@@ -9,7 +9,6 @@ import { PontosDto } from "../../data/dto/pontos.dto";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { UsuarioDto } from "../../../../autenticacao/data/dto/usuario.dto";
 import { Router } from "@angular/router";
-import { AutenticacaoService } from "../../../../autenticacao/services/autenticacao.service";
 import { TextButtonComponent } from "../../../../core/common_components/text.button.component";
 
 @Component(
@@ -37,9 +36,8 @@ export class PontosComponent implements OnInit {
         this.pessoa.set(await this.pontosService.recuperarUsuario());
     }
 
-    logout() {
-        this.autenticacaoService.logout();
-        this.router.navigate(['/login']);
+    voltarParaSite() {
+        this.router.navigate(['/loja']);
     }
 
     onRegulamentoTap = () => {
@@ -55,7 +53,7 @@ export class PontosComponent implements OnInit {
         return dia === 28 && mes === 2 && ano === 2026;
     }
 
-    constructor(private pontosService: PontosService, private router: Router, private autenticacaoService: AutenticacaoService) {
+    constructor(private pontosService: PontosService, private router: Router) {
 
     }
 

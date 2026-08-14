@@ -20,6 +20,9 @@ import { PontosDataSource } from '../modules/fidelizacao/pontos/data/pontos.data
 import { RecuperarSenhaDataSource } from '../modules/autenticacao/data/recuperar.senha.data.source';
 import { ReferenciaDataSource } from '../modules/referencias/data/referencia.data.source';
 import { ReferenciaService } from '../modules/referencias/services/referencia.service';
+import { PedidosDataSource } from '../modules/pedidos/data/pedidos.data.source';
+import { PedidoPublicoDataSource } from '../modules/pedidos/data/pedido-publico.data.source';
+import { PedidosService } from '../modules/pedidos/services/pedidos.service';
 const maskConfig: Partial<NgxMaskConfig> = {
   validation: false,
 };
@@ -45,7 +48,10 @@ export const appConfig: ApplicationConfig = {
     { provide: PontosDataSource, },
     { provide: RecuperarSenhaDataSource },
     { provide: ReferenciaDataSource },
-    { provide: ReferenciaService }
+    { provide: ReferenciaService },
+    { provide: PedidosDataSource },
+    { provide: PedidoPublicoDataSource },
+    { provide: PedidosService }
 
   ]
 };

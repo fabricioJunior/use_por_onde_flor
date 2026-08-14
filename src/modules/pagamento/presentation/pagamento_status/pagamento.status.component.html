@@ -1,5 +1,9 @@
 <div class="container">
     <app-logo> </app-logo>
+    @if(pedidoId()){
+    <h1>Pedido #{{ pedidoId() }} recebido!</h1>
+    <p>Assim que o pagamento for confirmado, você será notificado.</p>
+    } @else {
     <h1>Processando...</h1>
     <mat-spinner></mat-spinner>
     @if(pagamentoExpirado()){
@@ -7,5 +11,6 @@
     }
     @if(fluxoInvalido()){
     <h1>Nao foi possivel processar este pagamento.</h1>
+    }
     }
 </div>

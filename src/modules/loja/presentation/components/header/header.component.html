@@ -1,0 +1,30 @@
+<header class="loja-header">
+    <div class="loja-header-inner">
+        <a routerLink="/loja" class="loja-logo-link">
+            <img src="/logo-primary-color.png" alt="Por Onde Flor" class="loja-logo-img">
+        </a>
+        <div class="loja-header-acoes">
+            <a routerLink="/carrinho" class="loja-sacola">
+                Sacola
+                @if (itensNoCarrinho > 0) {
+                <span class="loja-sacola-badge">{{ itensNoCarrinho }}</span>
+                }
+            </a>
+            @if (estaAutenticado()) {
+            <details class="loja-conta">
+                <summary class="loja-conta-resumo">
+                    <span class="loja-conta-icone">&#128100;</span>
+                    {{ nomeDoUsuario() }}
+                </summary>
+                <div class="loja-conta-menu">
+                    <a routerLink="/home">Cartão fidelidade</a>
+                    <a routerLink="/pedidos">Meus pedidos</a>
+                    <button type="button" class="loja-conta-sair" (click)="logout()">Sair</button>
+                </div>
+            </details>
+            } @else {
+            <a routerLink="/login" [queryParams]="{returnUrl: router.url}" class="loja-login-link">Login</a>
+            }
+        </div>
+    </div>
+</header>

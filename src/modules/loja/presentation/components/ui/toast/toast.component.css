@@ -1,0 +1,25 @@
+.ui-toast {
+    font-family: var(--font-sans);
+    font: var(--text-body-sm);
+    padding: 14px 20px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ui-toast.neutral {
+    background: var(--surface-inverse);
+    color: var(--text-on-inverse);
+}
+
+.ui-toast.success {
+    background: var(--color-green-800);
+    color: #fff;
+}
+
+.ui-toast.error {
+    background: var(--state-error);
+    color: #fff;
+}

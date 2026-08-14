@@ -1,0 +1,159 @@
+<div class="pagina-shell">
+    <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
+    @if (loading()) {
+    <div class="pagina-estado">
+        <mat-spinner diameter="42"></mat-spinner>
+        <p>Carregando produto...</p>
+    </div>
+    } @else if (erro()) {
+    <div class="pagina-estado">
+        <p>{{ erro() }}</p>
+    </div>
+    } @else {
+    @if (referencia(); as item) {
+    <div class="pagina-conteudo">
+        <div class="galeria">
+            <div class="foto-principal" [class.zoom-ativo]="zoomAtivo()"
+                (pointerdown)="onFotoPointerDown($event)" (pointermove)="onFotoPointerMove($event)"
+                (pointerup)="onFotoPointerUp($event)" (pointercancel)="onFotoPointerUp($event)">
+                @if (fotoSelecionada(); as foto) {
+                <img [src]="foto.url" [alt]="item.nome"
+                    [style.transform]="zoomAtivo() ? 'scale(2) translate(' + (panX() / 2) + 'px, ' + (panY() / 2) + 'px)' : 'none'">
+                @if (midias().length > 1) {
+                @if (indiceFotoAtual() > 0) {
+                <button type="button" class="foto-seta foto-seta-esquerda" aria-label="Foto anterior"
+                    (click)="$event.stopPropagation(); fotoAnterior()">‹</button>
+                }
+                @if (indiceFotoAtual() < midias().length - 1) {
+                <button type="button" class="foto-seta foto-seta-direita" aria-label="Próxima foto"
+                    (click)="$event.stopPropagation(); fotoProxima()">›</button>
+                }
+                }
+                <span class="foto-zoom-dica" aria-hidden="true">{{ zoomAtivo() ? 'Toque para reduzir' : 'Toque para ampliar' }}</span>
+                } @else {
+                <span class="foto-placeholder">Sem foto</span>
+                }
+            </div>
+            @if (midias().length > 1) {
+            <div class="tira-thumbs">
+                @if (podeRolarThumbEsquerda()) {
+                <button type="button" class="thumb-seta thumb-seta-esquerda" aria-label="Ver fotos anteriores"
+                    (click)="rolarThumb(-1)">‹</button>
+                }
+                <div class="thumb-lista" #thumbLista (scroll)="atualizarSetasThumb()">
+                    @for (midia of midias(); track midia.id) {
+                    <button type="button" class="thumb" [class.ativo]="midia === fotoSelecionada()"
+                        (click)="selecionarMidia(midia)">
+                        <img [src]="midia.url" [alt]="item.nome">
+                    </button>
+                    }
+                </div>
+                @if (podeRolarThumbDireita()) {
+                <button type="button" class="thumb-seta thumb-seta-direita" aria-label="Ver mais fotos"
+                    (click)="rolarThumb(1)">›</button>
+                }
+            </div>
+            }
+        </div>
+
+        <div class="detalhes">
+            <h1>{{ item.nome }}</h1>
+            <p class="preco">{{ formatarPreco(item.valor) }}</p>
+            <p class="descricao">{{ item.descricao || 'Sem descrição disponível.' }}</p>
+
+            @if (cores().length > 0) {
+            <section class="secao-variacao" #secaoCor>
+                <h2 class="secao-titulo">
+                    Cor: <span class="secao-titulo-valor">{{ corSelecionadaLabel() }}</span>
+                    <span class="secao-titulo-contador">· {{ cores().length }} {{ cores().length === 1 ? 'opção' : 'opções' }}</span>
+                </h2>
+                <div class="tira-cores">
+                    @if (podeRolarCorEsquerda()) {
+                    <button type="button" class="tira-seta tira-seta-esquerda" aria-label="Ver cores anteriores"
+                        (click)="rolarCor(-1)">‹</button>
+                    }
+                    <div class="tira-cores-scroll" #corLista (scroll)="atualizarSetasCor()" role="group" aria-label="Selecione a cor">
+                        @for (cor of cores(); track cor) {
+                        <button type="button" class="chip-cor" [class.ativo]="corSelecionada() === cor"
+                            [class.indisponivel]="!corDisponivel(cor)"
+                            [disabled]="!corDisponivel(cor)"
+                            [attr.aria-label]="'Cor: ' + normalizarNomeCor(cor) + (corSelecionada() === cor ? ', selecionada' : '') + (corDisponivel(cor) ? '' : ', indisponível')"
+                            [attr.aria-pressed]="corSelecionada() === cor"
+                            (click)="selecionarCor(cor)">
+                            <span class="chip-cor-swatch" [class.clara]="corEhClara(cor)" [class.neutro]="!corHex(cor)"
+                                [style.background-color]="corHex(cor)">
+                                <span class="swatch-check" aria-hidden="true">✓</span>
+                            </span>
+                            <span class="chip-cor-nome">{{ normalizarNomeCor(cor) }}</span>
+                        </button>
+                        }
+                    </div>
+                    @if (podeRolarCorDireita()) {
+                    <button type="button" class="tira-seta tira-seta-direita" aria-label="Ver mais cores"
+                        (click)="rolarCor(1)">›</button>
+                    }
+                </div>
+            </section>
+            }
+
+            @if (tamanhosParaCorAtual().length > 0) {
+            <section class="secao-variacao" #secaoTamanho>
+                <h2 class="secao-titulo">Tamanho: <span class="secao-titulo-valor">{{ tamanhoSelecionadoLabel() }}</span></h2>
+                <div class="tira-cores">
+                    @if (podeRolarTamanhoEsquerda()) {
+                    <button type="button" class="tira-seta tira-seta-esquerda" aria-label="Ver tamanhos anteriores"
+                        (click)="rolarTamanho(-1)">‹</button>
+                    }
+                    <div class="seletor-opcoes" #tamanhoLista (scroll)="atualizarSetasTamanho()" role="group" aria-label="Selecione o tamanho">
+                        @for (tamanho of tamanhosParaCorAtual(); track tamanho) {
+                        <button type="button" class="opcao" [class.ativo]="tamanhoSelecionado() === tamanho"
+                            [class.esgotado]="!tamanhoDisponivel(tamanho)" [disabled]="!tamanhoDisponivel(tamanho)"
+                            [attr.aria-label]="'Tamanho: ' + tamanho + (tamanhoSelecionado() === tamanho ? ', selecionado' : '') + (tamanhoDisponivel(tamanho) ? '' : ', indisponível')"
+                            [attr.aria-pressed]="tamanhoSelecionado() === tamanho"
+                            (click)="selecionarTamanho(tamanho)">{{ tamanho }}</button>
+                        }
+                    </div>
+                    @if (podeRolarTamanhoDireita()) {
+                    <button type="button" class="tira-seta tira-seta-direita" aria-label="Ver mais tamanhos"
+                        (click)="rolarTamanho(1)">›</button>
+                    }
+                </div>
+            </section>
+            }
+
+            @if (produtosDisponiveis().length === 0) {
+            <p class="aviso">Produto indisponível no momento.</p>
+            } @else if (mensagemValidacao()) {
+            <p class="aviso" role="alert">{{ mensagemValidacao() }}</p>
+            }
+
+            @if (produtoSelecionado(); as selecionado) {
+            <div class="quantidade">
+                <span class="seletor-titulo">Quantidade</span>
+                <div class="quantidade-stepper">
+                    <button type="button" class="stepper-botao" [disabled]="quantidade() <= 1"
+                        (click)="decrementarQuantidade()">−</button>
+                    <span class="quantidade-valor">{{ quantidade() }}</span>
+                    <button type="button" class="stepper-botao" [disabled]="quantidade() >= selecionado.saldo"
+                        (click)="incrementarQuantidade()">+</button>
+                </div>
+            </div>
+            }
+
+            @if (adicionado()) {
+            <div class="confirmacao">
+                <p>Adicionado à sacola.</p>
+                <ui-button variant="secondary" size="sm" (clicked)="irParaCarrinho()">Ver sacola</ui-button>
+            </div>
+            }
+            <div class="acoes-compra">
+                <ui-button size="lg" variant="secondary" [disabled]="!produtoSelecionado() || adicionando()" (clicked)="adicionarAoCarrinho()">
+                    @if (adicionando()) { Adicionando... } @else { Adicionar à sacola }
+                </ui-button>
+                <ui-button size="lg" [disabled]="!produtoSelecionado()" (clicked)="comprarAgora()">Comprar agora</ui-button>
+            </div>
+        </div>
+    </div>
+    }
+    }
+</div>

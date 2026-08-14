@@ -1,0 +1,16 @@
+<!-- @dsCard group="Components" viewport="700x140" name="Navigation: Tabs" -->
+<link rel="stylesheet" href="../../styles.css">
+<script src="../../_ds_bundle.js"></script>
+<div id="root"></div>
+<script type="text/babel">
+const { Tabs } = window.PorOndeFlor;
+function Demo() {
+  const [active, setActive] = React.useState('d');
+  return (
+    <div style={{fontFamily:'var(--font-sans)',padding:'24px',background:'var(--surface-page)'}}>
+      <Tabs items={[{value:'d',label:'Descrição'},{value:'a',label:'Avaliações'},{value:'g',label:'Guia de medidas'}]} active={active} onChange={setActive} />
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>

@@ -1,0 +1,53 @@
+:root {
+  /* Brand hues — sampled directly from the logo, do not alter */
+  --color-green-50: #EAF0EB;
+  --color-green-100: #D6E1D7;
+  --color-green-200: #BECBC0;
+  --color-green-300: #A3B5A6;
+  --color-green-400: #8AA48D;
+  --color-green-500: #709274; /* logo — verde exato extraído */
+  --color-green-600: #5F7F63;
+  --color-green-700: #4E6C52; /* logo dark script / dot */
+  --color-green-800: #3D5641;
+  --color-green-900: #2C3F2F;
+
+  /* Warm neutrals — sophisticated, low-chroma, not stark */
+  --color-neutral-0: #FFFFFF;
+  --color-neutral-50: oklch(98% 0.004 75);
+  --color-neutral-100: oklch(95.5% 0.006 75);
+  --color-neutral-200: oklch(90% 0.008 75);
+  --color-neutral-300: oklch(82% 0.01 75);
+  --color-neutral-400: oklch(70% 0.012 75);
+  --color-neutral-500: oklch(58% 0.012 75);
+  --color-neutral-600: oklch(46% 0.01 75);
+  --color-neutral-700: oklch(36% 0.01 75);
+  --color-neutral-800: oklch(26% 0.008 75);
+  --color-neutral-900: oklch(17% 0.006 75);
+
+  /* Semantic aliases */
+  --surface-page: var(--color-neutral-50);
+  --surface-card: var(--color-neutral-0);
+  --surface-sunken: var(--color-neutral-100);
+  --surface-inverse: var(--color-neutral-900);
+
+  --text-primary: var(--color-neutral-900);
+  --text-secondary: var(--color-neutral-600);
+  --text-muted: var(--color-neutral-400);
+  --text-on-brand: var(--color-neutral-0);
+  --text-on-inverse: var(--color-neutral-50);
+
+  --border-subtle: var(--color-neutral-200);
+  --border-default: var(--color-neutral-300);
+
+  --brand-primary: var(--color-green-500);
+  --brand-primary-hover: var(--color-green-600);
+  --brand-primary-deep: var(--color-green-700);
+  --brand-tint: var(--color-green-50);
+
+  --link-color: var(--color-green-700);
+  --link-color-hover: var(--color-green-800);
+
+  --state-success: var(--color-green-600);
+  --state-error: #A6432E;
+  --state-warning: #A67B2E;
+}

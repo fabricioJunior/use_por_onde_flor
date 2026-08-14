@@ -22,6 +22,10 @@ import { AutenticacaoService } from '../modules/autenticacao/services/autenticac
 import { inject } from '@angular/core';
 import { RegulamentoComponent } from '../modules/fidelizacao/pontos/pages/regulamento/regulamento.component';
 import { ReferenciaComponent } from '../modules/referencias/pages/referencia/referencia.component';
+import { LojaHomePage } from '../modules/loja/presentation/pages/loja_home/loja.home.page';
+import { LojaReferenciaPage } from '../modules/loja/presentation/pages/loja_referencia/loja.referencia.page';
+import { CarrinhoPage } from '../modules/carrinho/presentation/pages/carrinho/carrinho.page';
+import { CheckoutPage } from '../modules/checkout/presentation/pages/checkout/checkout.page';
 
 
 export const autenticacaoGuard: CanMatchFn = (route: Route, segments: UrlSegment[]) => {
@@ -30,7 +34,8 @@ export const autenticacaoGuard: CanMatchFn = (route: Route, segments: UrlSegment
 
     const estaAutenticado = authService.estaAutenticado();
     if (!estaAutenticado) {
-        router.navigate(['/login']);
+        const returnUrl = '/' + segments.map(s => s.path).join('/');
+        router.navigate(['/login'], { queryParams: { returnUrl } });
         return false;
     }
     return true;
@@ -87,10 +92,24 @@ export const routes: Routes = [
 
         ]
     },
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: '', redirectTo: 'loja', pathMatch: 'full' },
 
     {
-        path: 'pagamento', component: PagamentoStatusComponent, canMatch: [autenticacaoGuard]
+        // Público -- é o retorno do gateway de pagamento avulso E do checkout novo (guest ou
+        // logado), então não pode exigir sessão.
+        path: 'pagamento', component: PagamentoStatusComponent,
+    },
+    {
+        path: 'loja', component: LojaHomePage,
+    },
+    {
+        path: 'loja/referencia/:id', component: LojaReferenciaPage,
+    },
+    {
+        path: 'carrinho', component: CarrinhoPage,
+    },
+    {
+        path: 'checkout', component: CheckoutPage,
     },
     {
         path: 'produtos', component: ProdutosComponent,
@@ -115,6 +134,23 @@ export const routes: Routes = [
     },
     {
         path: 'pagamento/:orderNsu', component: PagamentoComponent,
+        canMatch: [autenticacaoGuard]
+    },
+    {
+        // ANTES de 'pedidos' (lista) propositalmente -- autenticacaoGuard (canMatch) da lista
+        // recebe TODOS os segmentos restantes da URL, não só os dela. Pra '/pedidos/25', se 'pedidos'
+        // fosse tentada primeiro, o guard já dispararia router.navigate(['/login']) como efeito
+        // colateral antes do Angular sequer tentar esta rota (mais específica, sem canMatch,
+        // acessível sem login via link com token -- ver PedidoDetalhePage, que decide internamente
+        // entre busca autenticada e pública via ?token=).
+        path: 'pedidos/:id',
+        loadComponent: () => import('../modules/pedidos/presentation/pages/pedido_detalhe/pedido.detalhe.page').then(m => m.PedidoDetalhePage),
+    },
+    {
+        // Lazy: só carrega o bundle de pedidos quando o cliente acessa, mantém o initial bundle
+        // dentro do budget do build.
+        path: 'pedidos',
+        loadComponent: () => import('../modules/pedidos/presentation/pages/pedidos/pedidos.page').then(m => m.PedidosPage),
         canMatch: [autenticacaoGuard]
     },
 

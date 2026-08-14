@@ -1,0 +1,430 @@
+:host {
+    display: block;
+    min-height: 100dvh;
+    background: var(--surface-page);
+    /* Rede de segurança contra qualquer overflow horizontal residual (imagem, tira de cores/tamanhos) --
+       nunca deveria disparar depois do min-width:0 abaixo, mas evita regressão silenciosa. */
+    overflow-x: hidden;
+}
+
+.pagina-shell {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: var(--space-6) var(--container-padding);
+}
+
+.pagina-estado {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-9) 0;
+    color: var(--text-secondary);
+}
+
+.pagina-conteudo {
+    margin-top: var(--space-6);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+}
+
+/* min-width:0 nos itens do grid -- sem isso, o item herda a largura mínima de conteúdo da imagem
+   (min-width:auto é o default de item de grid/flex) e empurra a página inteira pra largura da foto,
+   gerando scroll horizontal (e o vertical junto, como consequência do layout esticado). */
+.galeria,
+.detalhes {
+    min-width: 0;
+}
+
+.foto-principal {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--surface-sunken);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* pan-y: deixa o scroll vertical da página passar direto; horizontal fica com o JS
+       (swipe/pan), sem o navegador brigando pelo gesto. */
+    touch-action: pan-y;
+    cursor: zoom-in;
+    user-select: none;
+}
+
+.foto-principal.zoom-ativo {
+    cursor: grab;
+    touch-action: none;
+}
+
+.foto-principal img {
+    width: 100%;
+    height: 100%;
+    /* contain: mostra a imagem inteira (sem cortar) -- cover cortava fotos fora do 4:5 no mobile. */
+    object-fit: contain;
+    transition: transform 0.15s ease-out;
+    pointer-events: none;
+}
+
+.foto-principal.zoom-ativo img {
+    transition: none;
+}
+
+.foto-placeholder {
+    font: var(--text-caption);
+    color: var(--text-muted);
+}
+
+.foto-seta {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.foto-seta-esquerda {
+    left: var(--space-3);
+}
+
+.foto-seta-direita {
+    right: var(--space-3);
+}
+
+.foto-zoom-dica {
+    position: absolute;
+    bottom: var(--space-3);
+    left: 50%;
+    transform: translateX(-50%);
+    font: var(--text-caption);
+    color: #fff;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+.tira-thumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+}
+
+/* Uma linha só, com scroll horizontal -- nada de quebrar em grade/múltiplas linhas. */
+.thumb-lista {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    gap: var(--space-2);
+    scrollbar-width: none;
+}
+
+.thumb-lista::-webkit-scrollbar {
+    display: none;
+}
+
+.thumb {
+    flex: 0 0 64px;
+    width: 64px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    cursor: pointer;
+    background: none;
+    scroll-snap-align: start;
+}
+
+.thumb img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+.thumb.ativo {
+    border-color: var(--brand-primary-deep);
+}
+
+.thumb-seta {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border-default);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font: var(--text-h1);
+    color: var(--text-primary);
+    margin: 0 0 var(--space-2);
+}
+
+.preco {
+    font: var(--text-h3);
+    color: var(--brand-primary-deep);
+    margin: 0 0 var(--space-4);
+}
+
+.descricao {
+    font: var(--text-body);
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-5);
+    white-space: pre-line;
+}
+
+.secao-variacao {
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-default);
+}
+
+.secao-titulo {
+    font: var(--text-body-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-2);
+}
+
+.secao-titulo-valor {
+    color: var(--text-primary);
+    font-weight: 400;
+}
+
+/* Wrapper genérico das tiras horizontais de seleção (cor e tamanho) -- setas + tira com scroll.
+   No mobile, sangra até a margem real da tela e reaplica só 16px de respiro (--space-4), em vez de
+   herdar o --container-padding (bem maior) do resto da página. */
+.tira-cores {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.tira-cores-scroll,
+.seletor-opcoes {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: var(--space-3);
+    scrollbar-width: none;
+    padding: 2px;
+}
+
+.tira-cores-scroll::-webkit-scrollbar,
+.seletor-opcoes::-webkit-scrollbar {
+    display: none;
+}
+
+.tira-seta {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border-default);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 899px) {
+    .tira-cores {
+        margin: 0 calc(-1 * var(--container-padding));
+        padding: 0 var(--space-4);
+    }
+}
+
+.chip-cor {
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    /* Área de toque mínima recomendada (44px) mesmo com o swatch visual menor. */
+    min-width: 44px;
+    padding: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    outline-offset: 3px;
+}
+
+.chip-cor-swatch {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chip-cor-swatch.clara {
+    border-color: var(--border-strong, var(--border-default));
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.chip-cor-swatch.neutro {
+    background:
+        repeating-linear-gradient(45deg, var(--surface-sunken), var(--surface-sunken) 4px, var(--surface-card) 4px, var(--surface-card) 8px);
+}
+
+.chip-cor.ativo .chip-cor-swatch {
+    box-shadow: 0 0 0 2px var(--surface-card), 0 0 0 4px var(--brand-primary-deep);
+}
+
+.chip-cor-nome {
+    font: var(--text-caption);
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.chip-cor.ativo .chip-cor-nome {
+    color: var(--brand-primary-deep);
+    font-weight: 600;
+}
+
+.swatch-check {
+    display: none;
+    font-size: 14px;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+}
+
+.chip-cor.ativo .swatch-check {
+    display: block;
+}
+
+.chip-cor.indisponivel {
+    cursor: not-allowed;
+    opacity: 0.35;
+}
+
+/* Indisponível não pode depender só de opacidade (comunicação por cor/contraste é insuficiente) --
+   risca o swatch na diagonal. */
+.chip-cor.indisponivel .chip-cor-swatch::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(to top right, transparent calc(50% - 1px), var(--text-muted), transparent calc(50% + 1px));
+    border-radius: 50%;
+}
+
+.seletor-opcoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.opcao {
+    flex: 0 0 auto;
+    font: var(--text-body-sm);
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-default);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.opcao.ativo {
+    border-color: var(--brand-primary-deep);
+    background: var(--brand-tint);
+    color: var(--brand-primary-deep);
+}
+
+.opcao.esgotado {
+    opacity: 0.45;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.quantidade {
+    margin-bottom: var(--space-5);
+}
+
+.quantidade-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.stepper-botao {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-default);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    font: var(--text-body);
+    cursor: pointer;
+    line-height: 1;
+}
+
+.stepper-botao:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.quantidade-valor {
+    font: var(--text-body);
+    color: var(--text-primary);
+    min-width: 1.5em;
+    text-align: center;
+}
+
+.aviso {
+    font: var(--text-body-sm);
+    color: var(--state-error);
+    margin-bottom: var(--space-4);
+}
+
+.confirmacao {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--state-success);
+}
+
+.acoes-compra {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+@media (min-width: 900px) {
+    .pagina-conteudo {
+        grid-template-columns: minmax(340px, 480px) 1fr;
+    }
+}

@@ -16,7 +16,7 @@
 
     <mat-checkbox class="aceite-regulamento"
         formControlName="aceitouRegulamento">
-        Declaro que li o regulamento do cartão fidelidade.
+        Declaro que li o regulamento do site.
     </mat-checkbox>
     <button class="btn-regulamento" mat-button type="button"
         (click)="abrirRegulamento()">
@@ -24,8 +24,7 @@
     </button>
 
     @if(formGroup.get('aceitouRegulamento')?.value !== true){
-    <p class="aceite-error">Você deve aceitar o regulamento do cartão
-        fidelidade.</p>
+    <p class="aceite-error">Você deve aceitar o regulamento do site.</p>
     }
 
     @if(loading()){

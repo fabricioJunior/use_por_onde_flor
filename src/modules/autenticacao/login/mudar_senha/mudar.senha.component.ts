@@ -86,16 +86,21 @@ export class MudarSenhaComponent implements OnInit {
         this.atualizarSenhaEnabled.set(result);
     }
 
-    atualizarSenha() {
+    async atualizarSenha() {
         this.carregando.set(true);
-        this.autenticacaoService.mudarSenha(this.senhaControl.value!, this.codigoControl.value!).then((result) => {
+        try {
+            const result = await this.autenticacaoService.mudarSenha(this.senhaControl.value!, this.codigoControl.value!);
             if (result.sucesso) {
                 this.senhaAtualizadaComSucesso.set(true);
             } else {
                 this.errorMessageCode.set(result.mensagem || 'Erro ao atualizar a senha');
-                this.carregando.set(false);
             }
-        });
+        } catch (error) {
+            console.error('Erro ao atualizar senha', error);
+            this.errorMessageCode.set('Erro ao atualizar a senha. Tente novamente.');
+        } finally {
+            this.carregando.set(false);
+        }
     }
 
 
