@@ -4,22 +4,22 @@ import { Observable } from "rxjs";
 import { RemoteDataSourceBase } from "../../core/http/remote.data.source.base";
 import { EnderecoDto } from "./dtos/endereco.dto";
 
-// GET/POST pessoas/{pessoaId}/enderecos -- só chamado quando a pessoa está autenticada (pessoaId
-// vem do `UsuarioDto` salvo em 'usuario_da_sessao'). Checkout de convidado não tem pessoaId
-// persistido a tempo de cadastrar endereço, então "entrega" fica restrito a quem está logado.
+// GET/POST pessoas-usuarios/enderecos -- self-service (pessoaId sempre resolvido no backend a
+// partir do token de quem chama, nunca vai na URL). Checkout de convidado não tem pessoa
+// autenticada a tempo de cadastrar endereço, então "entrega" fica restrito a quem está logado.
 @Injectable({ providedIn: 'root' })
 export class EnderecoDataSource extends RemoteDataSourceBase<EnderecoDto> {
-    path = 'v1/pessoas/{pessoaId}/enderecos';
+    path = 'v1/pessoas-usuarios/enderecos';
 
     constructor(http: HttpClient) {
         super(http);
     }
 
-    listar(pessoaId: number): Observable<EnderecoDto[]> {
-        return this.getList({ pathArguments: { pessoaId: pessoaId.toString() } });
+    listar(): Observable<EnderecoDto[]> {
+        return this.getList();
     }
 
-    criar(pessoaId: number, endereco: EnderecoDto): Observable<EnderecoDto> {
-        return this.post({ pathArguments: { pessoaId: pessoaId.toString() }, body: endereco });
+    criar(endereco: EnderecoDto): Observable<EnderecoDto> {
+        return this.post({ body: endereco });
     }
 }

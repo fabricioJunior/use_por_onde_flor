@@ -152,7 +152,7 @@ export class CheckoutPage implements OnInit {
             if (this.autenticado) {
                 const pessoa = this.localStorageService.get<UsuarioDto>('usuario_da_sessao') as UsuarioDto | null;
                 if (pessoa?.id) {
-                    const enderecos = await firstValueFrom(this.enderecoDataSource.listar(pessoa.id));
+                    const enderecos = await firstValueFrom(this.enderecoDataSource.listar());
                     this.enderecos.set(enderecos);
                     const principal = enderecos.find((endereco) => endereco.principal) ?? enderecos[0];
                     if (principal?.id) {
@@ -298,9 +298,8 @@ export class CheckoutPage implements OnInit {
                     // endereço antes do pedido (ver EcommerceCheckoutService.checkout).
                     enderecoEntrega = this.montarEnderecoInline();
                 } else if (this.mostrarNovoEndereco()) {
-                    const pessoa = this.localStorageService.get<UsuarioDto>('usuario_da_sessao') as UsuarioDto | null;
                     const valores = this.enderecoForm.getRawValue();
-                    const novoEndereco = await firstValueFrom(this.enderecoDataSource.criar(pessoa!.id!, {
+                    const novoEndereco = await firstValueFrom(this.enderecoDataSource.criar({
                         principal: this.enderecos().length === 0,
                         tipoEndereco: 'Residencial',
                         cep: valores.cep ?? undefined,
