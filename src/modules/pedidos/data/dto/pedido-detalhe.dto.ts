@@ -1,5 +1,6 @@
 export class PedidoItemDto {
     referenciaNome?: string;
+    imagemUrl?: string;
     corNome?: string;
     tamanhoNome?: string;
     valorUnitario?: number;
@@ -12,12 +13,14 @@ export class PedidoItemDto {
     }
 }
 
-// Shape conforme já usado internamente pro pagamento do pedido -- confirmar campos extras
-// quando o front puder bater no dev com dado real.
+// Shape real de PedidoPagamentoResponse (apollo-api) -- formaDePagamento vem como o objeto inteiro
+// (FormaDePagamentoEntity, eager relation), não uma string; valor confirmado só existe depois da
+// confirmação do pagamento, até lá é só o esperado.
 export class PedidoPagamentoDto {
-    formaDePagamento?: string;
-    valor?: number;
-    situacao?: string;
+    formaDePagamento?: { id?: number; descricao?: string };
+    valorEsperado?: number;
+    valorConfirmado?: number;
+    confirmadoEm?: string;
 
     constructor(partial?: Partial<PedidoPagamentoDto>) {
         Object.assign(this, partial);
@@ -31,6 +34,7 @@ export class PedidoDocumentoFiscalDto {
     chaveAcesso?: string;
     protocolo?: string;
     linkDanfe?: string;
+    urlConsultaSefaz?: string;
 
     constructor(partial?: Partial<PedidoDocumentoFiscalDto>) {
         Object.assign(this, partial);

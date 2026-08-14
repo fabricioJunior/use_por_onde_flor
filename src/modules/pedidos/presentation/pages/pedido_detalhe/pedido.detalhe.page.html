@@ -15,23 +15,21 @@
     <h1>Pedido #{{ p.id }}</h1>
 
     <section class="pedido-secao">
-        <span class="pedido-situacao">{{ p.situacao }}</span>
-        <p>Data: {{ p.data | date:'dd/MM/yyyy' }}</p>
-        @if (p.previsaoDeEntrega) {
-        <p>Previsão de entrega: {{ p.previsaoDeEntrega | date:'dd/MM/yyyy' }}</p>
-        }
-        <p>Modalidade de entrega: {{ p.modalidadeEntrega }}</p>
-    </section>
-
-    <section class="pedido-secao">
         <h2>Itens</h2>
         <div class="pedido-itens">
             @for (item of p.itens; track $index) {
             <div class="pedido-item-linha">
-                <div>
+                <div class="pedido-item-foto">
+                    @if (item.imagemUrl) {
+                    <img [src]="item.imagemUrl" [alt]="item.referenciaNome">
+                    } @else {
+                    <span>Sem foto</span>
+                    }
+                </div>
+                <div class="pedido-item-info">
                     <strong>{{ item.referenciaNome }}</strong>
                     <div class="pedido-item-variacao">{{ item.corNome }} · {{ item.tamanhoNome }}</div>
-                    <div class="pedido-item-variacao">Qtd solicitada: {{ item.solicitado }} · Atendida: {{ item.atendido }}</div>
+                    <div class="pedido-item-variacao">Qtd solicitada: {{ item.solicitado }}</div>
                 </div>
                 <div class="pedido-item-precos">
                     <span>{{ formatarPreco(item.valorUnitario) }}</span>
@@ -49,18 +47,27 @@
     </section>
 
     <section class="pedido-secao">
+        <span class="pedido-situacao">{{ p.situacao }}</span>
+        <p>Data: {{ p.data | date:'dd/MM/yyyy' }}</p>
+        @if (p.previsaoDeEntrega) {
+        <p>Previsão de entrega: {{ p.previsaoDeEntrega | date:'dd/MM/yyyy' }}</p>
+        }
+        <p>Modalidade de entrega: {{ p.modalidadeEntrega }}</p>
+    </section>
+
+    <section class="pedido-secao">
         <h2>Pagamentos</h2>
         @for (pagamento of p.pagamentos; track $index) {
         <div class="pedido-pagamento-linha">
-            <span>{{ pagamento.formaDePagamento }}</span>
-            <span>{{ formatarPreco(pagamento.valor) }}</span>
-            <span>{{ pagamento.situacao }}</span>
+            <span>{{ pagamento.formaDePagamento?.descricao }}</span>
+            <span>{{ formatarPreco(pagamento.valorConfirmado ?? pagamento.valorEsperado) }}</span>
+            <span>{{ pagamento.confirmadoEm ? 'Confirmado' : 'Pendente' }}</span>
         </div>
         }
     </section>
 
     <section class="pedido-secao">
-        <button type="button" [disabled]="reenviandoEmail()" (click)="reenviarEmail()">
+        <button type="button" class="pedido-botao-reenviar-email" [disabled]="reenviandoEmail()" (click)="reenviarEmail()">
             @if (reenviandoEmail()) { Reenviando... } @else { Reenviar e-mail do pedido }
         </button>
     </section>
@@ -72,9 +79,14 @@
         @if (p.documentoFiscal.chaveAcesso) {
         <p>Chave de acesso: {{ p.documentoFiscal.chaveAcesso }}</p>
         }
-        @if (p.documentoFiscal.linkDanfe) {
-        <a [href]="p.documentoFiscal.linkDanfe" target="_blank" rel="noopener">Ver DANFE</a>
-        }
+        <div class="pedido-nota-fiscal-links">
+            @if (p.documentoFiscal.linkDanfe) {
+            <a [href]="p.documentoFiscal.linkDanfe" target="_blank" rel="noopener">Ver DANFE</a>
+            }
+            @if (p.documentoFiscal.urlConsultaSefaz) {
+            <a [href]="p.documentoFiscal.urlConsultaSefaz" target="_blank" rel="noopener">Consultar na Sefaz</a>
+            }
+        </div>
     </section>
     }
     }
