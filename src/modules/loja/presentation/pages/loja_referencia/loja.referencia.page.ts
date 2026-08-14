@@ -11,11 +11,12 @@ import { CarrinhoFacadeService } from "../../../../carrinho/services/carrinho.fa
 import { ButtonComponent } from "../../components/ui/button/button.component";
 import { ToastService } from "../../components/ui/toast/toast.service";
 import { corEhClara, corParaHex, normalizarNomeCor } from "../../utils/cor-apresentacao.util";
+import { HeaderComponent } from "../../components/header/header.component";
 
 @Component({
     selector: 'loja-referencia-page',
     standalone: true,
-    imports: [CommonModule, MatProgressSpinnerModule, ButtonComponent],
+    imports: [CommonModule, MatProgressSpinnerModule, ButtonComponent, HeaderComponent],
     templateUrl: './loja.referencia.page.html',
     styleUrl: './loja.referencia.page.css',
 })
@@ -28,6 +29,7 @@ export class LojaReferenciaPage implements OnInit {
 
     loading = signal(true);
     erro = signal('');
+    itensNoCarrinho = signal(0);
     referencia = signal<EcommerceReferenciaDto | null>(null);
     produtos = signal<EcommerceReferenciaProdutoDto[]>([]);
     midias = signal<ReferenciaMidiaDto[]>([]);
@@ -175,6 +177,8 @@ export class LojaReferenciaPage implements OnInit {
             this.fotoSelecionada.set(midiasComUrl.find((midia) => midia.isDefault) ?? midiasComUrl[0] ?? null);
             this.resetarZoom();
             this.rolarThumbParaAtiva();
+
+            this.itensNoCarrinho.set(await this.carrinhoFacadeService.contarItens());
 
             this.quantidade.set(1);
             const disponiveis = produtos.filter((produto) => this.temEstoque(produto));
@@ -413,6 +417,7 @@ export class LojaReferenciaPage implements OnInit {
         try {
             await this.carrinhoFacadeService.adicionar(produto.produtoId, this.quantidade());
             this.adicionado.set(true);
+            this.itensNoCarrinho.set(await this.carrinhoFacadeService.contarItens());
             this.toastService.show('Produto adicionado à sacola', 'success');
         } finally {
             this.adicionando.set(false);

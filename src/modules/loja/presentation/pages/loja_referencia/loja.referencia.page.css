@@ -14,6 +14,7 @@
 }
 
 .pagina-estado {
+    margin-top: var(--space-6);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,6 +25,7 @@
 }
 
 .pagina-conteudo {
+    margin-top: var(--space-6);
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-6);

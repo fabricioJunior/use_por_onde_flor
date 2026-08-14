@@ -1,4 +1,5 @@
 <div class="pagina-shell">
+    <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
     @if (loading()) {
     <div class="pagina-estado">
         <mat-spinner diameter="42"></mat-spinner>
@@ -144,14 +145,13 @@
                 <p>Adicionado à sacola.</p>
                 <ui-button variant="secondary" size="sm" (clicked)="irParaCarrinho()">Ver sacola</ui-button>
             </div>
-            } @else {
+            }
             <div class="acoes-compra">
                 <ui-button size="lg" variant="secondary" [disabled]="!produtoSelecionado() || adicionando()" (clicked)="adicionarAoCarrinho()">
                     @if (adicionando()) { Adicionando... } @else { Adicionar à sacola }
                 </ui-button>
                 <ui-button size="lg" [disabled]="!produtoSelecionado()" (clicked)="comprarAgora()">Comprar agora</ui-button>
             </div>
-            }
         </div>
     </div>
     }
