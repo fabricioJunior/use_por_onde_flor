@@ -30,6 +30,10 @@
     font-weight: 600;
 }
 
+.pedido-item-entregue {
+    color: var(--state-success, #1a8f4c);
+}
+
 .pedido-item-linha,
 .pedido-pagamento-linha {
     display: flex;

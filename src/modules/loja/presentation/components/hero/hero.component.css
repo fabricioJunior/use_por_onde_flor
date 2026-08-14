@@ -1,5 +1,12 @@
 .loja-hero-imagem {
-    background: url('/imagem-principal.jpg') center / cover no-repeat;
+    background: url('/imagem-principal-mobile.jpg') center / cover no-repeat;
     width: 100%;
-    aspect-ratio: 2400 / 840;
+    aspect-ratio: 1219 / 715;
+}
+
+@media (min-width: 900px) {
+    .loja-hero-imagem {
+        background-image: url('/imagem-principal.jpg');
+        aspect-ratio: 2400 / 840;
+    }
 }

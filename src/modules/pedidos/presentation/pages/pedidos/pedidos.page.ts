@@ -6,6 +6,7 @@ import { FooterComponent } from "../../../../loja/presentation/components/footer
 import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
 import { PedidosService } from "../../../services/pedidos.service";
 import { PedidoListaItemDto } from "../../../data/dto/pedidos-lista.dto";
+import { pedidoFoiEntregue, situacaoPedidoLabel } from "../../../utils/pedido-situacao.util";
 
 const ITENS_POR_PAGINA = 10;
 
@@ -56,5 +57,13 @@ export class PedidosPage implements OnInit {
 
     formatarPreco(valor: number | undefined): string {
         return (valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    situacaoLabel(situacao: string | undefined): string {
+        return situacaoPedidoLabel(situacao);
+    }
+
+    foiEntregue(pedido: PedidoListaItemDto): boolean {
+        return pedidoFoiEntregue(pedido.situacaoEntrega, pedido.retiradoEm);
     }
 }

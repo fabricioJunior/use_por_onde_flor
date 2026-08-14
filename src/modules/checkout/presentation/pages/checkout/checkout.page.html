@@ -1,3 +1,5 @@
+<loja-header [itensNoCarrinho]="itens().length"></loja-header>
+
 <div class="checkout-shell">
     <h1>Finalizar compra</h1>
 
@@ -107,6 +109,11 @@
                     {{ item.nome || ('Produto #' + item.produtoId) }} x{{ item.quantidade }}
                     @if (item.corNome || item.tamanhoNome) {
                     <span class="checkout-resumo-item-variacao">{{ item.corNome }}{{ item.corNome && item.tamanhoNome ? ' · ' : '' }}{{ item.tamanhoNome }}</span>
+                    }
+                    @if (item.valorPromocional != null) {
+                    <span class="checkout-resumo-item-variacao">
+                        Valor original: {{ formatarPreco(item.valor) }} · Desconto: {{ formatarPreco((item.valor! - item.valorPromocional) * (item.quantidade ?? 0)) }}
+                    </span>
                     }
                 </span>
                 <span>{{ formatarPreco((item.valorPromocional ?? item.valor ?? 0) * (item.quantidade ?? 0)) }}</span>

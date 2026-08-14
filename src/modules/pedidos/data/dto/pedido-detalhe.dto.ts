@@ -44,12 +44,15 @@ export class PedidoDocumentoFiscalDto {
 export class PedidoDetalheDto {
     id?: number;
     situacao?: string;
-    data?: string;
+    criadoEm?: string;
+    atualizadoEm?: string;
     modalidadeEntrega?: string;
     enderecoEntregaId?: number;
     desconto?: number;
     valorTotal?: number;
     previsaoDeEntrega?: string;
+    situacaoEntrega?: string;
+    retiradoEm?: string;
     itens?: PedidoItemDto[];
     pagamentos?: PedidoPagamentoDto[];
     documentoFiscal?: PedidoDocumentoFiscalDto;
