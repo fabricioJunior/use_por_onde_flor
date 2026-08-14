@@ -1,47 +1,15 @@
 .loja-hero {
-    display: grid;
-    grid-template-columns: 1fr;
-    min-height: 360px;
-}
-
-.loja-hero-imagem {
-    background: url('/imagem-principal.png') center / cover no-repeat;
     min-height: 220px;
 }
 
-.loja-hero-conteudo {
-    background: var(--brand-tint);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: var(--container-padding);
-    gap: var(--space-5);
-}
-
-.loja-hero-titulo {
-    font: var(--text-display);
-    color: var(--brand-primary);
-    margin: 0;
-    letter-spacing: var(--tracking-tight);
-}
-
-.loja-hero-subtitulo {
-    font: var(--text-body-lg);
-    color: var(--brand-primary-deep);
-    margin: 0;
-    max-width: 420px;
-}
-
-.loja-hero-palavras-chave {
-    font: var(--text-body);
-    font-weight: 600;
-    color: var(--brand-primary);
-    margin: 0;
+.loja-hero-imagem {
+    background: url('/imagem-principal.jpg') center / cover no-repeat;
+    min-height: 220px;
+    height: 100%;
 }
 
 @media (min-width: 900px) {
     .loja-hero {
-        grid-template-columns: 1fr 1fr;
-        min-height: 560px;
+        min-height: 420px;
     }
 }
