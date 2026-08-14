@@ -9,6 +9,9 @@
     <p class="pedido-estado">Não foi possível carregar o pedido. Tente novamente mais tarde.</p>
     } @else if (pedido()) {
     @let p = pedido()!;
+    @if (pagamentoConcluido()) {
+    <div class="pedido-pagamento-sucesso" role="status">Pagamento concluído com sucesso!</div>
+    }
     <h1>Pedido #{{ p.id }}</h1>
 
     <section class="pedido-secao">

@@ -144,9 +144,11 @@ export const routes: Routes = [
         canMatch: [autenticacaoGuard]
     },
     {
+        // Sem canMatch: acessível sem login via link com token (?token=...) -- ver
+        // PedidoDetalhePage, que decide internamente entre busca autenticada ("meus pedidos") e
+        // pública (token na query string).
         path: 'pedidos/:id',
         loadComponent: () => import('../modules/pedidos/presentation/pages/pedido_detalhe/pedido.detalhe.page').then(m => m.PedidoDetalhePage),
-        canMatch: [autenticacaoGuard]
     },
 
 

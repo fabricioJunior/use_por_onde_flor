@@ -4,6 +4,7 @@ import { ActivatedRoute } from "@angular/router";
 import { HttpErrorResponse } from "@angular/common/http";
 import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
 import { FooterComponent } from "../../../../loja/presentation/components/footer/footer.component";
+import { AutenticacaoService } from "../../../../autenticacao/services/autenticacao.service";
 import { PedidosService } from "../../../services/pedidos.service";
 import { PedidoDetalheDto } from "../../../data/dto/pedido-detalhe.dto";
 
@@ -19,15 +20,31 @@ export class PedidoDetalhePage implements OnInit {
     naoEncontrado = signal(false);
     erro = signal(false);
     pedido = signal<PedidoDetalheDto | null>(null);
+    pagamentoConcluido = signal(false);
 
-    constructor(private route: ActivatedRoute, private pedidosService: PedidosService) { }
+    constructor(
+        private route: ActivatedRoute,
+        private pedidosService: PedidosService,
+        private autenticacaoService: AutenticacaoService,
+    ) { }
 
     async ngOnInit(): Promise<void> {
         const id = Number(this.route.snapshot.paramMap.get('id'));
+        const token = this.route.snapshot.queryParamMap.get('token');
+        this.pagamentoConcluido.set(this.route.snapshot.queryParamMap.get('pago') === '1');
+
         try {
-            this.pedido.set(await this.pedidosService.buscar(id));
+            // Link com token (pós-pagamento, compartilhável): busca pública, sem exigir login --
+            // mesmo sem login válido, se o token bater é o dono do pedido (ver PedidoEntity.tokenAcesso).
+            this.pedido.set(
+                token
+                    ? await this.pedidosService.buscarPublico(id, token)
+                    : await this.pedidosService.buscar(id),
+            );
         } catch (error) {
             if (error instanceof HttpErrorResponse && error.status === 404) {
+                this.naoEncontrado.set(true);
+            } else if (error instanceof HttpErrorResponse && error.status === 401 && !this.autenticacaoService.estaAutenticado()) {
                 this.naoEncontrado.set(true);
             } else {
                 this.erro.set(true);
