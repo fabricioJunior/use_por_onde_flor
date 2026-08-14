@@ -12,6 +12,7 @@ import { ButtonComponent } from "../../components/ui/button/button.component";
 import { ToastService } from "../../components/ui/toast/toast.service";
 import { corEhClara, corParaHex, normalizarNomeCor } from "../../utils/cor-apresentacao.util";
 import { HeaderComponent } from "../../components/header/header.component";
+import { PromocaoPrecoService } from "../../../services/promocao-preco.service";
 
 @Component({
     selector: 'loja-referencia-page',
@@ -31,6 +32,7 @@ export class LojaReferenciaPage implements OnInit {
     erro = signal('');
     itensNoCarrinho = signal(0);
     referencia = signal<EcommerceReferenciaDto | null>(null);
+    valorPromocional = signal<number | undefined>(undefined);
     produtos = signal<EcommerceReferenciaProdutoDto[]>([]);
     midias = signal<ReferenciaMidiaDto[]>([]);
     fotoSelecionada = signal<ReferenciaMidiaDto | null>(null);
@@ -139,6 +141,7 @@ export class LojaReferenciaPage implements OnInit {
         private midiaDataSource: ReferenciaMidiaPublicaDataSource,
         private carrinhoFacadeService: CarrinhoFacadeService,
         private toastService: ToastService,
+        private promocaoPrecoService: PromocaoPrecoService,
     ) { }
 
     ngOnInit(): void {
@@ -163,15 +166,24 @@ export class LojaReferenciaPage implements OnInit {
             // referencia/produtos usam o id de rota (ecommerceReferenciaId). Mídias usam o
             // referenciaId real do produto, que só vem dentro de `referencia` -- por isso
             // busca mídias só depois, com `referencia.referenciaId`, não com `id`.
-            const [referencia, produtos] = await Promise.all([
+            const [referencia, produtos, promocoes] = await Promise.all([
                 firstValueFrom(this.lojaDataSource.buscarReferencia(id)),
                 firstValueFrom(this.lojaDataSource.listarProdutos(id)),
+                firstValueFrom(this.lojaDataSource.promocoesAtivas()).catch(() => ({ items: [] })),
             ]);
             const midias = await firstValueFrom(this.midiaDataSource.listar(referencia.referenciaId.toString()))
                 .catch(() => [] as ReferenciaMidiaDto[]);
 
             this.referencia.set(referencia);
             this.produtos.set(produtos);
+            this.valorPromocional.set(
+                this.promocaoPrecoService.calcularParaReferencia(
+                    referencia.referenciaId,
+                    referencia.valor,
+                    this.promocaoPrecoService.montarMapa(promocoes.items),
+                    this.promocaoPrecoService.promocoesGerais(promocoes.items),
+                ) ?? undefined,
+            );
             const midiasComUrl = midias.filter((midia) => midia?.url);
             this.midias.set(midiasComUrl);
             this.fotoSelecionada.set(midiasComUrl.find((midia) => midia.isDefault) ?? midiasComUrl[0] ?? null);

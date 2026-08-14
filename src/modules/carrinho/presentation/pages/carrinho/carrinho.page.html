@@ -32,8 +32,16 @@
                 <span class="carrinho-item-esgotado">Esse produto esgotou e não está mais disponível para compra.</span>
                 }
                 @if (item.valor != null) {
+                @if (item.valorPromocional != null) {
+                <span class="carrinho-item-preco">
+                    <span class="carrinho-item-preco-original">{{ formatarPreco(item.valor) }}</span>
+                    {{ formatarPreco(item.valorPromocional) }} un.
+                </span>
+                <span class="carrinho-item-subtotal">{{ formatarPreco(item.valorPromocional * (item.quantidade ?? 0)) }}</span>
+                } @else {
                 <span class="carrinho-item-preco">{{ formatarPreco(item.valor) }} un.</span>
                 <span class="carrinho-item-subtotal">{{ formatarPreco(item.valor * (item.quantidade ?? 0)) }}</span>
+                }
                 }
             </div>
             <div class="carrinho-item-quantidade">

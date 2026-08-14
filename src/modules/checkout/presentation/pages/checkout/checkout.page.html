@@ -109,7 +109,7 @@
                     <span class="checkout-resumo-item-variacao">{{ item.corNome }}{{ item.corNome && item.tamanhoNome ? ' · ' : '' }}{{ item.tamanhoNome }}</span>
                     }
                 </span>
-                <span>{{ formatarPreco((item.valor ?? 0) * (item.quantidade ?? 0)) }}</span>
+                <span>{{ formatarPreco((item.valorPromocional ?? item.valor ?? 0) * (item.quantidade ?? 0)) }}</span>
             </div>
             }
             @if (freteSelecionado(); as frete) {

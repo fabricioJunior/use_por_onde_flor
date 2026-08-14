@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { AutenticacaoService } from "../../autenticacao/services/autenticacao.service";
 import { LojaDataSource } from "../../loja/data/loja.data.source";
+import { PromocaoPrecoService } from "../../loja/services/promocao-preco.service";
 import { CarrinhoDataSource } from "../data/carrinho.data.source";
 import { CarrinhoStorageService } from "../data/carrinho.storage.service";
 import { CarrinhoItemViewDto } from "../data/dtos/carrinho-item-view.dto";
@@ -16,6 +17,7 @@ export class CarrinhoFacadeService {
         private carrinhoStorageService: CarrinhoStorageService,
         private autenticacaoService: AutenticacaoService,
         private lojaDataSource: LojaDataSource,
+        private promocaoPrecoService: PromocaoPrecoService,
     ) { }
 
     private logado(): boolean {
@@ -24,11 +26,34 @@ export class CarrinhoFacadeService {
 
     async listar(): Promise<CarrinhoItemViewDto[]> {
         await this.sincronizarSeNecessario();
-        if (this.logado()) {
-            return firstValueFrom(this.carrinhoDataSource.listar());
+        const itens = this.logado()
+            ? await firstValueFrom(this.carrinhoDataSource.listar())
+            : await this.enriquecerItensLocais(await this.carrinhoStorageService.recuperarItens());
+        return this.aplicarPrecosPromocionais(itens);
+    }
+
+    // Carrinho não tem endpoint de preço-com-desconto pronto -- mesmo cálculo client-side já usado
+    // no catálogo (ver PromocaoPrecoService), agora com referenciaId vindo do item (backend
+    // enriquece em GET /carrinho e GET /e-commerce/{id}/produtos/{produtoId}).
+    private async aplicarPrecosPromocionais(itens: CarrinhoItemViewDto[]): Promise<CarrinhoItemViewDto[]> {
+        if (itens.length === 0) {
+            return itens;
         }
-        const itensLocais = await this.carrinhoStorageService.recuperarItens();
-        return this.enriquecerItensLocais(itensLocais);
+        try {
+            const resposta = await firstValueFrom(this.lojaDataSource.promocoesAtivas());
+            const mapa = this.promocaoPrecoService.montarMapa(resposta.items);
+            const gerais = this.promocaoPrecoService.promocoesGerais(resposta.items);
+            return itens.map((item) => ({
+                ...item,
+                valorPromocional: (item.referenciaId != null && item.valor != null
+                    ? this.promocaoPrecoService.calcularParaReferencia(item.referenciaId, item.valor, mapa, gerais)
+                    : null) ?? undefined,
+            }));
+        } catch (error) {
+            // Falha ao buscar promoção não pode derrubar o carrinho -- só segue sem desconto.
+            console.error('Erro ao aplicar promoções no carrinho', error);
+            return itens;
+        }
     }
 
     // Storage local só tem produtoId+quantidade -- busca nome/cor/tamanho/valor/imagem em paralelo

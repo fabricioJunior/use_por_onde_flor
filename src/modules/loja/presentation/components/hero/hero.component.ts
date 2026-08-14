@@ -1,12 +1,11 @@
 import { CommonModule } from "@angular/common";
 import { Component, Output, EventEmitter } from "@angular/core";
-import { ButtonComponent } from "../ui/button/button.component";
 
 // Porta Angular de `desing system/ui_kits/site/Hero.jsx`.
 @Component({
     selector: 'loja-hero',
     standalone: true,
-    imports: [CommonModule, ButtonComponent],
+    imports: [CommonModule],
     templateUrl: './hero.component.html',
     styleUrl: './hero.component.css',
 })
