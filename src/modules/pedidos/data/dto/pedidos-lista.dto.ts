@@ -3,7 +3,8 @@ export class PedidoListaItemDto {
     situacao?: string;
     data?: string;
     valorTotal?: number;
-    imagemCapa?: string;
+    situacaoEntrega?: string;
+    retiradoEm?: string;
 
     constructor(partial?: Partial<PedidoListaItemDto>) {
         Object.assign(this, partial);

@@ -8,6 +8,7 @@ import { AutenticacaoService } from "../../../../autenticacao/services/autentica
 import { PedidosService } from "../../../services/pedidos.service";
 import { PedidoDetalheDto } from "../../../data/dto/pedido-detalhe.dto";
 import { ToastService } from "../../../../loja/presentation/components/ui/toast/toast.service";
+import { pedidoFoiEntregue, situacaoPedidoLabel } from "../../../utils/pedido-situacao.util";
 
 @Component({
     selector: 'pedido-detalhe-page',
@@ -64,6 +65,14 @@ export class PedidoDetalhePage implements OnInit {
 
     formatarPreco(valor: number | undefined): string {
         return (valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    situacaoLabel(situacao: string | undefined): string {
+        return situacaoPedidoLabel(situacao);
+    }
+
+    foiEntregue(pedido: PedidoDetalheDto): boolean {
+        return pedidoFoiEntregue(pedido.situacaoEntrega, pedido.retiradoEm);
     }
 
     async reenviarEmail(): Promise<void> {

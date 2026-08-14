@@ -13,14 +13,15 @@
     <div class="pedidos-lista">
         @for (pedido of itens(); track pedido.id) {
         <a class="pedido-item" [routerLink]="['/pedidos', pedido.id]">
-            @if (pedido.imagemCapa) {
-            <img [src]="pedido.imagemCapa" alt="" class="pedido-item-imagem">
-            } @else {
-            <span class="pedido-item-imagem pedido-item-imagem-placeholder">Sem foto</span>
-            }
             <div class="pedido-item-info">
-                <span class="pedido-item-situacao">{{ pedido.situacao }}</span>
-                <span class="pedido-item-data">{{ pedido.data | date:'dd/MM/yyyy' }}</span>
+                <span class="pedido-item-numero">Pedido #{{ pedido.id }}</span>
+                <span class="pedido-item-situacao">
+                    {{ situacaoLabel(pedido.situacao) }}
+                    @if (foiEntregue(pedido)) {
+                    <span class="pedido-item-entregue">· Entregue</span>
+                    }
+                </span>
+                <span class="pedido-item-data">{{ pedido.data | date:'dd/MM/yyyy HH:mm' }}</span>
             </div>
             <span class="pedido-item-valor">{{ formatarPreco(pedido.valorTotal) }}</span>
         </a>

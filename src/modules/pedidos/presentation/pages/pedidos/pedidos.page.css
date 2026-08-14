@@ -28,24 +28,6 @@
     color: var(--text-primary);
 }
 
-.pedido-item-imagem {
-    width: 64px;
-    height: 64px;
-    object-fit: cover;
-    border-radius: var(--radius-sm);
-    flex-shrink: 0;
-}
-
-.pedido-item-imagem-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--surface-subtle, var(--border-subtle));
-    font: var(--text-caption);
-    color: var(--text-secondary, var(--text-primary));
-    text-align: center;
-}
-
 .pedido-item-info {
     display: flex;
     flex-direction: column;
@@ -53,7 +35,17 @@
     flex: 1;
 }
 
+.pedido-item-numero {
+    font-weight: 600;
+}
+
 .pedido-item-situacao {
+    font: var(--text-body-sm);
+    color: var(--text-secondary, var(--text-primary));
+}
+
+.pedido-item-entregue {
+    color: var(--state-success, #1a8f4c);
     font-weight: 600;
 }
 

@@ -47,8 +47,13 @@
     </section>
 
     <section class="pedido-secao">
-        <span class="pedido-situacao">{{ p.situacao }}</span>
-        <p>Data: {{ p.data | date:'dd/MM/yyyy' }}</p>
+        <span class="pedido-situacao">
+            {{ situacaoLabel(p.situacao) }}
+            @if (foiEntregue(p)) {
+            <span class="pedido-item-entregue">· Entregue</span>
+            }
+        </span>
+        <p>Data: {{ p.criadoEm | date:'dd/MM/yyyy HH:mm' }}</p>
         @if (p.previsaoDeEntrega) {
         <p>Previsão de entrega: {{ p.previsaoDeEntrega | date:'dd/MM/yyyy' }}</p>
         }
@@ -72,10 +77,9 @@
         </button>
     </section>
 
-    @if (p.documentoFiscal) {
+    @if (p.documentoFiscal && p.documentoFiscal.status === 'emitida') {
     <section class="pedido-secao">
         <h2>Nota fiscal</h2>
-        <p>{{ p.documentoFiscal.tipoDocumento }} · {{ p.documentoFiscal.status }}</p>
         @if (p.documentoFiscal.chaveAcesso) {
         <p>Chave de acesso: {{ p.documentoFiscal.chaveAcesso }}</p>
         }
