@@ -1,15 +1,5 @@
-.loja-hero {
-    min-height: 220px;
-}
-
 .loja-hero-imagem {
     background: url('/imagem-principal.jpg') center / cover no-repeat;
-    min-height: 220px;
-    height: 100%;
-}
-
-@media (min-width: 900px) {
-    .loja-hero {
-        min-height: 420px;
-    }
+    width: 100%;
+    aspect-ratio: 2400 / 840;
 }
