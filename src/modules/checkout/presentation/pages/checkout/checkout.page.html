@@ -129,6 +129,14 @@
     <p class="checkout-aviso">{{ erro() }}</p>
     }
 
+    @if (!podeFinalizar() && pendencias().length > 0) {
+    <ul class="checkout-pendencias">
+        @for (pendencia of pendencias(); track pendencia) {
+        <li>{{ pendencia }}</li>
+        }
+    </ul>
+    }
+
     <ui-button size="lg" [disabled]="!podeFinalizar() || finalizando()" (clicked)="finalizar()">
         @if (finalizando()) { Processando... } @else { Finalizar e pagar }
     </ui-button>

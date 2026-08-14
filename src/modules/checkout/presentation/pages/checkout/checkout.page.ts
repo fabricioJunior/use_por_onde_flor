@@ -298,22 +298,52 @@ export class CheckoutPage implements OnInit {
     }
 
     podeFinalizar(): boolean {
+        return this.pendencias().length === 0;
+    }
+
+    private static readonly LABEL_CAMPO: Record<string, string> = {
+        nome: 'Nome completo',
+        documento: 'CPF',
+        email: 'E-mail',
+        telefone: 'Telefone',
+        logradouro: 'Logradouro',
+        numero: 'Número',
+        bairro: 'Bairro',
+        municipio: 'Cidade',
+        uf: 'UF',
+    };
+
+    // Reaproveitada pelo botão (desabilita) e pela lista de avisos (explica o que falta) -- mesma
+    // regra em um lugar só, senão os dois podem divergir silenciosamente.
+    pendencias(): string[] {
         if (this.itens().length === 0 || this.lojaFechada()) {
-            return false;
+            return [];
         }
-        if (!this.autenticado && this.clienteForm.invalid) {
-            return false;
+
+        const pendencias: string[] = [];
+
+        if (!this.autenticado) {
+            pendencias.push(...this.camposInvalidos(this.clienteForm));
         }
+
         if (this.modalidadeEntrega() === 'entrega') {
-            if (!this.freteSelecionado()) {
-                return false;
-            }
             if (this.mostrarNovoEndereco() || !this.autenticado) {
-                return this.enderecoForm.valid;
+                pendencias.push(...this.camposInvalidos(this.enderecoForm));
+            } else if (this.enderecoSelecionadoId() == null) {
+                pendencias.push('Selecione um endereço de entrega.');
             }
-            return this.enderecoSelecionadoId() != null;
+            if (!this.freteSelecionado()) {
+                pendencias.push('Selecione uma opção de frete.');
+            }
         }
-        return true;
+
+        return pendencias;
+    }
+
+    private camposInvalidos(form: ReturnType<FormBuilder['group']>): string[] {
+        return Object.entries(form.controls)
+            .filter(([, controle]) => controle.invalid)
+            .map(([nome]) => `Preencha: ${CheckoutPage.LABEL_CAMPO[nome] ?? nome}.`);
     }
 
     async finalizar(): Promise<void> {
