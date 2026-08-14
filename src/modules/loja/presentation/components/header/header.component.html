@@ -3,11 +3,6 @@
         <a routerLink="/loja" class="loja-logo-link">
             <img src="/logo-primary-color.png" alt="Por Onde Flor" class="loja-logo-img">
         </a>
-        <nav class="loja-nav">
-            <a routerLink="/loja">Novidades</a>
-            <a routerLink="/loja">Roupas</a>
-            <a routerLink="/loja">Acessórios</a>
-        </nav>
         <div class="loja-header-acoes">
             <a routerLink="/carrinho" class="loja-sacola">
                 Sacola
@@ -24,6 +19,7 @@
                 <div class="loja-conta-menu">
                     <a routerLink="/home">Cartão fidelidade</a>
                     <a routerLink="/pedidos">Meus pedidos</a>
+                    <button type="button" class="loja-conta-sair" (click)="logout()">Sair</button>
                 </div>
             </details>
             } @else {

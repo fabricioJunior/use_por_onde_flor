@@ -1,4 +1,7 @@
 .loja-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
     border-bottom: 1px solid var(--border-subtle);
     background: var(--surface-card);
 }
@@ -22,18 +25,6 @@
 
 .loja-logo-img {
     height: 56px;
-}
-
-.loja-nav {
-    display: flex;
-    gap: var(--space-6);
-}
-
-.loja-nav a {
-    color: var(--text-primary);
-    font: var(--text-body-sm);
-    text-decoration: none;
-    letter-spacing: 0.02em;
 }
 
 .loja-sacola {
@@ -102,19 +93,20 @@
     z-index: 10;
 }
 
-.loja-conta-menu a {
+.loja-conta-menu a,
+.loja-conta-menu button {
     padding: var(--space-2) var(--space-4);
     color: var(--text-primary);
     text-decoration: none;
     font: var(--text-body-sm);
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
 }
 
-.loja-conta-menu a:hover {
+.loja-conta-menu a:hover,
+.loja-conta-menu button:hover {
     background: var(--surface-hover, var(--border-subtle));
 }
 
-@media (max-width: 720px) {
-    .loja-nav {
-        display: none;
-    }
-}

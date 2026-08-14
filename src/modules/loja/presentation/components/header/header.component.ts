@@ -27,4 +27,9 @@ export class HeaderComponent {
         if (!usuario) return '';
         return [usuario.nome, usuario.sobrenome].filter(Boolean).join(' ');
     }
+
+    logout(): void {
+        this.autenticacaoService.logout();
+        this.router.navigate(['/loja']);
+    }
 }
