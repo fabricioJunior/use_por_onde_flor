@@ -126,18 +126,6 @@ export class LojaHomePage implements OnInit {
         this.toastService.show('Produto adicionado à sacola', 'success');
     }
 
-    comprarAgora(referencia: EcommerceReferenciaDto): void {
-        // Mesma regra do adicionar: com mais de um SKU precisa escolher cor/tamanho na página de
-        // detalhe primeiro (lá tem o próprio botão "Comprar agora").
-        const produtoId = this.produtoIdUnicoDisponivel(referencia);
-        if (produtoId == null) {
-            this.router.navigate(['/loja/referencia', referencia.id]);
-            return;
-        }
-
-        this.router.navigate(['/checkout'], { state: { produtoId, quantidade: 1 } });
-    }
-
     private produtoIdUnicoDisponivel(referencia: EcommerceReferenciaDto): number | null {
         if (!referencia.saldo || referencia.saldo <= 0) {
             return null;

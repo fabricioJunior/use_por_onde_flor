@@ -28,6 +28,9 @@
                     {{ item.corNome }}{{ item.corNome && item.tamanhoNome ? ' · ' : '' }}{{ item.tamanhoNome }}
                 </span>
                 }
+                @if (item.saldo === 0) {
+                <span class="carrinho-item-esgotado">Esse produto esgotou e não está mais disponível para compra.</span>
+                }
                 @if (item.valor != null) {
                 <span class="carrinho-item-preco">{{ formatarPreco(item.valor) }} un.</span>
                 <span class="carrinho-item-subtotal">{{ formatarPreco(item.valor * (item.quantidade ?? 0)) }}</span>
@@ -48,6 +51,9 @@
         <strong>{{ formatarPreco(total()) }}</strong>
     </div>
 
-    <ui-button size="lg" (clicked)="irParaCheckout()">Finalizar compra</ui-button>
+    @if (temItemEsgotado()) {
+    <p class="carrinho-aviso">Remova os produtos esgotados da sacola pra continuar.</p>
+    }
+    <ui-button size="lg" [disabled]="temItemEsgotado()" (clicked)="irParaCheckout()">Finalizar compra</ui-button>
     }
 </div>

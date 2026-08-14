@@ -21,7 +21,7 @@
         <div class="loja-grid">
             @for (referencia of referencias(); track referencia.id) {
             <produto-card [referencia]="referencia" (abrir)="abrirReferencia(referencia)"
-                (adicionar)="adicionarAoCarrinho(referencia)" (comprarAgora)="comprarAgora(referencia)"></produto-card>
+                (adicionar)="adicionarAoCarrinho(referencia)"></produto-card>
             }
         </div>
 

@@ -17,16 +17,10 @@ export class ProdutoCardComponent {
     @Input() novo?: boolean;
     @Output() abrir = new EventEmitter<void>();
     @Output() adicionar = new EventEmitter<void>();
-    @Output() comprarAgora = new EventEmitter<void>();
 
     onAdicionarClick(event: Event) {
         event.stopPropagation();
         this.adicionar.emit();
-    }
-
-    onComprarAgoraClick(event: Event) {
-        event.stopPropagation();
-        this.comprarAgora.emit();
     }
 
     formatarPreco(valor: number): string {

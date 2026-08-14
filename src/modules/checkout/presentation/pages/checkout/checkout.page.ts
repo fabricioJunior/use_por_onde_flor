@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit, computed, signal } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
@@ -84,6 +85,7 @@ export class CheckoutPage implements OnInit {
         private lojaDataSource: LojaDataSource,
         private checkoutDataSource: CheckoutDataSource,
         private enderecoDataSource: EnderecoDataSource,
+        private http: HttpClient,
         public router: Router,
     ) {
         this.autenticado = this.autenticacaoService.estaAutenticado();
@@ -117,6 +119,41 @@ export class CheckoutPage implements OnInit {
         this.enderecoForm.get('cep')!.valueChanges
             .pipe(debounceTime(600), distinctUntilChanged())
             .subscribe((cep) => this.calcularFrete(cep));
+
+        this.enderecoForm.get('cep')!.valueChanges
+            .pipe(debounceTime(600), distinctUntilChanged())
+            .subscribe((cep) => this.preencherEnderecoPorCep(cep));
+    }
+
+    // ViaCEP -- direto do browser (sem passar pela nossa API), mesmo padrão de urls externas já
+    // aceito pelo ApiBaseUrlInterceptor (bypassa quando a url contém "http"). Só preenche
+    // logradouro/bairro/município/UF -- número/complemento continuam livres pro cliente digitar.
+    // Silencioso em qualquer falha (CEP incompleto, não encontrado, API fora do ar): cliente
+    // sempre pode preencher manualmente, isso é só uma ajuda.
+    private async preencherEnderecoPorCep(cepBruto: string | null | undefined): Promise<void> {
+        const cep = (cepBruto ?? '').replace(/\D/g, '');
+        if (cep.length !== 8) {
+            return;
+        }
+
+        try {
+            const resultado = await firstValueFrom(this.http.get<{
+                erro?: boolean; logradouro?: string; bairro?: string; localidade?: string; uf?: string;
+            }>(`https://viacep.com.br/ws/${cep}/json/`));
+
+            if (resultado.erro) {
+                return;
+            }
+
+            this.enderecoForm.patchValue({
+                logradouro: resultado.logradouro || this.enderecoForm.get('logradouro')!.value,
+                bairro: resultado.bairro || this.enderecoForm.get('bairro')!.value,
+                municipio: resultado.localidade || this.enderecoForm.get('municipio')!.value,
+                uf: resultado.uf || this.enderecoForm.get('uf')!.value,
+            });
+        } catch (error) {
+            console.error('Erro ao buscar endereço pelo CEP', error);
+        }
     }
 
     async ngOnInit(): Promise<void> {

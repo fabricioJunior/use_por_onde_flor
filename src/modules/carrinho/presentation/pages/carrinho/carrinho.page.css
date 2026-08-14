@@ -78,6 +78,20 @@ h1 {
     color: var(--text-muted);
 }
 
+.carrinho-item-esgotado {
+    display: block;
+    font: var(--text-caption);
+    color: var(--state-error);
+    font-weight: 600;
+}
+
+.carrinho-aviso {
+    font: var(--text-body-sm);
+    color: var(--state-error);
+    text-align: center;
+    margin-bottom: var(--space-3);
+}
+
 .carrinho-item-preco {
     font: var(--text-body-sm);
     color: var(--text-secondary);
