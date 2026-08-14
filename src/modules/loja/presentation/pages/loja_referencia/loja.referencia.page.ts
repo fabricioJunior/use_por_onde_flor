@@ -303,6 +303,7 @@ export class LojaReferenciaPage implements OnInit {
         this.corSelecionada.set(cor);
         this.tamanhoSelecionado.set(null);
         this.quantidade.set(1);
+        this.adicionado.set(false);
     }
 
     selecionarTamanho(tamanho: string): void {
@@ -312,6 +313,7 @@ export class LojaReferenciaPage implements OnInit {
         this.mensagemValidacao.set(null);
         this.tamanhoSelecionado.set(tamanho);
         this.quantidade.set(1);
+        this.adicionado.set(false);
     }
 
     // Retorna true quando pode seguir (produto totalmente selecionado). Quando falta cor/tamanho,
