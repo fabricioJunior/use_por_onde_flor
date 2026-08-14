@@ -3,11 +3,13 @@
 // `GET /e-commerce/{id}/produtos/{produtoId}` (`CarrinhoFacadeService.enriquecerItensLocais`).
 export interface CarrinhoItemViewDto {
     produtoId?: number;
+    referenciaId?: number;
     quantidade?: number;
     nome?: string;
     corNome?: string;
     tamanhoNome?: string;
     valor?: number;
+    valorPromocional?: number;
     imagemUrl?: string;
     saldo?: number;
 }

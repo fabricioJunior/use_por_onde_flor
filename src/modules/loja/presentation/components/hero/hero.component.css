@@ -5,7 +5,7 @@
 }
 
 .loja-hero-imagem {
-    background: repeating-linear-gradient(135deg, var(--color-neutral-100) 0 14px, var(--color-neutral-200) 14px 28px);
+    background: url('/imagem-principal.png') center / cover no-repeat;
     min-height: 220px;
 }
 

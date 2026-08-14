@@ -58,7 +58,14 @@
 
         <div class="detalhes">
             <h1>{{ item.nome }}</h1>
+            @if (valorPromocional(); as promocional) {
+            <p class="preco">
+                <span class="preco-original">{{ formatarPreco(item.valor) }}</span>
+                <span class="preco-promocional">{{ formatarPreco(promocional) }}</span>
+            </p>
+            } @else {
             <p class="preco">{{ formatarPreco(item.valor) }}</p>
+            }
             <p class="descricao">{{ item.descricao || 'Sem descrição disponível.' }}</p>
 
             @if (cores().length > 0) {

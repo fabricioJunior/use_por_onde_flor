@@ -185,9 +185,22 @@ h1 {
 }
 
 .preco {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
     font: var(--text-h3);
     color: var(--brand-primary-deep);
     margin: 0 0 var(--space-4);
+}
+
+.preco-original {
+    font: var(--text-body);
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+.preco-promocional {
+    color: var(--state-error);
 }
 
 .descricao {

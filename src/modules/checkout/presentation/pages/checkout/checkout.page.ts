@@ -68,7 +68,7 @@ export class CheckoutPage implements OnInit {
     });
 
     total = computed(() =>
-        this.itens().reduce((soma, item) => soma + (item.valor ?? 0) * (item.quantidade ?? 0), 0) + this.valorFrete(),
+        this.itens().reduce((soma, item) => soma + (item.valorPromocional ?? item.valor ?? 0) * (item.quantidade ?? 0), 0) + this.valorFrete(),
     );
 
     clienteForm: ReturnType<FormBuilder['group']>;

@@ -17,7 +17,7 @@ export class CarrinhoPage implements OnInit {
     loading = signal(true);
     itens = signal<CarrinhoItemViewDto[]>([]);
 
-    total = computed(() => this.itens().reduce((soma, item) => soma + (item.valor ?? 0) * (item.quantidade ?? 0), 0));
+    total = computed(() => this.itens().reduce((soma, item) => soma + (item.valorPromocional ?? item.valor ?? 0) * (item.quantidade ?? 0), 0));
     temItemEsgotado = computed(() => this.itens().some((item) => item.saldo === 0));
 
     constructor(private carrinhoFacadeService: CarrinhoFacadeService, private router: Router) { }

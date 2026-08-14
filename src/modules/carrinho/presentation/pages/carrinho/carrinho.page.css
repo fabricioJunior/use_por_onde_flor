@@ -97,6 +97,16 @@ h1 {
     color: var(--text-secondary);
 }
 
+.carrinho-item-preco:has(.carrinho-item-preco-original) {
+    color: var(--state-error);
+}
+
+.carrinho-item-preco-original {
+    color: var(--text-muted);
+    text-decoration: line-through;
+    margin-right: var(--space-2);
+}
+
 .carrinho-item-subtotal {
     font: var(--text-body-sm);
     font-weight: 600;
