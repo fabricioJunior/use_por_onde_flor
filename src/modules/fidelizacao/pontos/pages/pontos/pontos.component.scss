@@ -27,6 +27,12 @@ p {
     max-width: 100%;
 }
 
+.voltar-site {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
 .acoes-primarias {
     display: flex;
     flex-direction: column;
