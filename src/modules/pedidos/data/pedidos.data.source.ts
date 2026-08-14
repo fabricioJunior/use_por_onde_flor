@@ -20,4 +20,8 @@ export class PedidosDataSource extends RemoteDataSourceBase<any> {
     buscar(id: number): Observable<PedidoDetalheDto> {
         return this.get({ path: '/' + id });
     }
+
+    reenviarEmail(id: number): Observable<void> {
+        return this.post({ path: `/${id}/reenviar-email` }) as unknown as Observable<void>;
+    }
 }

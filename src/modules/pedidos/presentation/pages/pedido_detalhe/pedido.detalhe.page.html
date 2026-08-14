@@ -59,6 +59,12 @@
         }
     </section>
 
+    <section class="pedido-secao">
+        <button type="button" [disabled]="reenviandoEmail()" (click)="reenviarEmail()">
+            @if (reenviandoEmail()) { Reenviando... } @else { Reenviar e-mail do pedido }
+        </button>
+    </section>
+
     @if (p.documentoFiscal) {
     <section class="pedido-secao">
         <h2>Nota fiscal</h2>

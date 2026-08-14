@@ -18,4 +18,8 @@ export class PedidoPublicoDataSource extends RemoteDataSourceBase<any> {
     buscar(id: number, token: string): Observable<PedidoDetalheDto> {
         return this.get({ path: '/' + id, queryParameters: { token } });
     }
+
+    reenviarEmail(id: number, token: string): Observable<void> {
+        return this.post({ path: `/${id}/reenviar-email`, queryParameters: { token } }) as unknown as Observable<void>;
+    }
 }

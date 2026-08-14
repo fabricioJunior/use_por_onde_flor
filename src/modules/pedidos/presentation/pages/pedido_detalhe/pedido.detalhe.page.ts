@@ -7,6 +7,7 @@ import { FooterComponent } from "../../../../loja/presentation/components/footer
 import { AutenticacaoService } from "../../../../autenticacao/services/autenticacao.service";
 import { PedidosService } from "../../../services/pedidos.service";
 import { PedidoDetalheDto } from "../../../data/dto/pedido-detalhe.dto";
+import { ToastService } from "../../../../loja/presentation/components/ui/toast/toast.service";
 
 @Component({
     selector: 'pedido-detalhe-page',
@@ -21,16 +22,23 @@ export class PedidoDetalhePage implements OnInit {
     erro = signal(false);
     pedido = signal<PedidoDetalheDto | null>(null);
     pagamentoConcluido = signal(false);
+    reenviandoEmail = signal(false);
+
+    private id = 0;
+    private token: string | null = null;
 
     constructor(
         private route: ActivatedRoute,
         private pedidosService: PedidosService,
         private autenticacaoService: AutenticacaoService,
+        private toastService: ToastService,
     ) { }
 
     async ngOnInit(): Promise<void> {
         const id = Number(this.route.snapshot.paramMap.get('id'));
         const token = this.route.snapshot.queryParamMap.get('token');
+        this.id = id;
+        this.token = token;
         this.pagamentoConcluido.set(this.route.snapshot.queryParamMap.get('pago') === '1');
 
         try {
@@ -56,5 +64,18 @@ export class PedidoDetalhePage implements OnInit {
 
     formatarPreco(valor: number | undefined): string {
         return (valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    async reenviarEmail(): Promise<void> {
+        this.reenviandoEmail.set(true);
+        try {
+            await this.pedidosService.reenviarEmail(this.id, this.token);
+            this.toastService.show('E-mail reenviado com sucesso', 'success');
+        } catch (error) {
+            console.error('Erro ao reenviar e-mail do pedido', error);
+            this.toastService.show('Não foi possível reenviar o e-mail. Tente novamente.', 'error');
+        } finally {
+            this.reenviandoEmail.set(false);
+        }
     }
 }

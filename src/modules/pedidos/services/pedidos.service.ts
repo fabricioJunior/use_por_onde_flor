@@ -24,4 +24,10 @@ export class PedidosService {
     buscarPublico(id: number, token: string): Promise<PedidoDetalheDto> {
         return firstValueFrom(this.pedidoPublicoDataSource.buscar(id, token));
     }
+
+    reenviarEmail(id: number, token: string | null): Promise<void> {
+        return firstValueFrom(
+            token ? this.pedidoPublicoDataSource.reenviarEmail(id, token) : this.pedidosDataSource.reenviarEmail(id),
+        );
+    }
 }
