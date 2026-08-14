@@ -137,18 +137,21 @@ export const routes: Routes = [
         canMatch: [autenticacaoGuard]
     },
     {
+        // ANTES de 'pedidos' (lista) propositalmente -- autenticacaoGuard (canMatch) da lista
+        // recebe TODOS os segmentos restantes da URL, não só os dela. Pra '/pedidos/25', se 'pedidos'
+        // fosse tentada primeiro, o guard já dispararia router.navigate(['/login']) como efeito
+        // colateral antes do Angular sequer tentar esta rota (mais específica, sem canMatch,
+        // acessível sem login via link com token -- ver PedidoDetalhePage, que decide internamente
+        // entre busca autenticada e pública via ?token=).
+        path: 'pedidos/:id',
+        loadComponent: () => import('../modules/pedidos/presentation/pages/pedido_detalhe/pedido.detalhe.page').then(m => m.PedidoDetalhePage),
+    },
+    {
         // Lazy: só carrega o bundle de pedidos quando o cliente acessa, mantém o initial bundle
         // dentro do budget do build.
         path: 'pedidos',
         loadComponent: () => import('../modules/pedidos/presentation/pages/pedidos/pedidos.page').then(m => m.PedidosPage),
         canMatch: [autenticacaoGuard]
-    },
-    {
-        // Sem canMatch: acessível sem login via link com token (?token=...) -- ver
-        // PedidoDetalhePage, que decide internamente entre busca autenticada ("meus pedidos") e
-        // pública (token na query string).
-        path: 'pedidos/:id',
-        loadComponent: () => import('../modules/pedidos/presentation/pages/pedido_detalhe/pedido.detalhe.page').then(m => m.PedidoDetalhePage),
     },
 
 
