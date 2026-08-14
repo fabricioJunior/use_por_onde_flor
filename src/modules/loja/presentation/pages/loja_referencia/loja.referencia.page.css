@@ -2,6 +2,9 @@
     display: block;
     min-height: 100dvh;
     background: var(--surface-page);
+    /* Rede de segurança contra qualquer overflow horizontal residual (imagem, tira de cores/tamanhos) --
+       nunca deveria disparar depois do min-width:0 abaixo, mas evita regressão silenciosa. */
+    overflow-x: hidden;
 }
 
 .pagina-shell {
@@ -24,6 +27,14 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-6);
+}
+
+/* min-width:0 nos itens do grid -- sem isso, o item herda a largura mínima de conteúdo da imagem
+   (min-width:auto é o default de item de grid/flex) e empurra a página inteira pra largura da foto,
+   gerando scroll horizontal (e o vertical junto, como consequência do layout esticado). */
+.galeria,
+.detalhes {
+    min-width: 0;
 }
 
 .foto-principal {
@@ -202,13 +213,17 @@ h1 {
     font-weight: 400;
 }
 
-/* Tira horizontal com scroll -- cabe muitas cores sem quebrar linha nem espremer o layout. */
+/* Wrapper genérico das tiras horizontais de seleção (cor e tamanho) -- setas + tira com scroll.
+   No mobile, sangra até a margem real da tela e reaplica só 16px de respiro (--space-4), em vez de
+   herdar o --container-padding (bem maior) do resto da página. */
 .tira-cores {
     display: flex;
     align-items: center;
+    gap: var(--space-1);
 }
 
-.tira-cores-scroll {
+.tira-cores-scroll,
+.seletor-opcoes {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -217,8 +232,32 @@ h1 {
     padding: 2px;
 }
 
-.tira-cores-scroll::-webkit-scrollbar {
+.tira-cores-scroll::-webkit-scrollbar,
+.seletor-opcoes::-webkit-scrollbar {
     display: none;
+}
+
+.tira-seta {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border-default);
+    background: var(--surface-card);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 899px) {
+    .tira-cores {
+        margin: 0 calc(-1 * var(--container-padding));
+        padding: 0 var(--space-4);
+    }
 }
 
 .chip-cor {
@@ -307,6 +346,7 @@ h1 {
 }
 
 .opcao {
+    flex: 0 0 auto;
     font: var(--text-body-sm);
     padding: 8px 16px;
     border-radius: var(--radius-pill);

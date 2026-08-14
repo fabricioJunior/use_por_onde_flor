@@ -67,7 +67,11 @@
                     <span class="secao-titulo-contador">· {{ cores().length }} {{ cores().length === 1 ? 'opção' : 'opções' }}</span>
                 </h2>
                 <div class="tira-cores">
-                    <div class="tira-cores-scroll" #tiraCores role="group" aria-label="Selecione a cor">
+                    @if (podeRolarCorEsquerda()) {
+                    <button type="button" class="tira-seta tira-seta-esquerda" aria-label="Ver cores anteriores"
+                        (click)="rolarCor(-1)">‹</button>
+                    }
+                    <div class="tira-cores-scroll" #corLista (scroll)="atualizarSetasCor()" role="group" aria-label="Selecione a cor">
                         @for (cor of cores(); track cor) {
                         <button type="button" class="chip-cor" [class.ativo]="corSelecionada() === cor"
                             [class.indisponivel]="!corDisponivel(cor)"
@@ -83,6 +87,10 @@
                         </button>
                         }
                     </div>
+                    @if (podeRolarCorDireita()) {
+                    <button type="button" class="tira-seta tira-seta-direita" aria-label="Ver mais cores"
+                        (click)="rolarCor(1)">›</button>
+                    }
                 </div>
             </section>
             }
@@ -90,13 +98,23 @@
             @if (tamanhosParaCorAtual().length > 0) {
             <section class="secao-variacao" #secaoTamanho>
                 <h2 class="secao-titulo">Tamanho: <span class="secao-titulo-valor">{{ tamanhoSelecionadoLabel() }}</span></h2>
-                <div class="seletor-opcoes" role="group" aria-label="Selecione o tamanho">
-                    @for (tamanho of tamanhosParaCorAtual(); track tamanho) {
-                    <button type="button" class="opcao" [class.ativo]="tamanhoSelecionado() === tamanho"
-                        [class.esgotado]="!tamanhoDisponivel(tamanho)" [disabled]="!tamanhoDisponivel(tamanho)"
-                        [attr.aria-label]="'Tamanho: ' + tamanho + (tamanhoSelecionado() === tamanho ? ', selecionado' : '') + (tamanhoDisponivel(tamanho) ? '' : ', indisponível')"
-                        [attr.aria-pressed]="tamanhoSelecionado() === tamanho"
-                        (click)="selecionarTamanho(tamanho)">{{ tamanho }}</button>
+                <div class="tira-cores">
+                    @if (podeRolarTamanhoEsquerda()) {
+                    <button type="button" class="tira-seta tira-seta-esquerda" aria-label="Ver tamanhos anteriores"
+                        (click)="rolarTamanho(-1)">‹</button>
+                    }
+                    <div class="seletor-opcoes" #tamanhoLista (scroll)="atualizarSetasTamanho()" role="group" aria-label="Selecione o tamanho">
+                        @for (tamanho of tamanhosParaCorAtual(); track tamanho) {
+                        <button type="button" class="opcao" [class.ativo]="tamanhoSelecionado() === tamanho"
+                            [class.esgotado]="!tamanhoDisponivel(tamanho)" [disabled]="!tamanhoDisponivel(tamanho)"
+                            [attr.aria-label]="'Tamanho: ' + tamanho + (tamanhoSelecionado() === tamanho ? ', selecionado' : '') + (tamanhoDisponivel(tamanho) ? '' : ', indisponível')"
+                            [attr.aria-pressed]="tamanhoSelecionado() === tamanho"
+                            (click)="selecionarTamanho(tamanho)">{{ tamanho }}</button>
+                        }
+                    </div>
+                    @if (podeRolarTamanhoDireita()) {
+                    <button type="button" class="tira-seta tira-seta-direita" aria-label="Ver mais tamanhos"
+                        (click)="rolarTamanho(1)">›</button>
                     }
                 </div>
             </section>

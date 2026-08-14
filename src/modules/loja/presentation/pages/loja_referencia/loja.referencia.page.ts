@@ -23,6 +23,8 @@ export class LojaReferenciaPage implements OnInit {
     @ViewChild('secaoCor') secaoCorRef?: ElementRef<HTMLElement>;
     @ViewChild('secaoTamanho') secaoTamanhoRef?: ElementRef<HTMLElement>;
     @ViewChild('thumbLista') thumbListaRef?: ElementRef<HTMLElement>;
+    @ViewChild('corLista') corListaRef?: ElementRef<HTMLElement>;
+    @ViewChild('tamanhoLista') tamanhoListaRef?: ElementRef<HTMLElement>;
 
     loading = signal(true);
     erro = signal('');
@@ -36,6 +38,10 @@ export class LojaReferenciaPage implements OnInit {
     panY = signal(0);
     podeRolarThumbEsquerda = signal(false);
     podeRolarThumbDireita = signal(false);
+    podeRolarCorEsquerda = signal(false);
+    podeRolarCorDireita = signal(false);
+    podeRolarTamanhoEsquerda = signal(false);
+    podeRolarTamanhoDireita = signal(false);
 
     // Estado de gesto (pointer down/move/up) -- não precisa ser signal, só usado durante o drag.
     private gestoAtivo = false;
@@ -176,6 +182,10 @@ export class LojaReferenciaPage implements OnInit {
                 this.corSelecionada.set(disponiveis[0].corNome);
                 this.tamanhoSelecionado.set(disponiveis[0].tamanhoNome);
             }
+            setTimeout(() => {
+                this.atualizarSetasCor();
+                this.atualizarSetasTamanho();
+            });
         } catch (error) {
             console.error('Erro ao carregar referência da loja', error);
             this.erro.set('Não foi possível carregar este produto no momento.');
@@ -282,17 +292,46 @@ export class LojaReferenciaPage implements OnInit {
     }
 
     rolarThumb(direcao: 1 | -1): void {
-        const container = this.thumbListaRef?.nativeElement;
-        container?.scrollBy({ left: direcao * 160, behavior: 'smooth' });
+        this.rolar(this.thumbListaRef, direcao);
     }
 
     atualizarSetasThumb(): void {
-        const container = this.thumbListaRef?.nativeElement;
+        this.atualizarSetas(this.thumbListaRef, this.podeRolarThumbEsquerda, this.podeRolarThumbDireita);
+    }
+
+    rolarCor(direcao: 1 | -1): void {
+        this.rolar(this.corListaRef, direcao);
+    }
+
+    atualizarSetasCor(): void {
+        this.atualizarSetas(this.corListaRef, this.podeRolarCorEsquerda, this.podeRolarCorDireita);
+    }
+
+    rolarTamanho(direcao: 1 | -1): void {
+        this.rolar(this.tamanhoListaRef, direcao);
+    }
+
+    atualizarSetasTamanho(): void {
+        this.atualizarSetas(this.tamanhoListaRef, this.podeRolarTamanhoEsquerda, this.podeRolarTamanhoDireita);
+    }
+
+    // Mesma lógica de rolagem/detecção de fim de tira, reaproveitada pelas 3 tiras horizontais
+    // (fotos, cores, tamanhos) -- só muda a ref e os signals.
+    private rolar(ref: ElementRef<HTMLElement> | undefined, direcao: 1 | -1): void {
+        ref?.nativeElement.scrollBy({ left: direcao * 160, behavior: 'smooth' });
+    }
+
+    private atualizarSetas(
+        ref: ElementRef<HTMLElement> | undefined,
+        podeEsquerda: ReturnType<typeof signal<boolean>>,
+        podeDireita: ReturnType<typeof signal<boolean>>,
+    ): void {
+        const container = ref?.nativeElement;
         if (!container) {
             return;
         }
-        this.podeRolarThumbEsquerda.set(container.scrollLeft > 4);
-        this.podeRolarThumbDireita.set(container.scrollLeft + container.clientWidth < container.scrollWidth - 4);
+        podeEsquerda.set(container.scrollLeft > 4);
+        podeDireita.set(container.scrollLeft + container.clientWidth < container.scrollWidth - 4);
     }
 
     selecionarCor(cor: string): void {
@@ -304,6 +343,8 @@ export class LojaReferenciaPage implements OnInit {
         this.tamanhoSelecionado.set(null);
         this.quantidade.set(1);
         this.adicionado.set(false);
+        // Lista de tamanhos muda de conteúdo (filtrada pela cor) -- recalcula depois do DOM atualizar.
+        setTimeout(() => this.atualizarSetasTamanho());
     }
 
     selecionarTamanho(tamanho: string): void {
