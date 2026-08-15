@@ -5,6 +5,7 @@ import { RemoteDataSourceBase } from "../../core/http/remote.data.source.base";
 import { environment } from "../../../environments/environment";
 import { CheckoutRequestDto, CheckoutResponseDto } from "./dtos/checkout.dto";
 import { CotarFreteRequestDto, OpcaoFreteDto } from "./dtos/frete.dto";
+import { CotarCheckoutRequestDto, CotarCheckoutResponseDto } from "./dtos/cotar-checkout.dto";
 
 @Injectable({ providedIn: 'root' })
 export class CheckoutDataSource extends RemoteDataSourceBase<CheckoutResponseDto> {
@@ -27,5 +28,13 @@ export class CheckoutDataSource extends RemoteDataSourceBase<CheckoutResponseDto
             path: '/frete',
             body: dto,
         }) as unknown as Observable<OpcaoFreteDto[]>;
+    }
+
+    cotar(dto: CotarCheckoutRequestDto): Observable<CotarCheckoutResponseDto> {
+        return this.post({
+            pathArguments: { ecommerceId: environment.ecommerceId.toString() },
+            path: '/cotar',
+            body: dto,
+        }) as unknown as Observable<CotarCheckoutResponseDto>;
     }
 }

@@ -49,4 +49,7 @@ export interface CheckoutCobrancaDto {
 export interface CheckoutResponseDto {
     pedidoId: number;
     cobranca?: CheckoutCobrancaDto;
+    // Presente só pra checkout guest -- permite consultar o status do pedido sem login
+    // (GET /pedidos/publico/:id?token=).
+    tokenAcesso?: string;
 }

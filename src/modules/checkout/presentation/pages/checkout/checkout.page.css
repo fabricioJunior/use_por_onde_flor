@@ -137,8 +137,35 @@ h2 {
 .checkout-resumo-item {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
     font: var(--text-body-sm);
     color: var(--text-secondary);
+}
+
+.checkout-resumo-item-foto {
+    width: 48px;
+    height: 60px;
+    flex-shrink: 0;
+    background: var(--surface-sunken);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font: var(--text-caption);
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.checkout-resumo-item-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.checkout-resumo-item-info {
+    flex: 1;
 }
 
 .checkout-resumo-item-variacao {

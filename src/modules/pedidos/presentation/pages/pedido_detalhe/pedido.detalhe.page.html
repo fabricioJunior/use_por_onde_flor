@@ -68,6 +68,29 @@
             <span>{{ formatarPreco(pagamento.valorConfirmado ?? pagamento.valorEsperado) }}</span>
             <span>{{ pagamento.confirmadoEm ? 'Confirmado' : 'Pendente' }}</span>
         </div>
+        @if (!pagamento.confirmadoEm && pagamento.cobranca) {
+        @if (pagamento.estoqueDisponivel === false) {
+        <div class="pedido-pagamento-sem-estoque">
+            <p>Um ou mais produtos desse pedido ficaram sem estoque. Entre em contato pra verificar antes de continuar o pagamento.</p>
+        </div>
+        } @else {
+        <div class="checkout-pix">
+            <p>Pagamento pendente. Finalize pra confirmar o pedido.</p>
+            @if (pagamento.cobranca.urlDePagamento) {
+            <a [href]="pagamento.cobranca.urlDePagamento" target="_blank" rel="noopener">Ir para o pagamento</a>
+            }
+            @if (pagamento.cobranca.qrCodePix) {
+            <img class="checkout-pix-qrcode" [src]="pagamento.cobranca.qrCodePix" alt="QR Code Pix">
+            }
+            @if (pagamento.cobranca.chavePixCopiaECola) {
+            <div class="checkout-pix-copia">
+                <span>{{ pagamento.cobranca.chavePixCopiaECola }}</span>
+                <button type="button" [cdkCopyToClipboard]="pagamento.cobranca.chavePixCopiaECola">Copiar</button>
+            </div>
+            }
+        </div>
+        }
+        }
         }
     </section>
 

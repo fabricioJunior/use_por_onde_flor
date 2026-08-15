@@ -25,11 +25,13 @@ export class InformacoesContatoComponent implements OnInit {
     loading = signal(false);
 
     emailError = signal('');
+    emailPendenteVerificacao = signal(false);
 
     avancaEnable(): boolean {
         return true;
     }
     onAvancarTap() {
+        this.emailPendenteVerificacao.set(false);
         this.loginService.validarEmailValido(this.formGroup.get('email')?.value).subscribe((value) => {
             this.loading.set(true);
             if (value.valido) {
@@ -37,10 +39,19 @@ export class InformacoesContatoComponent implements OnInit {
             } else {
                 console.log(value);
                 this.loading.set(false);
-                this.emailError.set(value.mensagem);
+                if (value.emailVerificado === false) {
+                    this.emailError.set('Esse e-mail já tem um cadastro aguardando verificação.');
+                    this.emailPendenteVerificacao.set(true);
+                } else {
+                    this.emailError.set(value.mensagem);
+                }
             }
         });
 
+    }
+
+    irParaLogin() {
+        this.router.navigate(['/login']);
     }
 
     formGroup: FormGroup;

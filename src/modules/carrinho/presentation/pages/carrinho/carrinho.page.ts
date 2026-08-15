@@ -5,11 +5,12 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { CarrinhoFacadeService } from "../../../services/carrinho.facade.service";
 import { CarrinhoItemViewDto } from "../../../data/dtos/carrinho-item-view.dto";
 import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
+import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
 
 @Component({
     selector: 'carrinho-page',
     standalone: true,
-    imports: [CommonModule, RouterLink, MatProgressSpinnerModule, ButtonComponent],
+    imports: [CommonModule, RouterLink, MatProgressSpinnerModule, ButtonComponent, HeaderComponent],
     templateUrl: './carrinho.page.html',
     styleUrl: './carrinho.page.css',
 })

@@ -74,7 +74,11 @@ export const ApiBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
     console.log('acesso no config');
     console.log(tokens);
 
-    if (req.url.includes('http') || req.url.includes('pagamento') || req.url.includes('pagamentos-avulsos')) {
+    // 'pagamento'/'pagamentos-avulsos' já são cobertos por includes('http') (PagamentoDataSource
+    // monta URL absoluta com environment.pagamentoApiUrl) -- checagem extra removida porque
+    // colidia com 'v1/e-commerce/{id}/forma-pagamento', que também contém a substring "pagamento"
+    // e não deve ser bypassada (precisa do prefixo de environment.serverUrl).
+    if (req.url.includes('http')) {
         console.log("url", req.url);
         return next(req);
     }

@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, OnInit, signal } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { HttpErrorResponse } from "@angular/common/http";
+import { ClipboardModule } from "@angular/cdk/clipboard";
 import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
 import { FooterComponent } from "../../../../loja/presentation/components/footer/footer.component";
 import { AutenticacaoService } from "../../../../autenticacao/services/autenticacao.service";
@@ -13,7 +14,7 @@ import { pedidoFoiEntregue, situacaoPedidoLabel } from "../../../utils/pedido-si
 @Component({
     selector: 'pedido-detalhe-page',
     standalone: true,
-    imports: [CommonModule, HeaderComponent, FooterComponent],
+    imports: [CommonModule, HeaderComponent, FooterComponent, ClipboardModule],
     templateUrl: './pedido.detalhe.page.html',
     styleUrl: './pedido.detalhe.page.css',
 })

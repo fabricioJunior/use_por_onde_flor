@@ -13,14 +13,28 @@ export class PedidoItemDto {
     }
 }
 
+export class PedidoPagamentoCobrancaDto {
+    qrCodePix?: string;
+    chavePixCopiaECola?: string;
+    urlDePagamento?: string;
+
+    constructor(partial?: Partial<PedidoPagamentoCobrancaDto>) {
+        Object.assign(this, partial);
+    }
+}
+
 // Shape real de PedidoPagamentoResponse (apollo-api) -- formaDePagamento vem como o objeto inteiro
 // (FormaDePagamentoEntity, eager relation), não uma string; valor confirmado só existe depois da
-// confirmação do pagamento, até lá é só o esperado.
+// confirmação do pagamento, até lá é só o esperado. cobranca só vem preenchida quando o pagamento
+// é online e ainda está pendente (PedidoPagamentoService.findByPedidoId reconstrói o link do
+// gateway a cada consulta) -- é o link que permite retomar o pagamento se o cliente saiu do fluxo.
 export class PedidoPagamentoDto {
     formaDePagamento?: { id?: number; descricao?: string };
     valorEsperado?: number;
     valorConfirmado?: number;
     confirmadoEm?: string;
+    cobranca?: PedidoPagamentoCobrancaDto;
+    estoqueDisponivel?: boolean;
 
     constructor(partial?: Partial<PedidoPagamentoDto>) {
         Object.assign(this, partial);
