@@ -117,7 +117,14 @@
         <div class="checkout-resumo">
             @for (item of itens(); track item.produtoId) {
             <div class="checkout-resumo-item">
-                <span>
+                <div class="checkout-resumo-item-foto">
+                    @if (item.imagemUrl) {
+                    <img [src]="item.imagemUrl" [alt]="item.nome">
+                    } @else {
+                    <span>Sem foto</span>
+                    }
+                </div>
+                <span class="checkout-resumo-item-info">
                     {{ item.nome || ('Produto #' + item.produtoId) }} x{{ item.quantidade }}
                     @if (item.corNome || item.tamanhoNome) {
                     <span class="checkout-resumo-item-variacao">{{ item.corNome }}{{ item.corNome && item.tamanhoNome ? ' · ' : '' }}{{ item.tamanhoNome }}</span>

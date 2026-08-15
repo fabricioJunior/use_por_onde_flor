@@ -195,6 +195,7 @@ export class CheckoutPage implements OnInit {
                 this.formasPagamento.set(formas);
                 if (formas.length === 1) {
                     this.formaPagamentoSelecionadaId.set(formas[0].formaDePagamentoId);
+                    await this.atualizarPrecosPorFormaPagamento(formas[0].formaDePagamentoId);
                 }
             } catch (formaPagamentoError) {
                 console.error('Erro ao consultar formas de pagamento', formaPagamentoError);
@@ -359,8 +360,30 @@ export class CheckoutPage implements OnInit {
         return pendencias;
     }
 
-    selecionarFormaPagamento(formaDePagamentoId: number): void {
+    async selecionarFormaPagamento(formaDePagamentoId: number): Promise<void> {
         this.formaPagamentoSelecionadaId.set(formaDePagamentoId);
+        await this.atualizarPrecosPorFormaPagamento(formaDePagamentoId);
+    }
+
+    // Desconto de promoção pode variar por forma de pagamento (restringirFormasPagamento/override
+    // em promocao_forma_pagamento, ver EcommerceCheckoutService.montarItensComDesconto) -- recotar
+    // sempre que a escolha mudar, senão o valor exibido não bate com o que o backend vai cobrar.
+    private async atualizarPrecosPorFormaPagamento(formaDePagamentoId: number): Promise<void> {
+        if (this.itens().length === 0) {
+            return;
+        }
+        try {
+            const cotacao = await firstValueFrom(this.checkoutDataSource.cotar({
+                itens: this.itens().map((item) => ({ produtoId: item.produtoId!, quantidade: item.quantidade! })),
+                formaDePagamentoId,
+            }));
+            this.itens.set(this.itens().map((item) => {
+                const precoItem = cotacao.itens.find((i) => i.produtoId === item.produtoId);
+                return precoItem ? { ...item, valor: precoItem.valor, valorPromocional: precoItem.valorPromocional } : item;
+            }));
+        } catch (error) {
+            console.error('Erro ao recalcular preço pra forma de pagamento selecionada', error);
+        }
     }
 
     private camposInvalidos(form: ReturnType<FormBuilder['group']>): string[] {
