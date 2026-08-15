@@ -86,6 +86,11 @@ export class AutenticacaoService {
         }
     }
 
+    emailVerificadoDaSessao(): boolean {
+        const usuario = this.localStorageService.get('usuario_da_sessao') as UsuarioDto | null;
+        return usuario?.emailVerificado !== false;
+    }
+
     async logout() {
         await this.localStorageService.clear();
     }

@@ -24,6 +24,11 @@
     <mat-error>
         {{emailError()}}
     </mat-error>
+    @if (emailPendenteVerificacao()) {
+    <button type="button" id="ir-para-login-button" (click)="irParaLogin()"
+        class="text-button text-button-text">Já tenho conta, ir para o
+        login</button>
+    }
     <div class="row">
         <app-filled-button [label]="'Avançar'" [color]="'red'"
             [enabled]="avancaEnable()"

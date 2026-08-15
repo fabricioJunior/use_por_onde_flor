@@ -18,6 +18,7 @@ import { PagamentosComponent } from '../modules/pagamento/presentation/pagamento
 import { PagamentoComponent } from '../modules/pagamento/presentation/pagamento/pagamento.component';
 import { RecuperarSenhaComponent } from '../modules/autenticacao/login/recuperar_senha/recuperar.senha.component';
 import { MudarSenhaComponent } from '../modules/autenticacao/login/mudar_senha/mudar.senha.component';
+import { EmailPendenteComponent } from '../modules/autenticacao/login/email_pendente/email.pendente.component';
 import { AutenticacaoService } from '../modules/autenticacao/services/autenticacao.service';
 import { inject } from '@angular/core';
 import { RegulamentoComponent } from '../modules/fidelizacao/pontos/pages/regulamento/regulamento.component';
@@ -67,6 +68,11 @@ export const routes: Routes = [
     },
     {
         path: 'mudarSenha', component: MudarSenhaComponent,
+    },
+    {
+        // Destino pós-login quando a conta ainda não confirmou o e-mail de cadastro.
+        path: 'email-pendente', component: EmailPendenteComponent,
+        canMatch: [autenticacaoGuard]
     },
     {
         path: 'home', component: PontosComponent,

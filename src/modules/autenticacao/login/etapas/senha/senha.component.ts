@@ -63,6 +63,10 @@ export class LoginSenhaComponent implements OnInit {
             this.formGroup.get('senha')?.value,
         );
         if (sucess) {
+            if (!this.loginService.emailVerificadoDaSessao()) {
+                this.router.navigate(['/email-pendente']);
+                return;
+            }
             this.router.navigateByUrl(this.loginComponent.returnUrl() ?? '/loja');
         } else {
             this.errorMessage.set('Senha incorreta, tente novamente');

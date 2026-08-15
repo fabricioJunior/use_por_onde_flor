@@ -9,6 +9,7 @@ export class UsuarioDto {
     telefone?: string;
     empresaId?: number
     id?: number;
+    emailVerificado?: boolean;
 
     constructor(partial?: Partial<UsuarioDto>) {
         Object.assign(this, partial);

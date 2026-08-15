@@ -1,0 +1,28 @@
+<div class="email-group">
+    <div class="column">
+        <app-logo></app-logo>
+        <h2>Confirme seu e-mail</h2>
+    </div>
+
+    @if (reenviado()) {
+    <p>E-mail reenviado. Acesse sua caixa de entrada para concluir a verificação.</p>
+    } @else {
+    <p>Seu e-mail ainda não foi verificado. Verifique sua caixa de entrada ou reenvie o e-mail de confirmação.</p>
+
+    @if (!reenviando()) {
+    <div class="button-group">
+        <app-filled-button [label]="'Reenviar e-mail de confirmação'" [color]="'red'"
+            [enabled]="true" (onTap)="reenviarEmail()"
+            class="button avanca-button"></app-filled-button>
+    </div>
+    } @else {
+    <mat-spinner></mat-spinner>
+    }
+    }
+
+    <div class="row">
+        <button type="button" id="voltar-login-button" (click)="irParaLogin()"
+            class="text-button text-button-text">Voltar para o login
+        </button>
+    </div>
+</div>
