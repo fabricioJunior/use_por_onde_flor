@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, OnInit, ViewChild, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { LojaDataSource } from "../../../data/loja.data.source";
@@ -14,15 +15,17 @@ import { HeaderComponent } from "../../components/header/header.component";
 import { HeroComponent } from "../../components/hero/hero.component";
 import { FooterComponent } from "../../components/footer/footer.component";
 import { ButtonComponent } from "../../components/ui/button/button.component";
+import { InputComponent } from "../../components/ui/input/input.component";
 
 const LIMITE_POR_PAGINA = 24;
+const DEBOUNCE_BUSCA_MS = 400;
 
 @Component({
     selector: 'loja-home-page',
     standalone: true,
     imports: [
-        CommonModule, MatProgressSpinnerModule, ProdutoCardComponent,
-        HeaderComponent, HeroComponent, FooterComponent, ButtonComponent,
+        CommonModule, FormsModule, MatProgressSpinnerModule, ProdutoCardComponent,
+        HeaderComponent, HeroComponent, FooterComponent, ButtonComponent, InputComponent,
     ],
     templateUrl: './loja.home.page.html',
     styleUrl: './loja.home.page.css',
@@ -36,7 +39,9 @@ export class LojaHomePage implements OnInit {
     referencias = signal<EcommerceReferenciaDto[]>([]);
     temMaisPaginas = signal(false);
     itensNoCarrinho = signal(0);
+    busca = signal('');
     private paginaAtual = 1;
+    private buscaDebounce?: ReturnType<typeof setTimeout>;
     private mapaPromocoesPorReferencia = new Map<number, PromocaoDto>();
     private promocoesGerais: PromocaoDto[] = [];
 
@@ -78,7 +83,9 @@ export class LojaHomePage implements OnInit {
 
     private async carregarPagina(pagina: number): Promise<void> {
         try {
-            const resposta = await firstValueFrom(this.lojaDataSource.listarReferencias(pagina, LIMITE_POR_PAGINA));
+            const resposta = await firstValueFrom(
+                this.lojaDataSource.listarReferencias(pagina, LIMITE_POR_PAGINA, this.busca().trim() || undefined),
+            );
             this.paginaAtual = pagina;
             const itens = this.aplicarPrecosPromocionais(resposta.items);
             this.referencias.update((atual) => (pagina === 1 ? itens : [...atual, ...itens]));
@@ -95,6 +102,15 @@ export class LojaHomePage implements OnInit {
     async carregarMais(): Promise<void> {
         this.carregandoMais.set(true);
         await this.carregarPagina(this.paginaAtual + 1);
+    }
+
+    onBuscaChange(valor: string): void {
+        this.busca.set(valor);
+        clearTimeout(this.buscaDebounce);
+        this.buscaDebounce = setTimeout(() => {
+            this.loading.set(true);
+            this.carregarPagina(1);
+        }, DEBOUNCE_BUSCA_MS);
     }
 
     async atualizarContagemCarrinho(): Promise<void> {
