@@ -177,7 +177,7 @@
     }
 
     <ui-button size="lg" [disabled]="!podeFinalizar() || finalizando()" (clicked)="finalizar()">
-        @if (finalizando()) { Processando... } @else { Finalizar e pagar }
+        @if (finalizando()) { Processando... } @else if (cotandoPreco()) { Calculando valores... } @else { Finalizar e pagar }
     </ui-button>
     }
     }

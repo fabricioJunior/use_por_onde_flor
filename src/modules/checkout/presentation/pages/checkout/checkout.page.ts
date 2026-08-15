@@ -57,6 +57,7 @@ export class CheckoutPage implements OnInit {
     resposta = signal<{ pedidoId: number; cobranca?: CheckoutCobrancaDto; tokenAcesso?: string } | null>(null);
     verificandoPagamento = signal(false);
     pagamentoNaoConfirmado = signal(false);
+    cotandoPreco = signal(false);
 
     autenticado: boolean;
 
@@ -318,7 +319,7 @@ export class CheckoutPage implements OnInit {
     }
 
     podeFinalizar(): boolean {
-        return this.pendencias().length === 0;
+        return this.pendencias().length === 0 && !this.cotandoPreco();
     }
 
     private static readonly LABEL_CAMPO: Record<string, string> = {
@@ -376,6 +377,7 @@ export class CheckoutPage implements OnInit {
         if (this.itens().length === 0) {
             return;
         }
+        this.cotandoPreco.set(true);
         try {
             const cotacao = await firstValueFrom(this.checkoutDataSource.cotar({
                 itens: this.itens().map((item) => ({ produtoId: item.produtoId!, quantidade: item.quantidade! })),
@@ -387,6 +389,8 @@ export class CheckoutPage implements OnInit {
             }));
         } catch (error) {
             console.error('Erro ao recalcular preço pra forma de pagamento selecionada', error);
+        } finally {
+            this.cotandoPreco.set(false);
         }
     }
 
