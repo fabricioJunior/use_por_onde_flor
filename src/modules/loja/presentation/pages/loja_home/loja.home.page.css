@@ -10,6 +10,11 @@
     padding: var(--space-6) var(--container-padding);
 }
 
+.loja-busca {
+    max-width: 480px;
+    margin: 0 auto var(--space-6);
+}
+
 .loja-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

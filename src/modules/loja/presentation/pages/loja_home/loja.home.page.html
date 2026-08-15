@@ -4,6 +4,11 @@
     <loja-hero (verColecao)="scrollParaProdutos()"></loja-hero>
 
     <main class="loja-content" id="produtos" #produtos>
+        <div class="loja-busca">
+            <ui-input placeholder="Buscar produtos..." [ngModel]="busca()"
+                (ngModelChange)="onBuscaChange($event)"></ui-input>
+        </div>
+
         @if (loading()) {
         <div class="loja-estado">
             <mat-spinner diameter="42"></mat-spinner>
@@ -15,7 +20,11 @@
         </div>
         } @else if (referencias().length === 0) {
         <div class="loja-estado">
+            @if (busca()) {
+            <p>Nenhum produto encontrado para "{{ busca() }}".</p>
+            } @else {
             <p>Nenhum produto disponível no momento.</p>
+            }
         </div>
         } @else {
         <div class="loja-grid">
