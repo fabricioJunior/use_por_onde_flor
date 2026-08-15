@@ -77,6 +77,9 @@ export class CheckoutPage implements OnInit {
 
     modalidadeEntrega = signal<ModalidadeEntregaPedido>('retirada');
 
+    formasPagamento = signal<{ formaDePagamentoId: number; descricao: string; provider?: string }[]>([]);
+    formaPagamentoSelecionadaId = signal<number | null>(null);
+
     constructor(
         private formBuilder: FormBuilder,
         private carrinhoFacadeService: CarrinhoFacadeService,
@@ -185,6 +188,17 @@ export class CheckoutPage implements OnInit {
             } catch (statusError) {
                 console.error('Erro ao consultar status da loja', statusError);
                 this.lojaFechada.set(false);
+            }
+
+            try {
+                const formas = await firstValueFrom(this.lojaDataSource.formaPagamento());
+                this.formasPagamento.set(formas);
+                if (formas.length === 1) {
+                    this.formaPagamentoSelecionadaId.set(formas[0].formaDePagamentoId);
+                }
+            } catch (formaPagamentoError) {
+                console.error('Erro ao consultar formas de pagamento', formaPagamentoError);
+                this.formasPagamento.set([]);
             }
 
             if (this.autenticado) {
@@ -338,7 +352,15 @@ export class CheckoutPage implements OnInit {
             }
         }
 
+        if (this.formasPagamento().length > 1 && this.formaPagamentoSelecionadaId() == null) {
+            pendencias.push('Selecione uma forma de pagamento.');
+        }
+
         return pendencias;
+    }
+
+    selecionarFormaPagamento(formaDePagamentoId: number): void {
+        this.formaPagamentoSelecionadaId.set(formaDePagamentoId);
     }
 
     private camposInvalidos(form: ReturnType<FormBuilder['group']>): string[] {
@@ -396,6 +418,7 @@ export class CheckoutPage implements OnInit {
                 enderecoEntregaId,
                 enderecoEntrega,
                 freteEscolhido: this.freteSelecionado() ?? undefined,
+                formaDePagamentoId: this.formaPagamentoSelecionadaId() ?? undefined,
             }));
 
             this.carrinhoFacadeService.limparLocal();

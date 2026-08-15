@@ -52,7 +52,30 @@ export class RecuperarSenhaDataSource extends RemoteDataSourceBase<RecuperarSenh
         return firstValueFrom(observe);
     }
 
+    confirmarEmail(token: string): Promise<RecuperarSenhaDto> {
+        var observe = this.post(
+            {
+                pathArguments: {
+                    'acao': 'confirmar-email'
+                },
+                body: {
+                    'token': token
+                }
+            }
+        );
+        return firstValueFrom(observe);
+    }
 
+    reenviarConfirmacaoDeEmail(): Promise<RecuperarSenhaDto> {
+        var observe = this.post(
+            {
+                pathArguments: {
+                    'acao': 'reenviar-confirmacao-de-email'
+                }
+            }
+        );
+        return firstValueFrom(observe);
+    }
 
 }
 

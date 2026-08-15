@@ -1,0 +1,32 @@
+
+<div class="email-group">
+    <div class="column">
+        <app-logo></app-logo>
+        <h2>Verificação de E-mail</h2>
+    </div>
+
+    @if (carregando()) {
+    <mat-spinner></mat-spinner>
+    } @else if (sucesso()) {
+    <h4>E-mail verificado com sucesso!</h4>
+    <div class="button-group">
+        <app-filled-button [label]="'Ir para a loja'" [color]="'red'"
+            (onTap)="irParaLoja()" class="button"></app-filled-button>
+    </div>
+    } @else {
+    <p class="error-message">{{ mensagemErro() }}</p>
+
+    @if (reenviado()) {
+    <p>Novo e-mail de confirmação enviado.</p>
+    }
+
+    @if (!reenviando()) {
+    <div class="button-group">
+        <app-filled-button [label]="'Reenviar e-mail de confirmação'" [color]="'red'"
+            (onTap)="reenviarConfirmacao()" class="button"></app-filled-button>
+    </div>
+    } @else {
+    <mat-spinner></mat-spinner>
+    }
+    }
+</div>

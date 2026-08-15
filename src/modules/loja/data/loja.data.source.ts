@@ -66,8 +66,8 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
         });
     }
 
-    formaPagamento(): Observable<{ formaDePagamentoId: number; descricao: string; provider?: string }> {
-        return this.get({
+    formaPagamento(): Observable<{ formaDePagamentoId: number; descricao: string; provider?: string }[]> {
+        return this.getList({
             pathArguments: this.ecommerceArgs(),
             path: '/forma-pagamento',
         });
