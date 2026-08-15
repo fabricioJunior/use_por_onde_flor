@@ -10,7 +10,21 @@
     } @else {
     @if (resposta(); as pix) {
     <div class="checkout-pix">
-        <p>Pedido #{{ pix.pedidoId }} criado! Finalize o pagamento via Pix para confirmar.</p>
+        <p>Pedido #{{ pix.pedidoId }} criado! Abrimos uma nova aba pra você concluir o pagamento.</p>
+        @if (pix.cobranca?.urlDePagamento) {
+        <a [href]="pix.cobranca!.urlDePagamento" target="_blank" rel="noopener">
+            Não abriu a aba? Clique aqui pra pagar
+        </a>
+        }
+        <p>Pagamento em andamento. Já pagou? Clique em verificar.</p>
+        @if (!verificandoPagamento()) {
+        <ui-button (clicked)="verificarPagamento()">Verificar pagamento</ui-button>
+        } @else {
+        <mat-spinner diameter="32"></mat-spinner>
+        }
+        @if (pagamentoNaoConfirmado()) {
+        <p class="checkout-aviso">Ainda não identificamos seu pagamento. Aguarde alguns instantes e tente novamente.</p>
+        }
         @if (pix.cobranca?.qrCodePix) {
         <img class="checkout-pix-qrcode" [src]="pix.cobranca!.qrCodePix" alt="QR Code Pix">
         }
@@ -20,7 +34,6 @@
             <button type="button" [cdkCopyToClipboard]="pix.cobranca!.chavePixCopiaECola!">Copiar</button>
         </div>
         }
-        <ui-button (clicked)="irParaConfirmacao()">Já paguei</ui-button>
     </div>
     } @else {
 

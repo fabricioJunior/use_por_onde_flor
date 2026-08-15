@@ -22,6 +22,7 @@ import { CheckoutCobrancaDto, ModalidadeEntregaPedido } from "../../../data/dtos
 import { OpcaoFreteDto } from "../../../data/dtos/frete.dto";
 import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
 import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
+import { PedidosService } from "../../../../pedidos/services/pedidos.service";
 
 const CEP_VALIDO = /^\d{5}-?\d{3}$/;
 
@@ -53,7 +54,9 @@ export class CheckoutPage implements OnInit {
     enderecos = signal<EnderecoDto[]>([]);
     enderecoSelecionadoId = signal<number | null>(null);
     mostrarNovoEndereco = signal(false);
-    resposta = signal<{ pedidoId: number; cobranca?: CheckoutCobrancaDto } | null>(null);
+    resposta = signal<{ pedidoId: number; cobranca?: CheckoutCobrancaDto; tokenAcesso?: string } | null>(null);
+    verificandoPagamento = signal(false);
+    pagamentoNaoConfirmado = signal(false);
 
     autenticado: boolean;
 
@@ -89,6 +92,7 @@ export class CheckoutPage implements OnInit {
         private lojaDataSource: LojaDataSource,
         private checkoutDataSource: CheckoutDataSource,
         private enderecoDataSource: EnderecoDataSource,
+        private pedidosService: PedidosService,
         private http: HttpClient,
         public router: Router,
     ) {
@@ -446,13 +450,23 @@ export class CheckoutPage implements OnInit {
 
             this.carrinhoFacadeService.limparLocal();
 
-            if (resposta.cobranca?.urlDePagamento && typeof window !== 'undefined') {
-                document.location.href = resposta.cobranca.urlDePagamento;
+            // Pix (Mercado Pago): abre o pagamento em nova aba (o cliente conclui lá) e mantém
+            // nossa tela aberta pra verificar a confirmação -- Orders API não suporta redirect de
+            // volta pro site (back_urls removido), então não dá pra confiar em nenhum retorno
+            // automático. urlDePagamento aqui é o ticket_url do Mercado Pago (página hospedada com
+            // o QR), não um link nosso.
+            if (resposta.cobranca?.qrCodePix || resposta.cobranca?.chavePixCopiaECola) {
+                if (resposta.cobranca?.urlDePagamento && typeof window !== 'undefined') {
+                    window.open(resposta.cobranca.urlDePagamento, '_blank', 'noopener');
+                }
+                this.resposta.set(resposta);
                 return;
             }
 
-            if (resposta.cobranca?.qrCodePix || resposta.cobranca?.chavePixCopiaECola) {
-                this.resposta.set(resposta);
+            // Outros gateways com checkout hospedado (ex: link de cartão) continuam com redirect
+            // de página inteira -- esses suportam redirect_url de volta pro site.
+            if (resposta.cobranca?.urlDePagamento && typeof window !== 'undefined') {
+                document.location.href = resposta.cobranca.urlDePagamento;
                 return;
             }
 
@@ -466,8 +480,36 @@ export class CheckoutPage implements OnInit {
         }
     }
 
-    irParaConfirmacao(): void {
-        const pedidoId = this.resposta()?.pedidoId;
-        this.router.navigate(['/pagamento'], { queryParams: { pedidoId } });
+    async verificarPagamento(): Promise<void> {
+        const resposta = this.resposta();
+        if (!resposta || this.verificandoPagamento()) {
+            return;
+        }
+
+        this.verificandoPagamento.set(true);
+        this.pagamentoNaoConfirmado.set(false);
+        try {
+            const pedido = this.autenticado
+                ? await this.pedidosService.buscar(resposta.pedidoId)
+                : resposta.tokenAcesso
+                    ? await this.pedidosService.buscarPublico(resposta.pedidoId, resposta.tokenAcesso)
+                    : null;
+
+            const pago = pedido?.pagamentos?.some((p) => !!p.confirmadoEm) ?? false;
+
+            if (pago) {
+                this.router.navigate(['/pedidos', resposta.pedidoId], {
+                    queryParams: resposta.tokenAcesso ? { token: resposta.tokenAcesso, pago: '1' } : { pago: '1' },
+                });
+                return;
+            }
+
+            this.pagamentoNaoConfirmado.set(true);
+        } catch (error) {
+            console.error('Erro ao verificar pagamento', error);
+            this.pagamentoNaoConfirmado.set(true);
+        } finally {
+            this.verificandoPagamento.set(false);
+        }
     }
 }
