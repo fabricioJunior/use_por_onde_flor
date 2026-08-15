@@ -34,6 +34,7 @@ export class PedidoPagamentoDto {
     valorConfirmado?: number;
     confirmadoEm?: string;
     cobranca?: PedidoPagamentoCobrancaDto;
+    estoqueDisponivel?: boolean;
 
     constructor(partial?: Partial<PedidoPagamentoDto>) {
         Object.assign(this, partial);
