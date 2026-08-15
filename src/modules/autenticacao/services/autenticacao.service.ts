@@ -60,6 +60,14 @@ export class AutenticacaoService {
         return this.recuperarSenhaDataSource.redefinirSenha(email, codigo);
     }
 
+    async confirmarEmail(token: string): Promise<RecuperarSenhaDto> {
+        return this.recuperarSenhaDataSource.confirmarEmail(token);
+    }
+
+    async reenviarConfirmacaoDeEmail(): Promise<RecuperarSenhaDto> {
+        return this.recuperarSenhaDataSource.reenviarConfirmacaoDeEmail();
+    }
+
 
     async fazerLogin(email: string, senha: string): Promise<boolean> {
         try {

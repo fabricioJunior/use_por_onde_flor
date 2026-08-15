@@ -34,8 +34,14 @@ export const autenticacaoGuard: CanMatchFn = (route: Route, segments: UrlSegment
 
     const estaAutenticado = authService.estaAutenticado();
     if (!estaAutenticado) {
-        const returnUrl = '/' + segments.map(s => s.path).join('/');
-        router.navigate(['/login'], { queryParams: { returnUrl } });
+        const path = '/' + segments.map(s => s.path).join('/');
+        // Segments não carregam query params (ex: ?token=... do link de verificação de e-mail);
+        // eles vêm da URL sendo navegada, disponível em getCurrentNavigation().
+        const queryParams = router.getCurrentNavigation()?.extractedUrl.queryParams;
+        const query = queryParams && Object.keys(queryParams).length
+            ? '?' + new URLSearchParams(queryParams as Record<string, string>).toString()
+            : '';
+        router.navigate(['/login'], { queryParams: { returnUrl: path + query } });
         return false;
     }
     return true;
@@ -151,6 +157,14 @@ export const routes: Routes = [
         // dentro do budget do build.
         path: 'pedidos',
         loadComponent: () => import('../modules/pedidos/presentation/pages/pedidos/pedidos.page').then(m => m.PedidosPage),
+        canMatch: [autenticacaoGuard]
+    },
+    {
+        // Link do e-mail de verificação de cadastro (urlVerificacaoEmail na Configuração SMTP)
+        // aponta pra cá com ?token=. Endpoint exige sessão -- se não estiver logado, o guard
+        // manda pro login e traz de volta com o token preservado (ver comentário no guard acima).
+        path: 'verificar-email',
+        loadComponent: () => import('../modules/autenticacao/verificar_email/verificar.email.component').then(m => m.VerificarEmailComponent),
         canMatch: [autenticacaoGuard]
     },
 

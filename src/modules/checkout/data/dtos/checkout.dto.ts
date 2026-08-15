@@ -37,6 +37,7 @@ export interface CheckoutRequestDto {
     enderecoEntregaId?: number;
     enderecoEntrega?: CheckoutEnderecoInlineDto;
     freteEscolhido?: OpcaoFreteDto;
+    formaDePagamentoId?: number;
 }
 
 export interface CheckoutCobrancaDto {
