@@ -1,4 +1,4 @@
-<article class="produto-card" (click)="abrir.emit()">
+<article class="produto-card" [class.produto-card-sem-estoque]="semEstoque()" (click)="abrir.emit()">
     <div class="produto-foto">
         @if (novo) {
         <ui-badge tone="brand" class="produto-badge-novo">Novo</ui-badge>
