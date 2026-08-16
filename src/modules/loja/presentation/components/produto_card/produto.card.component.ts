@@ -18,6 +18,12 @@ export class ProdutoCardComponent {
     @Output() abrir = new EventEmitter<void>();
     @Output() adicionar = new EventEmitter<void>();
 
+    // Mesmo critério de loja.home.page.ts (validarEstoque antes de adicionar ao carrinho) -- saldo
+    // undefined (produto sem saldo/disponibilidade calculada) também conta como sem estoque aqui.
+    semEstoque(): boolean {
+        return !this.referencia.saldo || this.referencia.saldo <= 0;
+    }
+
     onAdicionarClick(event: Event) {
         event.stopPropagation();
         this.adicionar.emit();
