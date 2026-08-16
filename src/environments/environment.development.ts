@@ -1,7 +1,7 @@
 export const environment = {
     production: false,
-    serverUrl: 'https://apollo-api-stg.coralcloud.app/docs',
-    pagamentoApiUrl: 'https://apollo-api-stg.coralcloud.app/docs',
+    serverUrl: 'https://apollo-api-stg.coralcloud.app',
+    pagamentoApiUrl: 'https://apollo-api-stg.coralcloud.app',
     estoqueApiUrl: 'https://estoque.coralcloud.app',
     ecommerceId: 7,
     empresaPadraoId: 1,
