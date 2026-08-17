@@ -78,7 +78,7 @@ export class LojaReferenciaPage implements OnInit {
     // -- produto pode estar disponivel=true com quantidadeDisponivel=0 (sem saldo real, ou saldo
     // todo reservado por outro pedido em pagamento). Selecionável exige as duas coisas.
     private temEstoque(produto: EcommerceReferenciaProdutoDto): boolean {
-        return produto.disponivel && produto.quantidadeDisponivel > 0;
+        return produto.disponivel && (produto.quantidadeDisponivel ?? produto.saldo ?? 0) > 0;
     }
 
     produtosDisponiveis = computed(() => this.produtos().filter((produto) => this.temEstoque(produto)));
@@ -404,7 +404,8 @@ export class LojaReferenciaPage implements OnInit {
     }
 
     incrementarQuantidade(): void {
-        const max = this.produtoSelecionado()?.quantidadeDisponivel ?? 1;
+        const produto = this.produtoSelecionado();
+        const max = produto?.quantidadeDisponivel ?? produto?.saldo ?? 1;
         this.quantidade.update((atual) => Math.min(atual + 1, max));
     }
 

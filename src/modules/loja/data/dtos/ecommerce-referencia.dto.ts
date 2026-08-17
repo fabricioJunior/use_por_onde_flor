@@ -31,8 +31,10 @@ export interface EcommerceReferenciaProdutoDto {
     saldo: number;
     // saldo real MENOS o que outros pedidos já reservaram (estoque virtual) -- limite de verdade
     // pra seleção/quantidade, sempre <= saldo. Ver apollo-api EstoqueDisponibilidadeService.
-    quantidadeDisponivel: number;
-    statusDisponibilidade: 'disponivel' | 'esgotado' | 'em_pagamento';
+    // Opcional: ausente quando o backend em produção ainda não tem esse campo (deploy assíncrono
+    // front/back) -- nesse caso cai no fallback via `saldo` (ver temEstoque/incrementarQuantidade).
+    quantidadeDisponivel?: number;
+    statusDisponibilidade?: 'disponivel' | 'esgotado' | 'em_pagamento';
 }
 
 export interface PaginationMetaDto {
