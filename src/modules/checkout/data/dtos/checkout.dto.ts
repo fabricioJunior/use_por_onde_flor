@@ -52,4 +52,7 @@ export interface CheckoutResponseDto {
     // Presente só pra checkout guest -- permite consultar o status do pedido sem login
     // (GET /pedidos/publico/:id?token=).
     tokenAcesso?: string;
+    // Momento em que a reserva de estoque virtual expira -- Pix não confirmado até lá cancela o
+    // pedido automaticamente (ver CheckoutDataSource.cancelarSeExpirado).
+    expiraReservaEm?: string;
 }

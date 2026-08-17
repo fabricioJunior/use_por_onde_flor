@@ -141,7 +141,7 @@
                     <button type="button" class="stepper-botao" [disabled]="quantidade() <= 1"
                         (click)="decrementarQuantidade()">−</button>
                     <span class="quantidade-valor">{{ quantidade() }}</span>
-                    <button type="button" class="stepper-botao" [disabled]="quantidade() >= selecionado.saldo"
+                    <button type="button" class="stepper-botao" [disabled]="quantidade() >= selecionado.quantidadeDisponivel"
                         (click)="incrementarQuantidade()">+</button>
                 </div>
             </div>

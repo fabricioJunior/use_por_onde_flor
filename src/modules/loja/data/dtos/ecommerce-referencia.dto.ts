@@ -29,6 +29,10 @@ export interface EcommerceReferenciaProdutoDto {
     tamanhoNome: string;
     disponivel: boolean;
     saldo: number;
+    // saldo real MENOS o que outros pedidos já reservaram (estoque virtual) -- limite de verdade
+    // pra seleção/quantidade, sempre <= saldo. Ver apollo-api EstoqueDisponibilidadeService.
+    quantidadeDisponivel: number;
+    statusDisponibilidade: 'disponivel' | 'esgotado' | 'em_pagamento';
 }
 
 export interface PaginationMetaDto {

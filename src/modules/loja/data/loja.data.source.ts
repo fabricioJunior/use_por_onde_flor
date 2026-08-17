@@ -59,7 +59,18 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
     }
 
     // Enriquece item de carrinho de convidado (que só tem produtoId+quantidade no localStorage).
-    produto(produtoId: number): Observable<{ produtoId: number; nome?: string; corNome?: string; tamanhoNome?: string; valor?: number; imagemUrl?: string }> {
+    produto(produtoId: number): Observable<{
+        produtoId: number;
+        referenciaId?: number;
+        nome?: string;
+        corNome?: string;
+        tamanhoNome?: string;
+        valor?: number;
+        imagemUrl?: string;
+        saldo?: number;
+        quantidadeDisponivel?: number;
+        statusDisponibilidade?: 'disponivel' | 'esgotado' | 'em_pagamento';
+    }> {
         return this.get({
             pathArguments: this.ecommerceArgs(),
             path: `/produtos/${produtoId}`,
@@ -71,5 +82,14 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
             pathArguments: this.ecommerceArgs(),
             path: '/forma-pagamento',
         });
+    }
+
+    // "Avise-me quando voltar ao estoque" (produto esgotado/em pagamento no checkout).
+    avisarDisponibilidade(dto: { produtoId: number; ecommerceReferenciaId?: number; email: string }): Observable<void> {
+        return this.post({
+            pathArguments: this.ecommerceArgs(),
+            path: '/avisos-disponibilidade',
+            body: dto,
+        }) as unknown as Observable<void>;
     }
 }

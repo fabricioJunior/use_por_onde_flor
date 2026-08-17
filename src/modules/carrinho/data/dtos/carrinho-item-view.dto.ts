@@ -12,4 +12,10 @@ export interface CarrinhoItemViewDto {
     valorPromocional?: number;
     imagemUrl?: string;
     saldo?: number;
+    // saldo real MENOS o que outros pedidos já reservaram -- limite de verdade pra continuar
+    // comprando. statusDisponibilidade distingue 'esgotado' (saldo real zerado, alguém já
+    // comprou/faturou) de 'em_pagamento' (saldo cobre, mas reservado por outro pedido pagando
+    // agora -- pode voltar). Ver apollo-api EstoqueDisponibilidadeService.
+    quantidadeDisponivel?: number;
+    statusDisponibilidade?: 'disponivel' | 'esgotado' | 'em_pagamento';
 }
