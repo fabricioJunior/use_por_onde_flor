@@ -436,6 +436,16 @@ export class CheckoutPage implements OnInit, OnDestroy {
         this.itemIndisponivel.set(null);
         this.avisoEnviado.set(false);
 
+        // Popup em branco aberto SÍNCRONO aqui, antes de qualquer await -- Safari (principalmente
+        // iOS) só concede permissão de fechar via popup.close() pra janela aberta em resposta
+        // DIRETA a um gesto do usuário. window.open() chamado depois de um await (ex: só depois da
+        // resposta do checkout) ainda abre a janela, mas o Safari passa a ignorar close() nela
+        // silenciosamente -- por isso reservamos a popup aqui e só navegamos/fechamos ela depois
+        // que soubermos qual gateway veio na resposta.
+        const popupReservado = typeof window !== 'undefined'
+            ? window.open('', 'pagamento', 'width=480,height=760')
+            : null;
+
         try {
             let enderecoEntregaId: number | undefined;
             let enderecoEntrega: ReturnType<typeof this.montarEnderecoInline> | undefined;
@@ -486,32 +496,36 @@ export class CheckoutPage implements OnInit, OnDestroy {
             // redirecionar) -- cliente paga usando o app do banco, a gente fica verificando a
             // confirmação em background até o timer (expiraReservaEm) zerar.
             if (resposta.cobranca?.qrCodePix || resposta.cobranca?.chavePixCopiaECola) {
+                popupReservado?.close();
                 this.resposta.set(resposta);
                 this.iniciarTimerPagamento(resposta.expiraReservaEm);
                 return;
             }
 
-            // Outros gateways com checkout hospedado (ex: InfinityPay, cartão) -- abre numa popup
-            // controlada por nós (dimensão fixa, mantemos a referência) em vez de redirect de
-            // página inteira ou aba solta. Mesmo timer/polling do Pix: expira -> fecha a popup e
-            // cancela; confirma -> fecha a popup e navega pro pedido.
-            // SEM "noopener" aqui de propósito: com noopener, window.open() retorna null nos
-            // browsers atuais (Chrome/Firefox) -- perderíamos a referência e fecharPopupPagamento()
-            // nunca teria o que fechar. Confiamos no domínio do gateway (InfinityPay), não é link
-            // de terceiro arbitrário.
+            // Outros gateways com checkout hospedado (ex: InfinityPay, cartão) -- reaproveita a
+            // popup reservada no início do método (navega ela pra URL de pagamento em vez de abrir
+            // uma nova), preservando a permissão de fechar concedida pelo Safari. Mesmo
+            // timer/polling do Pix: expira -> fecha a popup e cancela; confirma -> fecha a popup e
+            // navega pro pedido.
             if (resposta.cobranca?.urlDePagamento && typeof window !== 'undefined') {
                 this.resposta.set(resposta);
-                this.popupPagamento = window.open(
-                    resposta.cobranca.urlDePagamento,
-                    'pagamento',
-                    'width=480,height=760',
-                );
+                if (popupReservado) {
+                    popupReservado.location.href = resposta.cobranca.urlDePagamento;
+                    this.popupPagamento = popupReservado;
+                } else {
+                    // Popup bloqueada mesmo com o open síncrono (ex: usuário desabilitou popups) --
+                    // tenta de novo como melhor esforço, mesmo sabendo que o close() pode não
+                    // funcionar depois.
+                    this.popupPagamento = window.open(resposta.cobranca.urlDePagamento, 'pagamento', 'width=480,height=760');
+                }
                 this.iniciarTimerPagamento(resposta.expiraReservaEm);
                 return;
             }
 
+            popupReservado?.close();
             this.router.navigate(['/pagamento'], { queryParams: { pedidoId: resposta.pedidoId } });
         } catch (error) {
+            popupReservado?.close();
             console.error('Erro ao finalizar checkout', error);
             this.tratarErroFinalizar(error);
         } finally {
