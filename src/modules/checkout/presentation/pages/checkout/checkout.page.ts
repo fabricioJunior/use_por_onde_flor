@@ -495,12 +495,16 @@ export class CheckoutPage implements OnInit, OnDestroy {
             // controlada por nós (dimensão fixa, mantemos a referência) em vez de redirect de
             // página inteira ou aba solta. Mesmo timer/polling do Pix: expira -> fecha a popup e
             // cancela; confirma -> fecha a popup e navega pro pedido.
+            // SEM "noopener" aqui de propósito: com noopener, window.open() retorna null nos
+            // browsers atuais (Chrome/Firefox) -- perderíamos a referência e fecharPopupPagamento()
+            // nunca teria o que fechar. Confiamos no domínio do gateway (InfinityPay), não é link
+            // de terceiro arbitrário.
             if (resposta.cobranca?.urlDePagamento && typeof window !== 'undefined') {
                 this.resposta.set(resposta);
                 this.popupPagamento = window.open(
                     resposta.cobranca.urlDePagamento,
                     'pagamento',
-                    'width=480,height=760,noopener',
+                    'width=480,height=760',
                 );
                 this.iniciarTimerPagamento(resposta.expiraReservaEm);
                 return;
@@ -657,8 +661,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
         this.router.navigate(['/carrinho']);
     }
 
-    // "noopener" na abertura (ver finalizar()) não impede o LADO QUE ABRIU de fechar -- só bloqueia
-    // a popup de voltar a acessar esta janela. `.closed` evita erro se o cliente já fechou na mão.
+    // `.closed` evita erro se o cliente já fechou a popup na mão antes do timer/confirmação.
     private fecharPopupPagamento(): void {
         if (this.popupPagamento && !this.popupPagamento.closed) {
             this.popupPagamento.close();
