@@ -60,6 +60,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
     // o polling de confirmação de pagamento e, ao zerar, cancela o pedido e volta pra sacola.
     segundosRestantes = signal<number | null>(null);
     private timerPagamento?: ReturnType<typeof setInterval>;
+    private expiraEmMs?: number;
     private expirandoPedido = false;
     // Referência da popup de checkout hospedado (InfinityPay/cartão, ver finalizar()) -- fechamos
     // nós mesmos quando o pagamento confirma ou o timer expira, "noopener" não impede isso porque
@@ -183,6 +184,10 @@ export class CheckoutPage implements OnInit, OnDestroy {
     }
 
     async ngOnInit(): Promise<void> {
+        if (typeof document !== 'undefined') {
+            document.addEventListener('visibilitychange', this.onVisibilityChange);
+        }
+
         this.loading.set(true);
         try {
             // Chamadas separadas: falha em status() (ex: loja sem caixa configurado) não pode
@@ -614,29 +619,24 @@ export class CheckoutPage implements OnInit, OnDestroy {
     // 1 setInterval de 1s faz tudo: atualiza o mostrador de segundosRestantes, verifica o
     // pagamento a cada 5s (sem bater na API todo segundo) e, ao zerar, cancela o pedido e volta
     // pra sacola. expiraReservaEm vem de RESERVA_ESTOQUE_TTL_MINUTOS (configurável por e-commerce,
-    // ver EcommerceCheckoutService.calcularExpiracaoReserva).
+    // ver EcommerceCheckoutService.calcularExpiracaoReserva). expiraEmMs fica em campo (não closure
+    // local) pra onVisibilityChange conseguir recalcular na hora que a aba volta a ficar visível.
     private iniciarTimerPagamento(expiraReservaEm?: string): void {
         this.pararTimerPagamento();
         if (!expiraReservaEm) {
             return;
         }
 
-        const expiraEmMs = new Date(expiraReservaEm).getTime();
+        this.expiraEmMs = new Date(expiraReservaEm).getTime();
         let ticks = 0;
 
-        const atualizar = () => {
-            const restante = Math.max(0, Math.round((expiraEmMs - Date.now()) / 1000));
-            this.segundosRestantes.set(restante);
-            return restante;
-        };
-
-        if (atualizar() <= 0) {
+        if (this.atualizarSegundosRestantes() <= 0) {
             this.expirarPagamento();
             return;
         }
 
         this.timerPagamento = setInterval(() => {
-            const restante = atualizar();
+            const restante = this.atualizarSegundosRestantes();
             if (restante <= 0) {
                 this.pararTimerPagamento();
                 this.expirarPagamento();
@@ -649,12 +649,39 @@ export class CheckoutPage implements OnInit, OnDestroy {
         }, 1000);
     }
 
+    private atualizarSegundosRestantes(): number {
+        if (this.expiraEmMs == null) {
+            return 0;
+        }
+        const restante = Math.max(0, Math.round((this.expiraEmMs - Date.now()) / 1000));
+        this.segundosRestantes.set(restante);
+        return restante;
+    }
+
     private pararTimerPagamento(): void {
         if (this.timerPagamento) {
             clearInterval(this.timerPagamento);
             this.timerPagamento = undefined;
         }
+        this.expiraEmMs = undefined;
     }
+
+    // Volta de outro app/aba em background: o setInterval do timer pode ter atrasado ou parado de
+    // rodar de vez (iOS Safari suspende JS de aba em background pra economizar bateria) -- sem
+    // isso, a popup do gateway podia ficar aberta minutos depois do timeout real, só fechando no
+    // próximo tick (se é que ele roda). Recalcula na hora que a aba recupera o foco, e aproveita
+    // pra já checar se o pagamento foi confirmado enquanto o usuário estava fora.
+    private readonly onVisibilityChange = (): void => {
+        if (typeof document === 'undefined' || document.visibilityState !== 'visible' || this.expiraEmMs == null) {
+            return;
+        }
+        if (this.atualizarSegundosRestantes() <= 0) {
+            this.pararTimerPagamento();
+            this.expirarPagamento();
+            return;
+        }
+        this.verificarPagamento();
+    };
 
     private async expirarPagamento(): Promise<void> {
         if (this.expirandoPedido) {
@@ -685,5 +712,8 @@ export class CheckoutPage implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.pararTimerPagamento();
+        if (typeof document !== 'undefined') {
+            document.removeEventListener('visibilitychange', this.onVisibilityChange);
+        }
     }
 }
