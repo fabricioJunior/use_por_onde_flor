@@ -12,4 +12,5 @@ export interface PromocaoDto {
     valorFixo?: number;
     precoFixo?: number;
     referenciaIds?: number[];
+    regras?: string;
 }
