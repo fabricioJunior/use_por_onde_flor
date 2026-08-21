@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, computed, signal } from "@angular/core";
+import { Component, OnDestroy, OnInit, computed, signal } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { ClipboardModule } from "@angular/cdk/clipboard";
@@ -36,12 +36,12 @@ function cpfValidator(control: { value: string }) {
 @Component({
     selector: 'checkout-page',
     standalone: true,
-    imports: [CommonModule, RouterLink, ReactiveFormsModule, NgxMaskDirective, MatProgressSpinnerModule, ClipboardModule, ButtonComponent, HeaderComponent],
+    imports: [CommonModule, RouterLink, ReactiveFormsModule, FormsModule, NgxMaskDirective, MatProgressSpinnerModule, ClipboardModule, ButtonComponent, HeaderComponent],
     templateUrl: './checkout.page.html',
     styleUrl: './checkout.page.css',
     providers: [provideNgxMask()],
 })
-export class CheckoutPage implements OnInit {
+export class CheckoutPage implements OnInit, OnDestroy {
     loading = signal(true);
     finalizando = signal(false);
     erro = signal('');
@@ -54,7 +54,25 @@ export class CheckoutPage implements OnInit {
     enderecos = signal<EnderecoDto[]>([]);
     enderecoSelecionadoId = signal<number | null>(null);
     mostrarNovoEndereco = signal(false);
-    resposta = signal<{ pedidoId: number; cobranca?: CheckoutCobrancaDto; tokenAcesso?: string } | null>(null);
+    resposta = signal<{ pedidoId: number; cobranca?: CheckoutCobrancaDto; tokenAcesso?: string; expiraReservaEm?: string } | null>(null);
+    // Contagem regressiva pro Pix (RESERVA_ESTOQUE_TTL_MINUTOS, ver resposta.expiraReservaEm) --
+    // atualizada a cada segundo por um único setInterval (this.timerPagamento) que também dispara
+    // o polling de confirmação de pagamento e, ao zerar, cancela o pedido e volta pra sacola.
+    segundosRestantes = signal<number | null>(null);
+    private timerPagamento?: ReturnType<typeof setInterval>;
+    private expiraEmMs?: number;
+    private expirandoPedido = false;
+    // Referência da popup de checkout hospedado (InfinityPay/cartão, ver finalizar()) -- fechamos
+    // nós mesmos quando o pagamento confirma ou o timer expira, "noopener" não impede isso porque
+    // a referência é nossa (do lado que abriu), só bloqueia a popup de nos acessar de volta.
+    private popupPagamento: Window | null = null;
+    // Preenchido só quando o checkout falha por estoque indisponível E é compra de 1 produto só
+    // (compraDireta ou carrinho com 1 item) -- mensagem específica (esgotado x em pagamento) em vez
+    // do erro genérico, ver finalizar().
+    itemIndisponivel = signal<{ produtoId: number; status: 'esgotado' | 'em_pagamento' } | null>(null);
+    avisoEmail = signal('');
+    avisoEnviando = signal(false);
+    avisoEnviado = signal(false);
     verificandoPagamento = signal(false);
     pagamentoNaoConfirmado = signal(false);
     cotandoPreco = signal(false);
@@ -166,6 +184,10 @@ export class CheckoutPage implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
+        if (typeof document !== 'undefined') {
+            document.addEventListener('visibilitychange', this.onVisibilityChange);
+        }
+
         this.loading.set(true);
         try {
             // Chamadas separadas: falha em status() (ex: loja sem caixa configurado) não pode
@@ -177,11 +199,14 @@ export class CheckoutPage implements OnInit {
             // Carrinho persistido (logado) pode ter item que ficou sem saldo desde que foi
             // adicionado -- valida e remove antes de deixar seguir pro pagamento, em vez de só
             // descobrir no 400 do POST /checkout.
+            // Não remove mais sozinho (ver CarrinhoService.validar no apollo-api) -- se tem item
+            // indisponível, manda de volta pra sacola (já mostra linha vermelha + motivo lá, ver
+            // CarrinhoPage) em vez de deixar seguir pro pagamento com a sacola desatualizada.
             if (this.autenticado && !this.compraDireta) {
-                const { itensRemovidos } = await firstValueFrom(this.carrinhoDataSource.validar());
-                if (itensRemovidos.length > 0) {
-                    itens = await this.carrinhoFacadeService.listar();
-                    this.erro.set(`Alguns itens saíram da sacola por falta de estoque: ${itensRemovidos.map((i) => i.motivo).join(', ')}`);
+                const { itensIndisponiveis } = await firstValueFrom(this.carrinhoDataSource.validar());
+                if (itensIndisponiveis.length > 0) {
+                    this.router.navigate(['/carrinho']);
+                    return;
                 }
             }
 
@@ -303,6 +328,12 @@ export class CheckoutPage implements OnInit {
         return (valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
+    formatarTempoRestante(segundos: number): string {
+        const minutos = Math.floor(segundos / 60);
+        const resto = segundos % 60;
+        return `${minutos}:${resto.toString().padStart(2, '0')}`;
+    }
+
     private montarEnderecoInline() {
         const valores = this.enderecoForm.getRawValue();
         return {
@@ -407,6 +438,18 @@ export class CheckoutPage implements OnInit {
 
         this.finalizando.set(true);
         this.erro.set('');
+        this.itemIndisponivel.set(null);
+        this.avisoEnviado.set(false);
+
+        // Popup em branco aberto SÍNCRONO aqui, antes de qualquer await -- Safari (principalmente
+        // iOS) só concede permissão de fechar via popup.close() pra janela aberta em resposta
+        // DIRETA a um gesto do usuário. window.open() chamado depois de um await (ex: só depois da
+        // resposta do checkout) ainda abre a janela, mas o Safari passa a ignorar close() nela
+        // silenciosamente -- por isso reservamos a popup aqui e só navegamos/fechamos ela depois
+        // que soubermos qual gateway veio na resposta.
+        const popupReservado = typeof window !== 'undefined'
+            ? window.open('', 'pagamento', 'width=480,height=760')
+            : null;
 
         try {
             let enderecoEntregaId: number | undefined;
@@ -454,33 +497,87 @@ export class CheckoutPage implements OnInit {
 
             this.carrinhoFacadeService.limparLocal();
 
-            // Pix (Mercado Pago): abre o pagamento em nova aba (o cliente conclui lá) e mantém
-            // nossa tela aberta pra verificar a confirmação -- Orders API não suporta redirect de
-            // volta pro site (back_urls removido), então não dá pra confiar em nenhum retorno
-            // automático. urlDePagamento aqui é o ticket_url do Mercado Pago (página hospedada com
-            // o QR), não um link nosso.
+            // Pix (Mercado Pago): mostra QR Code + copia-e-cola direto nesta tela (sem abrir aba/
+            // redirecionar) -- cliente paga usando o app do banco, a gente fica verificando a
+            // confirmação em background até o timer (expiraReservaEm) zerar.
             if (resposta.cobranca?.qrCodePix || resposta.cobranca?.chavePixCopiaECola) {
-                if (resposta.cobranca?.urlDePagamento && typeof window !== 'undefined') {
-                    window.open(resposta.cobranca.urlDePagamento, '_blank', 'noopener');
-                }
+                popupReservado?.close();
                 this.resposta.set(resposta);
+                this.iniciarTimerPagamento(resposta.expiraReservaEm);
                 return;
             }
 
-            // Outros gateways com checkout hospedado (ex: link de cartão) continuam com redirect
-            // de página inteira -- esses suportam redirect_url de volta pro site.
+            // Outros gateways com checkout hospedado (ex: InfinityPay, cartão) -- reaproveita a
+            // popup reservada no início do método (navega ela pra URL de pagamento em vez de abrir
+            // uma nova), preservando a permissão de fechar concedida pelo Safari. Mesmo
+            // timer/polling do Pix: expira -> fecha a popup e cancela; confirma -> fecha a popup e
+            // navega pro pedido.
             if (resposta.cobranca?.urlDePagamento && typeof window !== 'undefined') {
-                document.location.href = resposta.cobranca.urlDePagamento;
+                this.resposta.set(resposta);
+                if (popupReservado) {
+                    popupReservado.location.href = resposta.cobranca.urlDePagamento;
+                    this.popupPagamento = popupReservado;
+                } else {
+                    // Popup bloqueada mesmo com o open síncrono (ex: usuário desabilitou popups) --
+                    // tenta de novo como melhor esforço, mesmo sabendo que o close() pode não
+                    // funcionar depois.
+                    this.popupPagamento = window.open(resposta.cobranca.urlDePagamento, 'pagamento', 'width=480,height=760');
+                }
+                this.iniciarTimerPagamento(resposta.expiraReservaEm);
                 return;
             }
 
+            popupReservado?.close();
             this.router.navigate(['/pagamento'], { queryParams: { pedidoId: resposta.pedidoId } });
         } catch (error) {
+            popupReservado?.close();
             console.error('Erro ao finalizar checkout', error);
-            const mensagemApi = (error as any)?.error?.message;
-            this.erro.set(typeof mensagemApi === 'string' ? mensagemApi : 'Não foi possível finalizar seu pedido. Tente novamente.');
+            this.tratarErroFinalizar(error);
         } finally {
             this.finalizando.set(false);
+        }
+    }
+
+    // itensIndisponiveis vem só na falha por estoque (ver EcommerceCheckoutService.
+    // validarEstoqueVirtualDisponivel no apollo-api) -- compra de 1 produto só ganha mensagem
+    // específica (esgotado x em pagamento, com opção de aviso por e-mail); carrinho com vários
+    // itens cai no genérico (o carrinho já deveria ter marcado o item antes de chegar aqui).
+    private tratarErroFinalizar(error: unknown): void {
+        const corpo = (error as any)?.error;
+        const itensIndisponiveis: { produtoId: number; status: 'esgotado' | 'em_pagamento' }[] | undefined = corpo?.itensIndisponiveis;
+
+        if (itensIndisponiveis?.length && this.itens().length === 1) {
+            this.itemIndisponivel.set(itensIndisponiveis[0]);
+            if (this.autenticado) {
+                const pessoa = this.localStorageService.get<UsuarioDto>('usuario_da_sessao') as UsuarioDto | null;
+                this.avisoEmail.set(pessoa?.email ?? '');
+            }
+            this.erro.set(
+                itensIndisponiveis[0].status === 'esgotado'
+                    ? 'Poxa! Esse produto foi comprado por outra pessoa há pouco e não está mais disponível.'
+                    : 'Alguém está comprando esse produto agora. Ele pode voltar ao estoque em alguns instantes, se o pagamento não for confirmado.',
+            );
+            return;
+        }
+
+        const mensagemApi = corpo?.message;
+        this.erro.set(typeof mensagemApi === 'string' ? mensagemApi : 'Não foi possível finalizar seu pedido. Tente novamente.');
+    }
+
+    async avisarQuandoDisponivel(): Promise<void> {
+        const item = this.itemIndisponivel();
+        if (!item || !this.avisoEmail() || this.avisoEnviando()) {
+            return;
+        }
+
+        this.avisoEnviando.set(true);
+        try {
+            await firstValueFrom(this.lojaDataSource.avisarDisponibilidade({ produtoId: item.produtoId, email: this.avisoEmail() }));
+            this.avisoEnviado.set(true);
+        } catch (error) {
+            console.error('Erro ao pedir aviso de disponibilidade', error);
+        } finally {
+            this.avisoEnviando.set(false);
         }
     }
 
@@ -502,6 +599,8 @@ export class CheckoutPage implements OnInit {
             const pago = pedido?.pagamentos?.some((p) => !!p.confirmadoEm) ?? false;
 
             if (pago) {
+                this.pararTimerPagamento();
+                this.fecharPopupPagamento();
                 this.router.navigate(['/pedidos', resposta.pedidoId], {
                     queryParams: resposta.tokenAcesso ? { token: resposta.tokenAcesso, pago: '1' } : { pago: '1' },
                 });
@@ -514,6 +613,107 @@ export class CheckoutPage implements OnInit {
             this.pagamentoNaoConfirmado.set(true);
         } finally {
             this.verificandoPagamento.set(false);
+        }
+    }
+
+    // 1 setInterval de 1s faz tudo: atualiza o mostrador de segundosRestantes, verifica o
+    // pagamento a cada 5s (sem bater na API todo segundo) e, ao zerar, cancela o pedido e volta
+    // pra sacola. expiraReservaEm vem de RESERVA_ESTOQUE_TTL_MINUTOS (configurável por e-commerce,
+    // ver EcommerceCheckoutService.calcularExpiracaoReserva). expiraEmMs fica em campo (não closure
+    // local) pra onVisibilityChange conseguir recalcular na hora que a aba volta a ficar visível.
+    private iniciarTimerPagamento(expiraReservaEm?: string): void {
+        this.pararTimerPagamento();
+        if (!expiraReservaEm) {
+            return;
+        }
+
+        this.expiraEmMs = new Date(expiraReservaEm).getTime();
+        let ticks = 0;
+
+        if (this.atualizarSegundosRestantes() <= 0) {
+            this.expirarPagamento();
+            return;
+        }
+
+        this.timerPagamento = setInterval(() => {
+            const restante = this.atualizarSegundosRestantes();
+            if (restante <= 0) {
+                this.pararTimerPagamento();
+                this.expirarPagamento();
+                return;
+            }
+            ticks++;
+            if (ticks % 5 === 0) {
+                this.verificarPagamento();
+            }
+        }, 1000);
+    }
+
+    private atualizarSegundosRestantes(): number {
+        if (this.expiraEmMs == null) {
+            return 0;
+        }
+        const restante = Math.max(0, Math.round((this.expiraEmMs - Date.now()) / 1000));
+        this.segundosRestantes.set(restante);
+        return restante;
+    }
+
+    private pararTimerPagamento(): void {
+        if (this.timerPagamento) {
+            clearInterval(this.timerPagamento);
+            this.timerPagamento = undefined;
+        }
+        this.expiraEmMs = undefined;
+    }
+
+    // Volta de outro app/aba em background: o setInterval do timer pode ter atrasado ou parado de
+    // rodar de vez (iOS Safari suspende JS de aba em background pra economizar bateria) -- sem
+    // isso, a popup do gateway podia ficar aberta minutos depois do timeout real, só fechando no
+    // próximo tick (se é que ele roda). Recalcula na hora que a aba recupera o foco, e aproveita
+    // pra já checar se o pagamento foi confirmado enquanto o usuário estava fora.
+    private readonly onVisibilityChange = (): void => {
+        if (typeof document === 'undefined' || document.visibilityState !== 'visible' || this.expiraEmMs == null) {
+            return;
+        }
+        if (this.atualizarSegundosRestantes() <= 0) {
+            this.pararTimerPagamento();
+            this.expirarPagamento();
+            return;
+        }
+        this.verificarPagamento();
+    };
+
+    private async expirarPagamento(): Promise<void> {
+        if (this.expirandoPedido) {
+            return;
+        }
+        this.expirandoPedido = true;
+        this.fecharPopupPagamento();
+
+        const resposta = this.resposta();
+        if (resposta) {
+            try {
+                await firstValueFrom(this.checkoutDataSource.cancelarSeExpirado(resposta.pedidoId, resposta.tokenAcesso ?? ''));
+            } catch (error) {
+                console.error('Erro ao cancelar pedido expirado', error);
+            }
+        }
+
+        this.router.navigate(['/carrinho']);
+    }
+
+    // `.closed` evita erro se o cliente já fechou a popup na mão antes do timer/confirmação.
+    private fecharPopupPagamento(): void {
+        if (this.popupPagamento && !this.popupPagamento.closed) {
+            this.popupPagamento.close();
+        }
+        this.popupPagamento = null;
+    }
+
+    ngOnDestroy(): void {
+        this.pararTimerPagamento();
+        if (typeof document !== 'undefined') {
+            document.removeEventListener('visibilitychange', this.onVisibilityChange);
         }
     }
 }

@@ -18,8 +18,14 @@ export class CarrinhoPage implements OnInit {
     loading = signal(true);
     itens = signal<CarrinhoItemViewDto[]>([]);
 
-    total = computed(() => this.itens().reduce((soma, item) => soma + (item.valorPromocional ?? item.valor ?? 0) * (item.quantidade ?? 0), 0));
-    temItemEsgotado = computed(() => this.itens().some((item) => item.saldo === 0));
+    // Total ignora item indisponível (esgotado ou em pagamento) -- cliente vê o valor real do que
+    // pode de fato comprar, sem precisar remover manualmente só pra ver o total certo.
+    total = computed(() =>
+        this.itens()
+            .filter((item) => item.statusDisponibilidade === 'disponivel' || item.statusDisponibilidade == null)
+            .reduce((soma, item) => soma + (item.valorPromocional ?? item.valor ?? 0) * (item.quantidade ?? 0), 0),
+    );
+    temItemIndisponivel = computed(() => this.itens().some((item) => item.statusDisponibilidade && item.statusDisponibilidade !== 'disponivel'));
 
     constructor(private carrinhoFacadeService: CarrinhoFacadeService, private router: Router) { }
 
@@ -41,7 +47,7 @@ export class CarrinhoPage implements OnInit {
             await this.remover(item);
             return;
         }
-        const limite = item.saldo ?? quantidade;
+        const limite = item.quantidadeDisponivel ?? item.saldo ?? quantidade;
         await this.carrinhoFacadeService.adicionar(item.produtoId!, Math.min(quantidade, limite));
         await this.carregar();
     }

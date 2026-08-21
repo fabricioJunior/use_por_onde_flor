@@ -74,10 +74,11 @@ export class LojaReferenciaPage implements OnInit {
 
     tamanhoSelecionadoLabel = computed(() => this.tamanhoSelecionado() ?? 'Selecione um tamanho');
 
-    // "disponivel" é flag manual do admin (vínculo produto<->e-commerce), independente do saldo
-    // real -- produto pode estar disponivel=true com saldo=0. Selecionável exige as duas coisas.
+    // "disponivel" é flag manual do admin (vínculo produto<->e-commerce), independente do estoque
+    // -- produto pode estar disponivel=true com quantidadeDisponivel=0 (sem saldo real, ou saldo
+    // todo reservado por outro pedido em pagamento). Selecionável exige as duas coisas.
     private temEstoque(produto: EcommerceReferenciaProdutoDto): boolean {
-        return produto.disponivel && produto.saldo > 0;
+        return produto.disponivel && (produto.quantidadeDisponivel ?? produto.saldo ?? 0) > 0;
     }
 
     produtosDisponiveis = computed(() => this.produtos().filter((produto) => this.temEstoque(produto)));
@@ -403,7 +404,8 @@ export class LojaReferenciaPage implements OnInit {
     }
 
     incrementarQuantidade(): void {
-        const max = this.produtoSelecionado()?.saldo ?? 1;
+        const produto = this.produtoSelecionado();
+        const max = produto?.quantidadeDisponivel ?? produto?.saldo ?? 1;
         this.quantidade.update((atual) => Math.min(atual + 1, max));
     }
 

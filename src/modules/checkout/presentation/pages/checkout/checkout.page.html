@@ -10,21 +10,23 @@
     } @else {
     @if (resposta(); as pix) {
     <div class="checkout-pix">
-        <p>Pedido #{{ pix.pedidoId }} criado! Abrimos uma nova aba pra você concluir o pagamento.</p>
+        @if (pix.cobranca?.qrCodePix || pix.cobranca?.chavePixCopiaECola) {
+        <p>Pedido #{{ pix.pedidoId }} criado! Escaneie o QR Code ou copie o código Pix abaixo pra pagar.</p>
+        } @else {
+        <p>Pedido #{{ pix.pedidoId }} criado! Abrimos uma janela pra você concluir o pagamento.</p>
         @if (pix.cobranca?.urlDePagamento) {
         <a [href]="pix.cobranca!.urlDePagamento" target="_blank" rel="noopener">
-            Não abriu a aba? Clique aqui pra pagar
+            Não abriu a janela? Clique aqui pra pagar
         </a>
         }
-        <p>Pagamento em andamento. Já pagou? Clique em verificar.</p>
-        @if (!verificandoPagamento()) {
-        <ui-button (clicked)="verificarPagamento()">Verificar pagamento</ui-button>
-        } @else {
-        <mat-spinner diameter="32"></mat-spinner>
         }
-        @if (pagamentoNaoConfirmado()) {
-        <p class="checkout-aviso">Ainda não identificamos seu pagamento. Aguarde alguns instantes e tente novamente.</p>
+
+        @if (segundosRestantes() != null) {
+        <p class="checkout-pix-timer" [class.checkout-pix-timer-urgente]="segundosRestantes()! <= 60">
+            Tempo pra pagar: {{ formatarTempoRestante(segundosRestantes()!) }}
+        </p>
         }
+
         @if (pix.cobranca?.qrCodePix) {
         <img class="checkout-pix-qrcode" [src]="pix.cobranca!.qrCodePix" alt="QR Code Pix">
         }
@@ -33,6 +35,16 @@
             <span>{{ pix.cobranca!.chavePixCopiaECola }}</span>
             <button type="button" [cdkCopyToClipboard]="pix.cobranca!.chavePixCopiaECola!">Copiar</button>
         </div>
+        }
+
+        <p>Pagamento em andamento. Já pagou? Clique em verificar.</p>
+        @if (!verificandoPagamento()) {
+        <ui-button (clicked)="verificarPagamento()">Verificar pagamento</ui-button>
+        } @else {
+        <mat-spinner diameter="32"></mat-spinner>
+        }
+        @if (pagamentoNaoConfirmado()) {
+        <p class="checkout-aviso">Ainda não identificamos seu pagamento. Aguarde alguns instantes e tente novamente.</p>
         }
     </div>
     } @else {
@@ -166,6 +178,23 @@
 
     @if (erro()) {
     <p class="checkout-aviso">{{ erro() }}</p>
+    }
+
+    @if (itemIndisponivel()?.status === 'em_pagamento') {
+    <div class="checkout-aviso-disponibilidade">
+        @if (avisoEnviado()) {
+        <p>Prontinho! Vamos te avisar por e-mail se esse produto voltar ao estoque.</p>
+        } @else {
+        <label for="aviso-email">Quer que a gente te avise por e-mail se ele voltar?</label>
+        <div class="checkout-aviso-disponibilidade-form">
+            <input id="aviso-email" type="email" placeholder="seu@email.com" [ngModel]="avisoEmail()"
+                (ngModelChange)="avisoEmail.set($event)" [ngModelOptions]="{ standalone: true }">
+            <ui-button size="sm" variant="secondary" [disabled]="!avisoEmail() || avisoEnviando()" (clicked)="avisarQuandoDisponivel()">
+                @if (avisoEnviando()) { Enviando... } @else { Avisar-me }
+            </ui-button>
+        </div>
+        }
+    </div>
     }
 
     @if (!podeFinalizar() && pendencias().length > 0) {

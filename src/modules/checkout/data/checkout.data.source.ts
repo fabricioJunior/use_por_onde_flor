@@ -37,4 +37,31 @@ export class CheckoutDataSource extends RemoteDataSourceBase<CheckoutResponseDto
             body: dto,
         }) as unknown as Observable<CotarCheckoutResponseDto>;
     }
+
+    // Chamado quando o timer da tela de pagamento (Pix) zera -- idempotente, sem efeito se o
+    // pedido já não estiver mais aguardando pagamento (pago/faturado/cancelado por outro motivo).
+    cancelarSeExpirado(pedidoId: number, token: string): Observable<void> {
+        return this.post({
+            pathArguments: { ecommerceId: environment.ecommerceId.toString() },
+            path: `/${pedidoId}/cancelar-expirado`,
+            queryParameters: { token },
+        }) as unknown as Observable<void>;
+    }
+
+    // Pré-checagem de disponibilidade (sem side-effect) -- usado pelo carrinho antes de finalizar,
+    // pra marcar item esgotado/em pagamento sem precisar tentar o checkout de verdade.
+    verificarDisponibilidade(itens: { produtoId: number; quantidade: number }[]): Observable<{
+        produtoId: number;
+        quantidadeSolicitada: number;
+        quantidadeDisponivel: number;
+        status: 'disponivel' | 'esgotado' | 'em_pagamento';
+    }[]> {
+        return this.post({
+            pathArguments: { ecommerceId: environment.ecommerceId.toString() },
+            path: '/disponibilidade',
+            body: { itens },
+        }) as unknown as Observable<
+            { produtoId: number; quantidadeSolicitada: number; quantidadeDisponivel: number; status: 'disponivel' | 'esgotado' | 'em_pagamento' }[]
+        >;
+    }
 }

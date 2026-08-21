@@ -7,7 +7,8 @@ import { CarrinhoItemViewDto } from "./dtos/carrinho-item-view.dto";
 import { CarrinhoItemDto } from "./dtos/carrinho-item.dto";
 
 export interface ValidarCarrinhoResponseDto {
-    itensRemovidos: { produtoId: number; motivo: string }[];
+    // Só sinaliza -- não remove mais o item sozinho (ver CarrinhoService.validar no apollo-api).
+    itensIndisponiveis: { produtoId: number; status: 'esgotado' | 'em_pagamento'; quantidadeDisponivel: number }[];
 }
 
 // Endpoints exigem `@ApiPessoa()` -- só chamar quando `AutenticacaoService.estaAutenticado()`.
