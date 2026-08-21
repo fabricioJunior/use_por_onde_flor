@@ -37,6 +37,19 @@ export class PromocaoPrecoService {
     }
 
     calcularParaReferencia(referenciaId: number, valorBase: number, mapaPorReferencia: Map<number, PromocaoDto>, gerais: PromocaoDto[]): number | null {
+        const aplicada = this.promocaoAplicadaParaReferencia(referenciaId, valorBase, mapaPorReferencia, gerais);
+        return aplicada?.valorFinal ?? null;
+    }
+
+    // Mesma lógica de `calcularParaReferencia`, mas devolve também QUAL promoção venceu (não só o
+    // valor) -- usado pro aviso de regras no carrinho/checkout, que precisa saber de qual promoção
+    // veio o desconto aplicado em cada item.
+    promocaoAplicadaParaReferencia(
+        referenciaId: number,
+        valorBase: number,
+        mapaPorReferencia: Map<number, PromocaoDto>,
+        gerais: PromocaoDto[],
+    ): { promocao: PromocaoDto; valorFinal: number } | null {
         const candidatas = [...gerais];
         const especifica = mapaPorReferencia.get(referenciaId);
         if (especifica) {
@@ -48,7 +61,7 @@ export class PromocaoPrecoService {
 
         const melhor = this.melhorPromocao(candidatas, valorBase);
         const valorFinal = this.calcular(melhor, valorBase);
-        return valorFinal < valorBase ? valorFinal : null;
+        return valorFinal < valorBase ? { promocao: melhor, valorFinal } : null;
     }
 
     private melhorPromocao(promocoes: PromocaoDto[], valorBase: number): PromocaoDto {

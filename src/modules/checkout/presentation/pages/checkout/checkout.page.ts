@@ -47,6 +47,20 @@ export class CheckoutPage implements OnInit, OnDestroy {
     erro = signal('');
     lojaFechada = signal(false);
     itens = signal<CarrinhoItemViewDto[]>([]);
+    // Regras/condições de troca das promoções ativas nos itens da sacola, uma por promoção
+    // distinta (dedupe por texto -- 2 itens na mesma promoção não duplicam o aviso).
+    avisosPromocao = computed(() => {
+        const vistos = new Set<string>();
+        const avisos: string[] = [];
+        for (const item of this.itens()) {
+            const regra = item.promocaoRegras?.trim();
+            if (regra && !vistos.has(regra)) {
+                vistos.add(regra);
+                avisos.push(regra);
+            }
+        }
+        return avisos;
+    });
     // Presente quando veio do botão "Comprar agora" (ver LojaReferenciaPage/ProdutoCardComponent) --
     // nesse caso `itens` não vem do carrinho persistido, é só esse produto, e o carrinho salvo da
     // pessoa não deve ser tocado (nem lido, nem limpo) no finalizar().

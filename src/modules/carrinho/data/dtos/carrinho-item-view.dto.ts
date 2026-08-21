@@ -10,6 +10,9 @@ export interface CarrinhoItemViewDto {
     tamanhoNome?: string;
     valor?: number;
     valorPromocional?: number;
+    // Regras/condições de troca da promoção que gerou `valorPromocional`, quando ela tiver
+    // (ver PromocaoPrecoService.promocaoAplicadaParaReferencia) -- usado pro aviso no checkout.
+    promocaoRegras?: string;
     imagemUrl?: string;
     saldo?: number;
     // saldo real MENOS o que outros pedidos já reservaram -- limite de verdade pra continuar

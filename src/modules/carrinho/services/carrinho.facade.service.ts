@@ -43,12 +43,16 @@ export class CarrinhoFacadeService {
             const resposta = await firstValueFrom(this.lojaDataSource.promocoesAtivas());
             const mapa = this.promocaoPrecoService.montarMapa(resposta.items);
             const gerais = this.promocaoPrecoService.promocoesGerais(resposta.items);
-            return itens.map((item) => ({
-                ...item,
-                valorPromocional: (item.referenciaId != null && item.valor != null
-                    ? this.promocaoPrecoService.calcularParaReferencia(item.referenciaId, item.valor, mapa, gerais)
-                    : null) ?? undefined,
-            }));
+            return itens.map((item) => {
+                const aplicada = item.referenciaId != null && item.valor != null
+                    ? this.promocaoPrecoService.promocaoAplicadaParaReferencia(item.referenciaId, item.valor, mapa, gerais)
+                    : null;
+                return {
+                    ...item,
+                    valorPromocional: aplicada?.valorFinal,
+                    promocaoRegras: aplicada?.promocao.regras || undefined,
+                };
+            });
         } catch (error) {
             // Falha ao buscar promoção não pode derrubar o carrinho -- só segue sem desconto.
             console.error('Erro ao aplicar promoções no carrinho', error);
