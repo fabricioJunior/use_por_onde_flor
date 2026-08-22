@@ -455,13 +455,24 @@ export class CheckoutPage implements OnInit, OnDestroy {
         this.itemIndisponivel.set(null);
         this.avisoEnviado.set(false);
 
+        // Pix sempre mostra QR Code + copia-e-cola direto nesta tela (ver branch mais abaixo) --
+        // NUNCA usa a popup, então nem reservamos uma. Reservar incondicionalmente fazia todo
+        // pagamento (inclusive Pix) abrir uma aba em branco por baixo enquanto o checkout
+        // processava -- no desktop passava quase despercebido (popup pequena fecha rápido), mas no
+        // mobile o navegador ignora width/height e abre uma ABA CHEIA em branco, dando a impressão
+        // de que o site travou.
+        const formaSelecionada = this.formasPagamento().find(
+            (forma) => forma.formaDePagamentoId === this.formaPagamentoSelecionadaId(),
+        );
+        const ehPix = (formaSelecionada?.descricao ?? '').toLowerCase().includes('pix');
+
         // Popup em branco aberto SÍNCRONO aqui, antes de qualquer await -- Safari (principalmente
         // iOS) só concede permissão de fechar via popup.close() pra janela aberta em resposta
         // DIRETA a um gesto do usuário. window.open() chamado depois de um await (ex: só depois da
         // resposta do checkout) ainda abre a janela, mas o Safari passa a ignorar close() nela
         // silenciosamente -- por isso reservamos a popup aqui e só navegamos/fechamos ela depois
         // que soubermos qual gateway veio na resposta.
-        const popupReservado = typeof window !== 'undefined'
+        const popupReservado = typeof window !== 'undefined' && !ehPix
             ? window.open('', 'pagamento', 'width=480,height=760')
             : null;
 
