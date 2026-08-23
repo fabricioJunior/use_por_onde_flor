@@ -44,7 +44,7 @@ export class LojaHomePage implements OnInit {
     private buscaDebounce?: ReturnType<typeof setTimeout>;
     private mapaPromocoesPorReferencia = new Map<number, PromocaoDto>();
     private promocoesGerais: PromocaoDto[] = [];
-    private nomesFormaPagamento = new Map<number, string>();
+    private formaPagamentoPixId: number | null = null;
 
     constructor(
         private lojaDataSource: LojaDataSource,
@@ -67,7 +67,7 @@ export class LojaHomePage implements OnInit {
             ]);
             this.mapaPromocoesPorReferencia = this.promocaoPrecoService.montarMapa(resposta.items);
             this.promocoesGerais = this.promocaoPrecoService.promocoesGerais(resposta.items);
-            this.nomesFormaPagamento = new Map(formas.map((f) => [f.formaDePagamentoId, f.descricao]));
+            this.formaPagamentoPixId = formas.find((f) => f.descricao.toUpperCase().includes('PIX'))?.formaDePagamentoId ?? null;
         } catch (error) {
             // Falha ao buscar promoção não pode derrubar o catálogo -- só segue sem desconto.
             console.error('Erro ao carregar promoções ativas', error);
@@ -83,12 +83,12 @@ export class LojaHomePage implements OnInit {
                 this.mapaPromocoesPorReferencia,
                 this.promocoesGerais,
             ) ?? undefined,
-            melhorDesconto: this.promocaoPrecoService.melhorOpcaoParaReferencia(
+            melhorDesconto: this.promocaoPrecoService.descontoPixParaReferencia(
                 referencia.referenciaId,
                 referencia.valor,
                 this.mapaPromocoesPorReferencia,
                 this.promocoesGerais,
-                this.nomesFormaPagamento,
+                this.formaPagamentoPixId,
             ) ?? undefined,
         }));
     }

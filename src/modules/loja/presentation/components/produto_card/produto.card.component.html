@@ -12,10 +12,7 @@
     <div class="produto-info">
         @if (referencia.melhorDesconto) {
         <span class="produto-badge-desconto">
-            -{{ referencia.melhorDesconto.percentualOff }}% OFF
-            @if (referencia.melhorDesconto.formaPagamentoNome) {
-            no {{ referencia.melhorDesconto.formaPagamentoNome }}
-            }
+            -{{ referencia.melhorDesconto.percentualOff }}% OFF no Pix
         </span>
         }
         <span class="produto-nome">{{ referencia.nome }}</span>
