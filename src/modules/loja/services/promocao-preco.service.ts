@@ -64,17 +64,18 @@ export class PromocaoPrecoService {
         return valorFinal < valorBase ? { promocao: melhor, valorFinal } : null;
     }
 
-    // Desconto pagando via Pix especificamente -- usa o override de forma de pagamento se a
-    // promoção tiver um pra Pix, senão cai no desconto padrão (só se a promoção não restringir
-    // forma de pagamento). É o que o card do catálogo anuncia primeiro (pedido do usuário: sempre
-    // Pix, não "qualquer forma que dê o maior desconto").
-    descontoPixParaReferencia(
+    // Maior desconto possível pra essa referência, considerando TAMBÉM os overrides por forma de
+    // pagamento de cada promoção candidata (não só o desconto padrão) -- é o que o card do catálogo
+    // usa pra anunciar "até X% OFF no <forma>" antes de qualquer outra informação de preço.
+    // Estimativa client-side (mesma ressalva das outras funções deste service): backend recalcula
+    // de verdade no checkout, isso aqui é só pra exibição.
+    melhorOpcaoParaReferencia(
         referenciaId: number,
         valorBase: number,
         mapaPorReferencia: Map<number, PromocaoDto>,
         gerais: PromocaoDto[],
-        formaPagamentoPixId: number | null,
-    ): { percentualOff: number } | null {
+        nomesFormaPagamento: Map<number, string>,
+    ): { percentualOff: number; formaPagamentoNome: string | null } | null {
         const candidatas = [...gerais];
         const especifica = mapaPorReferencia.get(referenciaId);
         if (especifica) {
@@ -85,28 +86,33 @@ export class PromocaoPrecoService {
         }
 
         let melhorValorFinal = valorBase;
+        let melhorFormaNome: string | null = null;
         let encontrouDesconto = false;
 
-        for (const promocao of candidatas) {
-            const overridePix = formaPagamentoPixId != null
-                ? promocao.formasPagamento?.find((f) => f.formaDePagamentoId === formaPagamentoPixId)
-                : undefined;
+        const considerar = (valorFinal: number, formaNome: string | null) => {
+            if (valorFinal < valorBase && valorFinal < melhorValorFinal) {
+                melhorValorFinal = valorFinal;
+                melhorFormaNome = formaNome;
+                encontrouDesconto = true;
+            }
+        };
 
-            let valorFinal: number | null = null;
-            if (overridePix) {
-                valorFinal = this.calcular({
-                    ...promocao,
-                    valorPercentual: overridePix.valorPercentual ?? promocao.valorPercentual,
-                    valorFixo: overridePix.valorFixo ?? promocao.valorFixo,
-                    precoFixo: overridePix.precoFixo ?? promocao.precoFixo,
-                }, valorBase);
-            } else if (!promocao.restringirFormasPagamento) {
-                valorFinal = this.calcular(promocao, valorBase);
+        for (const promocao of candidatas) {
+            // Desconto padrão (sem forma específica) só conta se a promoção não restringir a forma
+            // -- promoção restrita só vale nas formas listadas em `formasPagamento`.
+            if (!promocao.restringirFormasPagamento) {
+                considerar(this.calcular(promocao, valorBase), null);
             }
 
-            if (valorFinal != null && valorFinal < valorBase && valorFinal < melhorValorFinal) {
-                melhorValorFinal = valorFinal;
-                encontrouDesconto = true;
+            for (const override of promocao.formasPagamento ?? []) {
+                const promocaoComOverride: PromocaoDto = {
+                    ...promocao,
+                    valorPercentual: override.valorPercentual ?? promocao.valorPercentual,
+                    valorFixo: override.valorFixo ?? promocao.valorFixo,
+                    precoFixo: override.precoFixo ?? promocao.precoFixo,
+                };
+                const nome = nomesFormaPagamento.get(override.formaDePagamentoId) ?? null;
+                considerar(this.calcular(promocaoComOverride, valorBase), nome);
             }
         }
 
@@ -115,7 +121,11 @@ export class PromocaoPrecoService {
         }
 
         const percentualOff = Math.round(((valorBase - melhorValorFinal) / valorBase) * 100);
-        return percentualOff > 0 ? { percentualOff } : null;
+        if (percentualOff <= 0) {
+            return null;
+        }
+
+        return { percentualOff, formaPagamentoNome: melhorFormaNome };
     }
 
     private melhorPromocao(promocoes: PromocaoDto[], valorBase: number): PromocaoDto {

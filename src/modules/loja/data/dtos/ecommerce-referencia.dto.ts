@@ -20,9 +20,10 @@ export interface EcommerceReferenciaDto {
     // Calculado no front (PromocaoPrecoService) a partir de GET /e-commerce/{id}/promocoes -- não
     // vem da API. Presente só quando há promoção ativa aplicável, sempre menor que `valor`.
     valorPromocional?: number;
-    // Desconto pagando via Pix (ver PromocaoPrecoService.descontoPixParaReferencia) -- é o que o
-    // card do catálogo anuncia primeiro.
-    melhorDesconto?: { percentualOff: number };
+    // Maior desconto possível entre a promoção geral e os overrides por forma de pagamento (ver
+    // PromocaoPrecoService.melhorOpcaoParaReferencia). `formaPagamentoNome` null = desconto vale
+    // pra qualquer forma; presente = só bate esse percentual pagando naquela forma específica.
+    melhorDesconto?: { percentualOff: number; formaPagamentoNome: string | null };
 }
 
 export interface EcommerceReferenciaProdutoDto {
