@@ -41,6 +41,16 @@
     z-index: 1;
 }
 
+.produto-badge-desconto {
+    align-self: flex-start;
+    font: var(--text-caption);
+    font-weight: 700;
+    color: var(--state-error);
+    background: color-mix(in srgb, var(--state-error) 12%, transparent);
+    border-radius: var(--radius-sm, 4px);
+    padding: 2px var(--space-2);
+}
+
 .produto-nome {
     font: var(--text-body);
     color: var(--text-primary);
