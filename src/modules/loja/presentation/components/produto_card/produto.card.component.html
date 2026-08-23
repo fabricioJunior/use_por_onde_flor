@@ -10,6 +10,14 @@
         }
     </div>
     <div class="produto-info">
+        @if (referencia.melhorDesconto) {
+        <span class="produto-badge-desconto">
+            -{{ referencia.melhorDesconto.percentualOff }}% OFF
+            @if (referencia.melhorDesconto.formaPagamentoNome) {
+            no {{ referencia.melhorDesconto.formaPagamentoNome }}
+            }
+        </span>
+        }
         <span class="produto-nome">{{ referencia.nome }}</span>
         <div class="produto-precos">
             @if (referencia.valorPromocional != null) {

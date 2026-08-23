@@ -44,6 +44,7 @@ export class LojaHomePage implements OnInit {
     private buscaDebounce?: ReturnType<typeof setTimeout>;
     private mapaPromocoesPorReferencia = new Map<number, PromocaoDto>();
     private promocoesGerais: PromocaoDto[] = [];
+    private nomesFormaPagamento = new Map<number, string>();
 
     constructor(
         private lojaDataSource: LojaDataSource,
@@ -60,9 +61,13 @@ export class LojaHomePage implements OnInit {
 
     private async carregarPromocoes(): Promise<void> {
         try {
-            const resposta = await firstValueFrom(this.lojaDataSource.promocoesAtivas());
+            const [resposta, formas] = await Promise.all([
+                firstValueFrom(this.lojaDataSource.promocoesAtivas()),
+                firstValueFrom(this.lojaDataSource.formaPagamento()),
+            ]);
             this.mapaPromocoesPorReferencia = this.promocaoPrecoService.montarMapa(resposta.items);
             this.promocoesGerais = this.promocaoPrecoService.promocoesGerais(resposta.items);
+            this.nomesFormaPagamento = new Map(formas.map((f) => [f.formaDePagamentoId, f.descricao]));
         } catch (error) {
             // Falha ao buscar promoção não pode derrubar o catálogo -- só segue sem desconto.
             console.error('Erro ao carregar promoções ativas', error);
@@ -77,6 +82,13 @@ export class LojaHomePage implements OnInit {
                 referencia.valor,
                 this.mapaPromocoesPorReferencia,
                 this.promocoesGerais,
+            ) ?? undefined,
+            melhorDesconto: this.promocaoPrecoService.melhorOpcaoParaReferencia(
+                referencia.referenciaId,
+                referencia.valor,
+                this.mapaPromocoesPorReferencia,
+                this.promocoesGerais,
+                this.nomesFormaPagamento,
             ) ?? undefined,
         }));
     }

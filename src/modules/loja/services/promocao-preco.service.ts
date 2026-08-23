@@ -64,6 +64,70 @@ export class PromocaoPrecoService {
         return valorFinal < valorBase ? { promocao: melhor, valorFinal } : null;
     }
 
+    // Maior desconto possível pra essa referência, considerando TAMBÉM os overrides por forma de
+    // pagamento de cada promoção candidata (não só o desconto padrão) -- é o que o card do catálogo
+    // usa pra anunciar "até X% OFF no <forma>" antes de qualquer outra informação de preço.
+    // Estimativa client-side (mesma ressalva das outras funções deste service): backend recalcula
+    // de verdade no checkout, isso aqui é só pra exibição.
+    melhorOpcaoParaReferencia(
+        referenciaId: number,
+        valorBase: number,
+        mapaPorReferencia: Map<number, PromocaoDto>,
+        gerais: PromocaoDto[],
+        nomesFormaPagamento: Map<number, string>,
+    ): { percentualOff: number; formaPagamentoNome: string | null } | null {
+        const candidatas = [...gerais];
+        const especifica = mapaPorReferencia.get(referenciaId);
+        if (especifica) {
+            candidatas.push(especifica);
+        }
+        if (candidatas.length === 0 || valorBase <= 0) {
+            return null;
+        }
+
+        let melhorValorFinal = valorBase;
+        let melhorFormaNome: string | null = null;
+        let encontrouDesconto = false;
+
+        const considerar = (valorFinal: number, formaNome: string | null) => {
+            if (valorFinal < valorBase && valorFinal < melhorValorFinal) {
+                melhorValorFinal = valorFinal;
+                melhorFormaNome = formaNome;
+                encontrouDesconto = true;
+            }
+        };
+
+        for (const promocao of candidatas) {
+            // Desconto padrão (sem forma específica) só conta se a promoção não restringir a forma
+            // -- promoção restrita só vale nas formas listadas em `formasPagamento`.
+            if (!promocao.restringirFormasPagamento) {
+                considerar(this.calcular(promocao, valorBase), null);
+            }
+
+            for (const override of promocao.formasPagamento ?? []) {
+                const promocaoComOverride: PromocaoDto = {
+                    ...promocao,
+                    valorPercentual: override.valorPercentual ?? promocao.valorPercentual,
+                    valorFixo: override.valorFixo ?? promocao.valorFixo,
+                    precoFixo: override.precoFixo ?? promocao.precoFixo,
+                };
+                const nome = nomesFormaPagamento.get(override.formaDePagamentoId) ?? null;
+                considerar(this.calcular(promocaoComOverride, valorBase), nome);
+            }
+        }
+
+        if (!encontrouDesconto) {
+            return null;
+        }
+
+        const percentualOff = Math.round(((valorBase - melhorValorFinal) / valorBase) * 100);
+        if (percentualOff <= 0) {
+            return null;
+        }
+
+        return { percentualOff, formaPagamentoNome: melhorFormaNome };
+    }
+
     private melhorPromocao(promocoes: PromocaoDto[], valorBase: number): PromocaoDto {
         return promocoes.reduce((melhor, atual) => (this.calcular(atual, valorBase) < this.calcular(melhor, valorBase) ? atual : melhor));
     }

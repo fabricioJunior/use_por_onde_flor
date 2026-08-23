@@ -3,6 +3,13 @@
 export type PromocaoTipoDesconto = 'percentual' | 'valor_fixo' | 'preco_fixo';
 export type PromocaoTipoEscopo = 'geral' | 'referencias' | 'combo_kit' | 'combo_leve_pague';
 
+export interface PromocaoFormaPagamentoDto {
+    formaDePagamentoId: number;
+    valorPercentual?: number;
+    valorFixo?: number;
+    precoFixo?: number;
+}
+
 export interface PromocaoDto {
     id: number;
     tipoDesconto: PromocaoTipoDesconto;
@@ -13,4 +20,6 @@ export interface PromocaoDto {
     precoFixo?: number;
     referenciaIds?: number[];
     regras?: string;
+    restringirFormasPagamento?: boolean;
+    formasPagamento?: PromocaoFormaPagamentoDto[];
 }
