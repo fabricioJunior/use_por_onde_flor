@@ -25,6 +25,7 @@ import { HeaderComponent } from "../../../../loja/presentation/components/header
 import { PedidosService } from "../../../../pedidos/services/pedidos.service";
 
 const CEP_VALIDO = /^\d{5}-?\d{3}$/;
+const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function cpfValidator(control: { value: string }) {
     if (!control.value) {
@@ -92,6 +93,13 @@ export class CheckoutPage implements OnInit, OnDestroy {
     cotandoPreco = signal(false);
 
     autenticado: boolean;
+    // Cadastro feito pelo proprio site sempre exige e-mail (ver InformacoesContatoComponent) --
+    // conta autenticada sem e-mail valido so acontece por dado vindo de outra origem (loja
+    // fisica/PDV, sem essa validacao). Backend ignora `cliente` do payload quando autenticado
+    // (usa sempre a pessoa do token, ver EcommerceCheckoutService.checkout), entao a unica forma
+    // de garantir e-mail valido pro gateway de pagamento e' bloquear aqui antes de seguir --
+    // mudar o e-mail da conta exige o fluxo de verificacao (fora do escopo do checkout).
+    emailContaAusente = false;
 
     opcoesFrete = signal<OpcaoFreteDto[]>([]);
     freteSelecionado = signal<OpcaoFreteDto | null>(null);
@@ -130,6 +138,10 @@ export class CheckoutPage implements OnInit, OnDestroy {
         public router: Router,
     ) {
         this.autenticado = this.autenticacaoService.estaAutenticado();
+        if (this.autenticado) {
+            const pessoa = this.localStorageService.get<UsuarioDto>('usuario_da_sessao') as UsuarioDto | null;
+            this.emailContaAusente = !EMAIL_VALIDO.test(pessoa?.email ?? '');
+        }
 
         // getCurrentNavigation() só existe durante a navegação em si -- precisa ler aqui no
         // constructor, no ngOnInit já voltaria null.
@@ -390,6 +402,8 @@ export class CheckoutPage implements OnInit, OnDestroy {
 
         if (!this.autenticado) {
             pendencias.push(...this.camposInvalidos(this.clienteForm));
+        } else if (this.emailContaAusente) {
+            pendencias.push('Seu cadastro não tem um e-mail válido. Atualize seu cadastro para continuar.');
         }
 
         if (this.modalidadeEntrega() === 'entrega') {

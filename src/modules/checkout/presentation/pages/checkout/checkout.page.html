@@ -66,6 +66,13 @@
             <input placeholder="Telefone" mask="(00) 00000-0000" formControlName="telefone">
         </form>
     </section>
+    } @else if (emailContaAusente) {
+    <section class="checkout-secao">
+        <p class="checkout-aviso">
+            Seu cadastro não tem um e-mail válido, e ele é necessário pra gerar o pagamento.
+            Entre em contato com a loja para atualizar seu cadastro antes de continuar a compra.
+        </p>
+    </section>
     }
 
     <section class="checkout-secao">
