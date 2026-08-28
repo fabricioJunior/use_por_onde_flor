@@ -25,9 +25,9 @@
             </div>
             <div class="carrinho-item-info">
                 <span class="carrinho-item-nome">{{ item.nome || ('Produto #' + item.produtoId) }}</span>
-                @if (item.corNome || item.tamanhoNome) {
+                @if (item.corNome || item.tamanhoNome || item.estampaNome) {
                 <span class="carrinho-item-variacao">
-                    {{ item.corNome }}{{ item.corNome && item.tamanhoNome ? ' · ' : '' }}{{ item.tamanhoNome }}
+                    {{ descricaoVariacao(item.corNome, item.tamanhoNome, item.estampaNome) }}
                 </span>
                 }
                 @if (item.statusDisponibilidade === 'esgotado') {

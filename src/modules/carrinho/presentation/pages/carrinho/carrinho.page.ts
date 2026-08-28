@@ -6,6 +6,7 @@ import { CarrinhoFacadeService } from "../../../services/carrinho.facade.service
 import { CarrinhoItemViewDto } from "../../../data/dtos/carrinho-item-view.dto";
 import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
 import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
+import { descricaoVariacao } from "../../../../loja/presentation/utils/variacao-apresentacao.util";
 
 @Component({
     selector: 'carrinho-page',
@@ -17,6 +18,7 @@ import { HeaderComponent } from "../../../../loja/presentation/components/header
 export class CarrinhoPage implements OnInit {
     loading = signal(true);
     itens = signal<CarrinhoItemViewDto[]>([]);
+    descricaoVariacao = descricaoVariacao;
 
     // Total ignora item indisponível (esgotado ou em pagamento) -- cliente vê o valor real do que
     // pode de fato comprar, sem precisar remover manualmente só pra ver o total certo.

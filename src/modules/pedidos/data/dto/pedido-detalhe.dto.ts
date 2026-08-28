@@ -3,6 +3,9 @@ export class PedidoItemDto {
     imagemUrl?: string;
     corNome?: string;
     tamanhoNome?: string;
+    // Opcional, mesma ressalva de EcommerceReferenciaProdutoDto.estampaNome -- backend ainda não
+    // preenche em pedido-item-enrich.util.ts.
+    estampaNome?: string;
     valorUnitario?: number;
     valorUnitDesconto?: number;
     solicitado?: number;

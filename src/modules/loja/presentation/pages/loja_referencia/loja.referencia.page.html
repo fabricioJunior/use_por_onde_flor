@@ -128,6 +128,31 @@
             </section>
             }
 
+            @if (referenciaTemEstampa()) {
+            <section class="secao-variacao" #secaoEstampa>
+                <h2 class="secao-titulo">Estampa: <span class="secao-titulo-valor">{{ estampaSelecionadaLabel() }}</span></h2>
+                <div class="tira-cores">
+                    @if (podeRolarEstampaEsquerda()) {
+                    <button type="button" class="tira-seta tira-seta-esquerda" aria-label="Ver estampas anteriores"
+                        (click)="rolarEstampa(-1)">‹</button>
+                    }
+                    <div class="seletor-opcoes" #estampaLista (scroll)="atualizarSetasEstampa()" role="group" aria-label="Selecione a estampa">
+                        @for (estampa of estampasParaSelecaoAtual(); track estampa) {
+                        <button type="button" class="opcao" [class.ativo]="estampaSelecionada() === estampa"
+                            [class.esgotado]="!estampaDisponivel(estampa)" [disabled]="!estampaDisponivel(estampa)"
+                            [attr.aria-label]="'Estampa: ' + estampa + (estampaSelecionada() === estampa ? ', selecionada' : '') + (estampaDisponivel(estampa) ? '' : ', indisponível')"
+                            [attr.aria-pressed]="estampaSelecionada() === estampa"
+                            (click)="selecionarEstampa(estampa)">{{ estampa }}</button>
+                        }
+                    </div>
+                    @if (podeRolarEstampaDireita()) {
+                    <button type="button" class="tira-seta tira-seta-direita" aria-label="Ver mais estampas"
+                        (click)="rolarEstampa(1)">›</button>
+                    }
+                </div>
+            </section>
+            }
+
             @if (produtosDisponiveis().length === 0) {
             <p class="aviso">Produto indisponível no momento.</p>
             } @else if (mensagemValidacao()) {

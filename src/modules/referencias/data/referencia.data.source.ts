@@ -31,6 +31,7 @@ export interface ReferenciaMidiaDto {
     description?: string;
     cor?: string;
     tamanho?: string;
+    estampa?: string;
     isDefault?: boolean;
     isPublic?: boolean;
 }

@@ -23,6 +23,7 @@ import { OpcaoFreteDto } from "../../../data/dtos/frete.dto";
 import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
 import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
 import { PedidosService } from "../../../../pedidos/services/pedidos.service";
+import { descricaoVariacao } from "../../../../loja/presentation/utils/variacao-apresentacao.util";
 
 const CEP_VALIDO = /^\d{5}-?\d{3}$/;
 const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -43,6 +44,7 @@ function cpfValidator(control: { value: string }) {
     providers: [provideNgxMask()],
 })
 export class CheckoutPage implements OnInit, OnDestroy {
+    descricaoVariacao = descricaoVariacao;
     loading = signal(true);
     finalizando = signal(false);
     erro = signal('');
