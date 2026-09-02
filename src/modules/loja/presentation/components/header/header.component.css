@@ -2,11 +2,20 @@
     position: sticky;
     top: 0;
     z-index: 20;
+    overflow: hidden;
     border-bottom: 1px solid var(--border-subtle);
-    background: var(--surface-card);
+    background: var(--surface-page);
+}
+
+.loja-header-traco {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
 }
 
 .loja-header-inner {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -23,23 +32,28 @@
     align-items: center;
 }
 
-.loja-logo-img {
-    height: 56px;
-}
-
 .loja-sacola {
     position: relative;
-    font: var(--text-body-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
     color: var(--text-primary);
     text-decoration: none;
 }
 
+.loja-sacola-icone {
+    font-size: 22px;
+    line-height: 1;
+}
+
 .loja-sacola-badge {
     position: absolute;
-    top: -8px;
-    right: -14px;
-    background: var(--brand-primary-deep);
-    color: var(--text-on-brand);
+    top: 6px;
+    right: 2px;
+    background: var(--brand-primary);
+    color: var(--text-primary);
     border-radius: var(--radius-circle);
     width: 16px;
     height: 16px;

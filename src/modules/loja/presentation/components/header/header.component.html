@@ -1,11 +1,13 @@
 <header class="loja-header">
+    <app-traco class="loja-header-traco" d="M6,50 Q30,15 55,50 Q75,80 87,100" variante="clara" [opacidade]="1"
+        animacao="desenha"></app-traco>
     <div class="loja-header-inner">
-        <a routerLink="/loja" class="loja-logo-link">
-            <img src="/logo-primary-color.png" alt="Por Onde Flor" class="loja-logo-img">
+        <a routerLink="/loja" class="loja-logo-link" aria-label="Por Onde Flor">
+            <app-logo variante="clara" [altura]="36"></app-logo>
         </a>
         <div class="loja-header-acoes">
-            <a routerLink="/carrinho" class="loja-sacola">
-                Sacola
+            <a routerLink="/carrinho" class="loja-sacola" aria-label="Sacola">
+                <span class="loja-sacola-icone" aria-hidden="true">&#128092;</span>
                 @if (itensNoCarrinho > 0) {
                 <span class="loja-sacola-badge">{{ itensNoCarrinho }}</span>
                 }
@@ -23,7 +25,7 @@
                 </div>
             </details>
             } @else {
-            <a routerLink="/login" [queryParams]="{returnUrl: router.url}" class="loja-login-link">Login</a>
+            <a routerLink="/login" [queryParams]="{returnUrl: router.url}" class="loja-login-link">Entrar</a>
             }
         </div>
     </div>
