@@ -1,0 +1,71 @@
+<div class="loja-shell">
+    <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
+
+    @if (categoria(); as cat) {
+    <header class="categoria-header">
+        <nav class="categoria-breadcrumb" aria-label="Trilha">
+            <a routerLink="/loja">Loja</a>
+            <span aria-hidden="true">/</span>
+            <span>{{ cat.nome }}</span>
+        </nav>
+        <div class="categoria-header-conteudo">
+            <span class="categoria-icone">
+                @if (cat.icone) {
+                <span class="categoria-icone-img" [style.background-image]="'url(' + cat.icone + ')'"></span>
+                } @else {
+                <app-traco d="M4,50 Q25,20 50,50 T96,50" variante="clara" [opacidade]="1"></app-traco>
+                }
+            </span>
+            <div>
+                <h1>{{ cat.nome }}</h1>
+                <p>{{ cat.descricao }}</p>
+                @if (!loading()) {
+                <span class="categoria-contagem">{{ referencias().length }} {{ referencias().length === 1 ? 'peça' : 'peças' }}</span>
+                }
+            </div>
+        </div>
+    </header>
+    } @else {
+    <header class="categoria-header">
+        <div class="categoria-header-conteudo">
+            <h1>Categoria não encontrada</h1>
+        </div>
+    </header>
+    }
+
+    <div class="categoria-chips">
+        @for (item of categorias; track item.slug) {
+        <a class="categoria-chip" [class.ativo]="item.slug === categoria()?.slug"
+            [routerLink]="['/loja/categoria', item.slug]">{{ item.nome }}</a>
+        }
+    </div>
+
+    <main class="categoria-content">
+        @if (loading()) {
+        <div class="loja-grid">
+            @for (item of [1,2,3,4]; track item) {
+            <div class="loja-card-skeleton" aria-hidden="true">
+                <div class="loja-card-skeleton-foto pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha curta pof-skeleton"></div>
+            </div>
+            }
+        </div>
+        } @else if (referencias().length === 0) {
+        <div class="categoria-vazio">
+            <app-traco class="categoria-vazio-traco" d="M10,50 Q50,10 90,50 Q50,90 10,50" variante="clara"
+                [opacidade]="0.6"></app-traco>
+            <p>Ainda não há peças nesta categoria.</p>
+        </div>
+        } @else {
+        <div class="loja-grid">
+            @for (referencia of referencias(); track referencia.id) {
+            <produto-card [referencia]="referencia" (abrir)="abrirReferencia(referencia)"
+                (adicionar)="adicionarAoCarrinho(referencia)"></produto-card>
+            }
+        </div>
+        }
+    </main>
+
+    <loja-footer></loja-footer>
+</div>
