@@ -1,11 +1,13 @@
 <header class="loja-header">
     <div class="loja-header-inner">
+        <div class="loja-header-traco-mask" aria-hidden="true">
+            <app-traco class="loja-header-traco" d="M0,50 Q8,18 16,50 Q24,82 32,50 Q40,20 48,50 C60,25 75,68 100,55"
+                variante="clara" [opacidade]="1" animacao="desenha"></app-traco>
+        </div>
         <div class="loja-logo-wrap">
             <a routerLink="/loja" class="loja-logo-link" aria-label="Por Onde Flor">
                 <app-logo variante="clara" [altura]="36"></app-logo>
             </a>
-            <app-traco class="loja-header-traco" d="M0,50 Q8,18 16,50 Q24,82 32,50 Q40,20 48,50 C60,25 75,68 100,55"
-                variante="clara" [opacidade]="1" animacao="desenha"></app-traco>
         </div>
         <div class="loja-header-acoes">
             <a routerLink="/carrinho" class="loja-sacola" aria-label="Sacola">
