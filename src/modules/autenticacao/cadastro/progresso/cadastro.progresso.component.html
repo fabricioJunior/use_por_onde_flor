@@ -1,7 +1,9 @@
 <div class="pof-progresso">
-  <svg viewBox="0 0 100 4" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0,2 L100,2" class="pof-progresso-fundo" />
-    <path d="M0,2 L100,2" class="pof-progresso-ativo"
+  <svg viewBox="0 0 100 26" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M 1 18 C 14 18 16 6 28 6 C 40 6 42 20 54 20 C 66 20 68 6 80 6 C 90 6 94 14 99 16"
+      class="pof-progresso-fundo" pathLength="100" vector-effect="non-scaling-stroke" />
+    <path d="M 1 18 C 14 18 16 6 28 6 C 40 6 42 20 54 20 C 66 20 68 6 80 6 C 90 6 94 14 99 16"
+      class="pof-progresso-ativo" pathLength="100" vector-effect="non-scaling-stroke"
       [style.stroke-dashoffset]="offset" />
   </svg>
   <span class="pof-progresso-label">Etapa {{etapa}} de {{total}} · {{label}}</span>

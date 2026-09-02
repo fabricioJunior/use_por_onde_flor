@@ -7,19 +7,22 @@
 
 .pof-progresso svg {
   width: 100%;
-  height: 3px;
+  height: 34px;
+  overflow: visible;
 }
 
 .pof-progresso-fundo {
   fill: none;
   stroke: rgba(160, 176, 139, .35);
-  stroke-width: 4;
+  stroke-width: 3.4;
+  stroke-linecap: round;
 }
 
 .pof-progresso-ativo {
   fill: none;
   stroke: var(--brand-primary-hover);
-  stroke-width: 4;
+  stroke-width: 3.4;
+  stroke-linecap: round;
   stroke-dasharray: 100;
   transition: stroke-dashoffset .6s cubic-bezier(.4, 0, .2, 1);
 }
@@ -29,4 +32,15 @@
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--brand-primary-hover);
+}
+
+@media (max-width: 640px) {
+  .pof-progresso svg {
+    height: 30px;
+  }
+
+  .pof-progresso-fundo,
+  .pof-progresso-ativo {
+    stroke-width: 3.2;
+  }
 }
