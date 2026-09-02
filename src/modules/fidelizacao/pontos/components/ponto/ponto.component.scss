@@ -12,7 +12,7 @@
 .body {
     width: 40px;
     height: 40px;
-    background-color: #237266;
+    background-color: var(--brand-primary-hover);
     border-radius: 100%;
     display: flex; /* Ativa o Flexbox */
     justify-content: center; /* Alinha os elementos horizontalmente no centro */
