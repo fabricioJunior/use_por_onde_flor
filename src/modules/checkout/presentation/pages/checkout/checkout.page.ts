@@ -3,7 +3,6 @@ import { Component, OnDestroy, OnInit, computed, signal } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { ClipboardModule } from "@angular/cdk/clipboard";
 import { NgxMaskDirective, provideNgxMask } from "ngx-mask";
 import { cpf } from "cpf-cnpj-validator";
@@ -24,6 +23,8 @@ import { ButtonComponent } from "../../../../loja/presentation/components/ui/but
 import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
 import { PedidosService } from "../../../../pedidos/services/pedidos.service";
 import { descricaoVariacao } from "../../../../loja/presentation/utils/variacao-apresentacao.util";
+import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
+import { PofLoaderComponent } from "../../../../core/common_components/pof_loader/pof.loader.component";
 
 const CEP_VALIDO = /^\d{5}-?\d{3}$/;
 const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -38,7 +39,7 @@ function cpfValidator(control: { value: string }) {
 @Component({
     selector: 'checkout-page',
     standalone: true,
-    imports: [CommonModule, RouterLink, ReactiveFormsModule, FormsModule, NgxMaskDirective, MatProgressSpinnerModule, ClipboardModule, ButtonComponent, HeaderComponent],
+    imports: [CommonModule, RouterLink, ReactiveFormsModule, FormsModule, NgxMaskDirective, ClipboardModule, ButtonComponent, HeaderComponent, FilledButtonComponent, PofLoaderComponent],
     templateUrl: './checkout.page.html',
     styleUrl: './checkout.page.css',
     providers: [provideNgxMask()],
@@ -93,6 +94,9 @@ export class CheckoutPage implements OnInit, OnDestroy {
     verificandoPagamento = signal(false);
     pagamentoNaoConfirmado = signal(false);
     cotandoPreco = signal(false);
+    // Só feedback visual do botão "Copiar código" (cdkCopyToClipboard já faz a cópia de verdade) --
+    // volta ao texto original depois de um tempo pra não ficar "Código copiado" pra sempre.
+    codigoPixCopiado = signal(false);
 
     autenticado: boolean;
     // Cadastro feito pelo proprio site sempre exige e-mail (ver InformacoesContatoComponent) --
@@ -354,6 +358,11 @@ export class CheckoutPage implements OnInit, OnDestroy {
 
     formatarPreco(valor: number | undefined): string {
         return (valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    marcarCodigoPixCopiado(): void {
+        this.codigoPixCopiado.set(true);
+        setTimeout(() => this.codigoPixCopiado.set(false), 3000);
     }
 
     formatarTempoRestante(segundos: number): string {
