@@ -104,9 +104,28 @@
     padding: var(--space-6) var(--container-padding);
 }
 
+.loja-busca-linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(160, 176, 139, .5);
+}
+
 .loja-busca {
-    max-width: 480px;
-    margin: 0 auto var(--space-6);
+    flex: 1;
+    max-width: 360px;
+}
+
+.loja-busca-contagem {
+    flex-shrink: 0;
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--brand-primary-hover);
+    white-space: nowrap;
 }
 
 .loja-grid {

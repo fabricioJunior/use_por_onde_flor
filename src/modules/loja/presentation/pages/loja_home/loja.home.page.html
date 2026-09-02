@@ -26,9 +26,10 @@
         <app-traco class="loja-vitrine-traco" d="M72,0 Q45,25 55,50 Q65,72 30,82 Q16,88 14,100" variante="clara"
             [opacidade]="0.5"></app-traco>
         <main class="loja-content" id="produtos" #produtos>
-        <div class="loja-busca">
-            <ui-input placeholder="Buscar produtos..." [ngModel]="busca()"
+        <div class="loja-busca-linha">
+            <ui-input class="loja-busca" placeholder="Buscar produtos..." [ngModel]="busca()"
                 (ngModelChange)="onBuscaChange($event)"></ui-input>
+            <span class="loja-busca-contagem">{{ referencias().length }} produtos</span>
         </div>
 
         @if (loading()) {

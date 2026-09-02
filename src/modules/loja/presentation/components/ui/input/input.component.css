@@ -6,27 +6,36 @@
 }
 
 label {
-    font: var(--text-body-sm);
-    color: var(--text-support);
+    font: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--brand-primary-hover);
 }
 
 input {
-    font: var(--text-body);
-    padding: 12px 14px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-default);
-    background: var(--surface-card);
+    font-size: 15px;
+    font-weight: 300;
+    font-family: inherit;
+    background: none;
+    border: none;
+    border-bottom: 1.5px solid var(--brand-primary);
+    border-radius: 0;
+    padding: 12px 2px;
     color: var(--text-primary);
     outline: none;
-    font-family: inherit;
+    transition: border-color var(--duration-micro) var(--ease-standard);
+}
+
+input::placeholder {
+    color: rgba(43, 25, 25, .35);
 }
 
 input.error {
-    border-color: var(--state-error);
+    border-bottom-color: var(--text-secondary);
 }
 
 input:focus-visible {
-    border-color: var(--brand-primary-deep);
+    border-bottom-color: var(--brand-primary-hover);
 }
 
 input:disabled {
@@ -35,9 +44,9 @@ input:disabled {
 
 .helper {
     font: var(--text-caption);
-    color: var(--text-muted);
+    color: var(--text-support);
 }
 
 .helper.error {
-    color: var(--state-error);
+    color: var(--text-secondary);
 }
