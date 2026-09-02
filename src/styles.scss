@@ -3,7 +3,6 @@
 
 // Variáveis globais
 $font-family: var(--font-sans);
-$body-bg-color: #ffffff;
 $default-margin: 0;
 $default-padding: 0;
 $primary-color: var(--brand-primary-deep);
@@ -20,7 +19,7 @@ body {
   margin: $default-margin !important;
   padding: $default-padding !important;
   font-family: $font-family;
-  background-color: $body-bg-color;
+  background-color: var(--surface-page);
 
 }
 
@@ -36,7 +35,7 @@ html, body {
 :root {
   @include mat.button-overrides((
     filled-container-color:  $primary-color,
-    filled-label-text-color: white,
+    filled-label-text-color: var(--text-on-brand),
     text-label-text-color: $primary-color,
 
   ));
