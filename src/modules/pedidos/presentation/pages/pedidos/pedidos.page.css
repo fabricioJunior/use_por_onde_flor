@@ -36,7 +36,7 @@
 }
 
 .pedido-item-numero {
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .pedido-item-situacao {
@@ -46,7 +46,7 @@
 
 .pedido-item-entregue {
     color: var(--state-success, #1a8f4c);
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .pedido-item-data {
@@ -55,7 +55,7 @@
 }
 
 .pedido-item-valor {
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .pedidos-carregar-mais {

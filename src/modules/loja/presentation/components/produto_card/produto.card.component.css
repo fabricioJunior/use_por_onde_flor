@@ -44,7 +44,7 @@
 .produto-badge-desconto {
     align-self: flex-start;
     font: var(--text-caption);
-    font-weight: 700;
+    font-weight: 500;
     color: var(--state-error);
     background: color-mix(in srgb, var(--state-error) 12%, transparent);
     border-radius: var(--radius-sm, 4px);
@@ -91,5 +91,5 @@
 
 .produto-preco-promocional {
     color: var(--state-error);
-    font-weight: 600;
+    font-weight: 500;
 }

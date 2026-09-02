@@ -87,7 +87,7 @@ h1 {
     display: block;
     font: var(--text-caption);
     color: var(--state-error);
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .carrinho-aviso {
@@ -114,7 +114,7 @@ h1 {
 
 .carrinho-item-subtotal {
     font: var(--text-body-sm);
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-primary);
 }
 

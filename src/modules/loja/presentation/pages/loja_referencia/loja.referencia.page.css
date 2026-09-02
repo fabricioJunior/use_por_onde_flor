@@ -218,7 +218,7 @@ h1 {
 
 .secao-titulo {
     font: var(--text-body-sm);
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-secondary);
     margin: 0 0 var(--space-2);
 }
@@ -324,7 +324,7 @@ h1 {
 
 .chip-cor.ativo .chip-cor-nome {
     color: var(--brand-primary-deep);
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .swatch-check {
