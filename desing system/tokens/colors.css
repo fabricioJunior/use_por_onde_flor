@@ -1,15 +1,20 @@
 :root {
-  /* Brand hues — sampled directly from the logo, do not alter */
-  --color-green-50: #EAF0EB;
-  --color-green-100: #D6E1D7;
-  --color-green-200: #BECBC0;
-  --color-green-300: #A3B5A6;
-  --color-green-400: #8AA48D;
-  --color-green-500: #709274; /* logo — verde exato extraído */
-  --color-green-600: #5F7F63;
-  --color-green-700: #4E6C52; /* logo dark script / dot */
-  --color-green-800: #3D5641;
-  --color-green-900: #2C3F2F;
+  /* Brand hues — sampled diretamente da paleta oficial (Por Onde Flor, Éllis Studio & Co.), não alterar */
+  --color-green-50: #EFF2EA;
+  --color-green-100: #E1E7D9;
+  --color-green-200: #CBD5BE;
+  --color-green-300: #B3C1A3;
+  --color-green-400: #A0B08B; /* verde sálvia — cor exata do logotipo */
+  --color-green-500: #8A9C77;
+  --color-green-600: #6A755B; /* verde oliva — swatch oficial da paleta */
+  --color-green-700: #4C5542;
+  --color-green-800: #3E4636; /* oliva escura — superfícies escuras (footer, painel login, hover de botão) */
+  --color-green-900: #25291F; /* verde-carvão — tom mais escuro da escala, uso pontual */
+
+  --color-wine-500: #6D4141; /* bordô — exclusivamente texto secundário, avisos, erros, pendências */
+  --color-ink: #2B1919; /* marrom quase-preto — cor do texto/logotipo "Preferencial" */
+  --color-cream: #F8F1EB; /* creme quente — swatch oficial da paleta */
+  --color-surface-secondary: #ECEDE3; /* mistura cru + sálvia — card, placeholder de foto, resumo */
 
   /* Warm neutrals — sophisticated, low-chroma, not stark */
   --color-neutral-0: #FFFFFF;
@@ -25,29 +30,32 @@
   --color-neutral-900: oklch(17% 0.006 75);
 
   /* Semantic aliases */
-  --surface-page: var(--color-neutral-50);
+  --surface-page: var(--color-cream);
   --surface-card: var(--color-neutral-0);
+  --surface-secondary: var(--color-surface-secondary);
   --surface-sunken: var(--color-neutral-100);
-  --surface-inverse: var(--color-neutral-900);
+  --surface-inverse: var(--color-green-800);
 
-  --text-primary: var(--color-neutral-900);
-  --text-secondary: var(--color-neutral-600);
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-wine-500);
   --text-muted: var(--color-neutral-400);
-  --text-on-brand: var(--color-neutral-0);
-  --text-on-inverse: var(--color-neutral-50);
+  --text-on-brand: var(--color-cream);
+  --text-on-inverse: rgba(248, 241, 235, .72);
 
-  --border-subtle: var(--color-neutral-200);
-  --border-default: var(--color-neutral-300);
+  --border-subtle: rgba(160, 176, 139, .45); /* borda de card, padrão sálvia */
+  --border-default: var(--color-green-400);
 
-  --brand-primary: var(--color-green-500);
-  --brand-primary-hover: var(--color-green-600);
-  --brand-primary-deep: var(--color-green-700);
+  --brand-primary: var(--color-green-400); /* sálvia — bordas, linhas de campo, detalhes */
+  --brand-primary-hover: var(--color-green-600); /* oliva — ações primárias, seleção ativa */
+  --brand-primary-deep: var(--color-green-600);
+  --brand-primary-active: var(--color-green-800); /* oliva escura — hover de botão */
   --brand-tint: var(--color-green-50);
+  --brand-accent: var(--color-wine-500);
 
-  --link-color: var(--color-green-700);
+  --link-color: var(--color-green-600);
   --link-color-hover: var(--color-green-800);
 
-  --state-success: var(--color-green-600);
-  --state-error: #A6432E;
-  --state-warning: #A67B2E;
+  --state-success: var(--color-green-500);
+  --state-error: var(--color-wine-500);
+  --state-warning: var(--color-wine-500);
 }

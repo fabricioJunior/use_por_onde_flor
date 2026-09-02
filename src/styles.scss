@@ -2,7 +2,7 @@
 @use '@angular/material' as mat;
 
 // Variáveis globais
-$font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
+$font-family: var(--font-sans);
 $body-bg-color: #ffffff;
 $default-margin: 0;
 $default-padding: 0;
