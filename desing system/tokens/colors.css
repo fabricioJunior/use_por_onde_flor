@@ -31,9 +31,9 @@
 
   /* Semantic aliases */
   --surface-page: var(--color-cream);
-  --surface-card: var(--color-neutral-0);
+  --surface-card: var(--color-surface-secondary);
   --surface-secondary: var(--color-surface-secondary);
-  --surface-sunken: var(--color-neutral-100);
+  --surface-sunken: var(--color-surface-secondary);
   --surface-inverse: var(--color-green-800);
 
   --text-primary: var(--color-ink);
