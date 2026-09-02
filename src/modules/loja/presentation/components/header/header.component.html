@@ -1,13 +1,15 @@
 <header class="loja-header">
-    <app-traco class="loja-header-traco" d="M6,50 Q30,15 55,50 Q75,80 87,100" variante="clara" [opacidade]="1"
-        animacao="desenha"></app-traco>
     <div class="loja-header-inner">
-        <a routerLink="/loja" class="loja-logo-link" aria-label="Por Onde Flor">
-            <app-logo variante="clara" [altura]="36"></app-logo>
-        </a>
+        <div class="loja-logo-wrap">
+            <a routerLink="/loja" class="loja-logo-link" aria-label="Por Onde Flor">
+                <app-logo variante="clara" [altura]="36"></app-logo>
+            </a>
+            <app-traco class="loja-header-traco" d="M0,50 Q8,18 16,50 Q24,82 32,50 Q40,20 48,50 C60,25 75,68 100,55"
+                variante="clara" [opacidade]="1" animacao="desenha"></app-traco>
+        </div>
         <div class="loja-header-acoes">
             <a routerLink="/carrinho" class="loja-sacola" aria-label="Sacola">
-                <span class="loja-sacola-icone" aria-hidden="true">&#128092;</span>
+                <span class="loja-sacola-texto">Sacola</span>
                 @if (itensNoCarrinho > 0) {
                 <span class="loja-sacola-badge">{{ itensNoCarrinho }}</span>
                 }
@@ -15,7 +17,6 @@
             @if (estaAutenticado()) {
             <details class="loja-conta">
                 <summary class="loja-conta-resumo">
-                    <span class="loja-conta-icone">&#128100;</span>
                     {{ nomeDoUsuario() }}
                 </summary>
                 <div class="loja-conta-menu">
