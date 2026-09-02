@@ -9,12 +9,12 @@
 
         <button type="button" id="esqueceu-seu-email-button"
             (click)="irParaPagindaDoCodigo()"
-            class="text-button text-button-text" placeholder>Já recebi o e-mail
+            class="pof-btn-text" placeholder>Já recebi o e-mail
         </button>
 
         <button type="button" id="esqueceu-seu-email-button"
             (click)="voltarParaLogin()"
-            class="text-button text-button-text" placeholder>Voltar para o login
+            class="pof-btn-text" placeholder>Voltar para o login
         </button>
     </div>
 
@@ -36,7 +36,7 @@
             class="button avanca-button"></app-filled-button>
     </div>
     }@else {
-    <mat-spinner></mat-spinner>
+    <app-pof-loader variante="inline"></app-pof-loader>
     }
 
     }

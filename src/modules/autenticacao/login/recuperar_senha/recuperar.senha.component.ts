@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { AutenticacaoService } from "../../services/autenticacao.service";
 import { MatInputModule } from "@angular/material/input";
 import { LoginComponent } from "../login.component";
-import { MatProgressSpinner, MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { PofLoaderComponent } from "../../../core/common_components/pof_loader/pof.loader.component";
 
 
 
@@ -17,7 +17,7 @@ import { MatProgressSpinner, MatProgressSpinnerModule } from "@angular/material/
     selector: 'app-cadastro',
     templateUrl: './recuperar.senha.component.html',
     styleUrls: ['./recuperar.senha.component.scss'],
-    imports: [MatError, MatLabel, MatFormField, FilledButtonComponent, MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, MatProgressSpinner, MatProgressSpinnerModule],
+    imports: [MatError, MatLabel, MatFormField, FilledButtonComponent, MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, PofLoaderComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })

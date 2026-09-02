@@ -11,7 +11,7 @@
     <div class="row">
         <button type="button" id="esqueceu-seu-email-button"
             (click)="irParaPagindaDoCodigo()"
-            class="text-button text-button-text" placeholder>Ir para o login
+            class="pof-btn-text" placeholder>Ir para o login
         </button>
 
     </div>
@@ -40,7 +40,7 @@
             class="button avanca-button"></app-filled-button>
     </div>
     }@else {
-    <mat-spinner></mat-spinner>
+    <app-pof-loader variante="inline"></app-pof-loader>
     }
 
     }

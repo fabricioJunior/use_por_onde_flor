@@ -3,13 +3,13 @@ import { Router } from "@angular/router";
 import { AutenticacaoService } from "../../services/autenticacao.service";
 import { FilledButtonComponent } from "../../../core/common_components/filled.button.component";
 import { LogoComponent } from "../../../core/common_components/logo.component";
-import { MatProgressSpinner, MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { PofLoaderComponent } from "../../../core/common_components/pof_loader/pof.loader.component";
 
 @Component({
     selector: 'app-email-pendente',
     templateUrl: './email.pendente.component.html',
     styleUrls: ['../mudar_senha/mudar.senha.component.scss'],
-    imports: [FilledButtonComponent, LogoComponent, MatProgressSpinner, MatProgressSpinnerModule],
+    imports: [FilledButtonComponent, LogoComponent, PofLoaderComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })

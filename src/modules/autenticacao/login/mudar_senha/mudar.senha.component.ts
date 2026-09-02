@@ -7,15 +7,15 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AutenticacaoService } from "../../services/autenticacao.service";
 import { MatInputModule } from "@angular/material/input";
-import { MatProgressSpinner, MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { NgOtpInputComponent } from 'ng-otp-input';
 import { LogoComponent } from "../../../core/common_components/logo.component";
+import { PofLoaderComponent } from "../../../core/common_components/pof_loader/pof.loader.component";
 
 @Component({
     selector: 'app-cadastro',
     templateUrl: './mudar.senha.component.html',
     styleUrls: ['./mudar.senha.component.scss'],
-    imports: [MatError, MatLabel, MatFormField, NgOtpInputComponent, FilledButtonComponent, MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, MatProgressSpinner, MatProgressSpinnerModule, LogoComponent],
+    imports: [MatError, MatLabel, MatFormField, NgOtpInputComponent, FilledButtonComponent, MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, LogoComponent, PofLoaderComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })

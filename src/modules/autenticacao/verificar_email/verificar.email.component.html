@@ -6,7 +6,7 @@
     </div>
 
     @if (carregando()) {
-    <mat-spinner></mat-spinner>
+    <app-pof-loader variante="inline"></app-pof-loader>
     } @else if (sucesso()) {
     <h4>E-mail verificado com sucesso!</h4>
     <div class="button-group">
@@ -26,7 +26,7 @@
             (onTap)="reenviarConfirmacao()" class="button"></app-filled-button>
     </div>
     } @else {
-    <mat-spinner></mat-spinner>
+    <app-pof-loader variante="inline"></app-pof-loader>
     }
     }
 </div>
