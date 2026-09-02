@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from "@angular/core";
 import { LogoComponent } from "../../../core/common_components/logo.component";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { PofLoaderComponent } from "../../../core/common_components/pof_loader/pof.loader.component";
 import { ActivatedRoute } from "@angular/router";
 import { PagamentoService } from "../../services/pagamento.service";
 import { firstValueFrom } from "rxjs";
@@ -10,7 +10,7 @@ import { HttpErrorResponse } from "@angular/common/http";
     selector: 'app-pagamento',
     templateUrl: './pagamento.status.component.html',
     styleUrls: ['./pagamento.status.component.scss'],
-    imports: [LogoComponent, MatProgressSpinnerModule]
+    imports: [LogoComponent, PofLoaderComponent]
 })
 export class PagamentoStatusComponent implements OnInit {
 

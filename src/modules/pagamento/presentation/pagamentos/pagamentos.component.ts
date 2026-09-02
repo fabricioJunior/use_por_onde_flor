@@ -5,7 +5,7 @@ import { MatList, MatListModule } from "@angular/material/list";
 import { MatRippleModule } from "@angular/material/core";
 import { MatInputModule } from "@angular/material/input";
 import { MatCardModule } from "@angular/material/card";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { PofLoaderComponent } from "../../../core/common_components/pof_loader/pof.loader.component";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
@@ -19,7 +19,7 @@ import { NovoPagamentoComponent } from "../pagamento/dialogs/novo pagamento/novo
     selector: 'pagamentos-page',
     templateUrl: './pagamentos.component.html',
     styleUrls: ['./pagamentos.component.scss'],
-    imports: [MatList, MatRippleModule, MatInputModule, MatCardModule, MatListModule, MatProgressSpinnerModule, ReactiveFormsModule, MatIconModule, MatButtonModule]
+    imports: [MatList, MatRippleModule, MatInputModule, MatCardModule, MatListModule, PofLoaderComponent, ReactiveFormsModule, MatIconModule, MatButtonModule]
 })
 export class PagamentosComponent implements OnInit {
 

@@ -5,7 +5,7 @@
     <p>Assim que o pagamento for confirmado, você será notificado.</p>
     } @else {
     <h1>Processando...</h1>
-    <mat-spinner></mat-spinner>
+    <app-pof-loader variante="inline"></app-pof-loader>
     @if(pagamentoExpirado()){
     <h1>Pagamento expirado.</h1>
     }

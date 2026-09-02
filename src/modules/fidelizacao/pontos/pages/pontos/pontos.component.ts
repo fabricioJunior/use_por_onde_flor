@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { PontosService } from "../../services/pontos.service";
 import { PontoDto } from "../../data/dto/ponto.dto";
 import { PontosDto } from "../../data/dto/pontos.dto";
-import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { PofLoaderComponent } from "../../../../core/common_components/pof_loader/pof.loader.component";
 import { UsuarioDto } from "../../../../autenticacao/data/dto/usuario.dto";
 import { Router } from "@angular/router";
 import { TextButtonComponent } from "../../../../core/common_components/text.button.component";
@@ -18,7 +18,7 @@ import { TextButtonComponent } from "../../../../core/common_components/text.but
         styleUrls: ['./pontos.component.scss'],
         changeDetection: ChangeDetectionStrategy.OnPush,
         standalone: true,
-        imports: [LogoComponent, PontoComponent, MatIconModule, MatButtonModule, MatProgressSpinner, TextButtonComponent],
+        imports: [LogoComponent, PontoComponent, MatIconModule, MatButtonModule, PofLoaderComponent, TextButtonComponent],
     }
 )
 export class PontosComponent implements OnInit {
