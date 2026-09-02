@@ -1,17 +1,19 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit, computed, signal } from "@angular/core";
-import { Router, RouterLink } from "@angular/router";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { Router } from "@angular/router";
 import { CarrinhoFacadeService } from "../../../services/carrinho.facade.service";
 import { CarrinhoItemViewDto } from "../../../data/dtos/carrinho-item-view.dto";
-import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
 import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
 import { descricaoVariacao } from "../../../../loja/presentation/utils/variacao-apresentacao.util";
+import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
+import { TextButtonComponent } from "../../../../core/common_components/text.button.component";
+import { PofLoaderComponent } from "../../../../core/common_components/pof_loader/pof.loader.component";
+import { TracoComponent } from "../../../../core/common_components/traco/traco.component";
 
 @Component({
     selector: 'carrinho-page',
     standalone: true,
-    imports: [CommonModule, RouterLink, MatProgressSpinnerModule, ButtonComponent, HeaderComponent],
+    imports: [CommonModule, HeaderComponent, FilledButtonComponent, TextButtonComponent, PofLoaderComponent, TracoComponent],
     templateUrl: './carrinho.page.html',
     styleUrl: './carrinho.page.css',
 })
@@ -66,4 +68,8 @@ export class CarrinhoPage implements OnInit {
     irParaCheckout(): void {
         this.router.navigate(['/checkout']);
     }
+
+    irParaLoja = (): void => {
+        this.router.navigate(['/loja']);
+    };
 }

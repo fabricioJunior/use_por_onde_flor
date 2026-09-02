@@ -5,67 +5,83 @@
 
     @if (loading()) {
     <div class="carrinho-estado">
-        <mat-spinner diameter="42"></mat-spinner>
+        <app-pof-loader variante="cheia"></app-pof-loader>
     </div>
     } @else if (itens().length === 0) {
-    <div class="carrinho-estado">
-        <p>Sua sacola está vazia.</p>
-        <a routerLink="/loja">Voltar para a loja</a>
+    <div class="carrinho-vazio">
+        <app-traco class="carrinho-vazio-traco" d="M10,50 Q50,15 90,50 Q50,85 10,50" variante="clara" animacao="desenha"></app-traco>
+        <p>Sua sacola está vazia</p>
+        <app-text-button label="Voltar para a loja" [action]="irParaLoja"></app-text-button>
     </div>
     } @else {
-    <div class="carrinho-lista">
-        @for (item of itens(); track item.produtoId) {
-        <div class="carrinho-item" [class.carrinho-item-indisponivel]="item.statusDisponibilidade && item.statusDisponibilidade !== 'disponivel'">
-            <div class="carrinho-item-foto">
-                @if (item.imagemUrl) {
-                <img [src]="item.imagemUrl" [alt]="item.nome">
-                } @else {
-                <span>Sem foto</span>
-                }
-            </div>
-            <div class="carrinho-item-info">
-                <span class="carrinho-item-nome">{{ item.nome || ('Produto #' + item.produtoId) }}</span>
-                @if (item.corNome || item.tamanhoNome || item.estampaNome) {
-                <span class="carrinho-item-variacao">
-                    {{ descricaoVariacao(item.corNome, item.tamanhoNome, item.estampaNome) }}
+    <div class="carrinho-grid">
+        <div class="carrinho-lista">
+            @for (item of itens(); track item.produtoId) {
+            <div class="carrinho-item" [class.carrinho-item-indisponivel]="item.statusDisponibilidade && item.statusDisponibilidade !== 'disponivel'">
+                <div class="carrinho-item-foto">
+                    @if (item.imagemUrl) {
+                    <img [src]="item.imagemUrl" [alt]="item.nome">
+                    } @else {
+                    <span>Sem foto</span>
+                    }
+                </div>
+                <div class="carrinho-item-info">
+                    <span class="carrinho-item-nome">{{ item.nome || ('Produto #' + item.produtoId) }}</span>
+                    @if (item.corNome || item.tamanhoNome || item.estampaNome) {
+                    <span class="carrinho-item-variacao">
+                        {{ descricaoVariacao(item.corNome, item.tamanhoNome, item.estampaNome) }}
+                    </span>
+                    }
+                    @if (item.statusDisponibilidade === 'esgotado') {
+                    <span class="carrinho-item-aviso">Esse produto esgotou e não está mais disponível para compra.</span>
+                    } @else if (item.statusDisponibilidade === 'em_pagamento') {
+                    <span class="carrinho-item-aviso">Alguém está comprando esse produto agora. Ele pode voltar em alguns instantes.</span>
+                    }
+                    @if (item.valor != null) {
+                    @if (item.valorPromocional != null) {
+                    <span class="carrinho-item-preco">
+                        <span class="carrinho-item-preco-original">{{ formatarPreco(item.valor) }}</span>
+                        {{ formatarPreco(item.valorPromocional) }} un.
+                    </span>
+                    } @else {
+                    <span class="carrinho-item-preco">{{ formatarPreco(item.valor) }} un.</span>
+                    }
+                    }
+                    <div class="carrinho-item-quantidade">
+                        <button type="button" (click)="alterarQuantidade(item, item.quantidade! - 1)" aria-label="Diminuir quantidade">-</button>
+                        <span>{{ item.quantidade }}</span>
+                        <button type="button" (click)="alterarQuantidade(item, item.quantidade! + 1)" aria-label="Aumentar quantidade">+</button>
+                    </div>
+                    <button type="button" class="carrinho-item-remover" (click)="remover(item)">Remover</button>
+                </div>
+                <span class="carrinho-item-subtotal">
+                    @if (item.valor != null) {
+                    {{ formatarPreco((item.valorPromocional ?? item.valor) * (item.quantidade ?? 0)) }}
+                    }
                 </span>
-                }
-                @if (item.statusDisponibilidade === 'esgotado') {
-                <span class="carrinho-item-esgotado">Esse produto esgotou e não está mais disponível para compra.</span>
-                } @else if (item.statusDisponibilidade === 'em_pagamento') {
-                <span class="carrinho-item-esgotado">Alguém está comprando esse produto agora. Ele pode voltar em alguns instantes.</span>
-                }
-                @if (item.valor != null) {
-                @if (item.valorPromocional != null) {
-                <span class="carrinho-item-preco">
-                    <span class="carrinho-item-preco-original">{{ formatarPreco(item.valor) }}</span>
-                    {{ formatarPreco(item.valorPromocional) }} un.
-                </span>
-                <span class="carrinho-item-subtotal">{{ formatarPreco(item.valorPromocional * (item.quantidade ?? 0)) }}</span>
-                } @else {
-                <span class="carrinho-item-preco">{{ formatarPreco(item.valor) }} un.</span>
-                <span class="carrinho-item-subtotal">{{ formatarPreco(item.valor * (item.quantidade ?? 0)) }}</span>
-                }
-                }
             </div>
-            <div class="carrinho-item-quantidade">
-                <button type="button" (click)="alterarQuantidade(item, item.quantidade! - 1)">-</button>
-                <span>{{ item.quantidade }}</span>
-                <button type="button" (click)="alterarQuantidade(item, item.quantidade! + 1)">+</button>
-            </div>
-            <button type="button" class="carrinho-item-remover" (click)="remover(item)">Remover</button>
+            }
         </div>
-        }
+
+        <aside class="carrinho-resumo">
+            <span class="carrinho-resumo-eyebrow">Resumo</span>
+            <div class="carrinho-resumo-total">
+                <span>Total</span>
+                <strong>{{ formatarPreco(total()) }}</strong>
+            </div>
+            @if (temItemIndisponivel()) {
+            <p class="carrinho-resumo-aviso">Remova os produtos indisponíveis da sacola pra continuar.</p>
+            }
+            <app-filled-button class="carrinho-resumo-cta" label="Finalizar compra" [enabled]="!temItemIndisponivel()" (onTap)="irParaCheckout()"></app-filled-button>
+        </aside>
     </div>
 
-    <div class="carrinho-resumo">
-        <span>Total</span>
-        <strong>{{ formatarPreco(total()) }}</strong>
+    <div class="carrinho-barra-mobile">
+        <div>
+            <span>Total</span>
+            <strong>{{ formatarPreco(total()) }}</strong>
+        </div>
+        <app-filled-button label="Finalizar compra" [enabled]="!temItemIndisponivel()" (onTap)="irParaCheckout()"></app-filled-button>
     </div>
-
-    @if (temItemIndisponivel()) {
-    <p class="carrinho-aviso">Remova os produtos indisponíveis da sacola pra continuar.</p>
-    }
-    <ui-button size="lg" [disabled]="temItemIndisponivel()" (clicked)="irParaCheckout()">Finalizar compra</ui-button>
     }
 </div>
