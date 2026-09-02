@@ -60,6 +60,15 @@
             <produto-card [referencia]="referencia" (abrir)="abrirReferencia(referencia)"
                 (adicionar)="adicionarAoCarrinho(referencia)"></produto-card>
             }
+            @if (carregandoMais()) {
+            @for (item of skeletonItems; track item) {
+            <div class="loja-card-skeleton" aria-hidden="true">
+                <div class="loja-card-skeleton-foto pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha curta pof-skeleton"></div>
+            </div>
+            }
+            }
         </div>
 
         @if (temMaisPaginas()) {
