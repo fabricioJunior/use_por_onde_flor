@@ -54,13 +54,10 @@
   </div>
 
   <div class="row">
-    @if(loading()){
-    <app-pof-loader variante="inline"></app-pof-loader>
-    } @else {
     <app-filled-button [label]="'Avançar'"
       [enabled]="avancaEnable()"
+      [loading]="loading()"
       (onTap)="onAvancarTap()"></app-filled-button>
-    }
   </div>
 
 </div>

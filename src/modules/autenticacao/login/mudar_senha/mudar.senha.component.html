@@ -33,15 +33,11 @@
     </mat-form-field>
     <mat-error class="error-message">{{errorMessageSenha()}}</mat-error>
 
-    @if (!carregando()) {
     <div class="button-group">
         <app-filled-button [label]="'Atualizar Senha'"
-            [enabled]="atualizarSenhaEnabled()" (onTap)="atualizarSenha()"
+            [enabled]="atualizarSenhaEnabled()" [loading]="carregando()" (onTap)="atualizarSenha()"
             class="button avanca-button"></app-filled-button>
     </div>
-    }@else {
-    <app-pof-loader variante="inline"></app-pof-loader>
-    }
 
     }
 

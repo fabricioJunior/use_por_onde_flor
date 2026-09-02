@@ -2,7 +2,6 @@ import { Component, OnInit, signal } from "@angular/core";
 import { FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
 import { CadastroProgressoComponent } from "../../progresso/cadastro.progresso.component";
-import { PofLoaderComponent } from "../../../../core/common_components/pof_loader/pof.loader.component";
 import { CadastroComponent } from "../../cadastro.component";
 import { Router } from "@angular/router";
 import { AutenticacaoService } from "../../../services/autenticacao.service";
@@ -13,7 +12,7 @@ import { recuperarEmpresaAtual, resolverEmpresaId } from "../../../../../app/con
         selector: 'senha-app',
         templateUrl: './senha.component.html',
         styleUrls: ['./senha.component.scss'],
-        imports: [ReactiveFormsModule, FormsModule, FilledButtonComponent, CadastroProgressoComponent, PofLoaderComponent],
+        imports: [ReactiveFormsModule, FormsModule, FilledButtonComponent, CadastroProgressoComponent],
     }
 )
 export class SenhaComponent implements OnInit {

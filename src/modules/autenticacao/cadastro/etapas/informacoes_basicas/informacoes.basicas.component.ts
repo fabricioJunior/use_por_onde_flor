@@ -3,7 +3,6 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from "ngx-mask";
 import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
 import { CadastroProgressoComponent } from "../../progresso/cadastro.progresso.component";
-import { PofLoaderComponent } from "../../../../core/common_components/pof_loader/pof.loader.component";
 import { CadastroComponent } from "../../cadastro.component";
 import { Route, Router } from "@angular/router";
 import { AutenticacaoService } from "../../../services/autenticacao.service";
@@ -11,7 +10,7 @@ import { single } from "rxjs";
 
 @Component({
     selector: 'app-informacoes-basicas',
-    imports: [ReactiveFormsModule, FormsModule, NgxMaskDirective, FilledButtonComponent, CadastroProgressoComponent, PofLoaderComponent],
+    imports: [ReactiveFormsModule, FormsModule, NgxMaskDirective, FilledButtonComponent, CadastroProgressoComponent],
     templateUrl: './informacoes.basicas.component.html',
     styleUrl: './informacoes.basicas.component.scss',
     providers: [provideNgxMask()]

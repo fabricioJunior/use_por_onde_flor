@@ -29,15 +29,11 @@
             (input)="onEmailInput($event)" />
     </mat-form-field>
     <mat-error class="error-message">{{errorMessage()}}</mat-error>
-    @if (!carregando()) {
     <div class="button-group">
         <app-filled-button [label]="'Avançar'"
-            [enabled]="avancaEnable()" (onTap)="solicitarRedefinicaoDeSenha()"
+            [enabled]="avancaEnable()" [loading]="carregando()" (onTap)="solicitarRedefinicaoDeSenha()"
             class="button avanca-button"></app-filled-button>
     </div>
-    }@else {
-    <app-pof-loader variante="inline"></app-pof-loader>
-    }
 
     }
 

@@ -9,13 +9,12 @@ import { AutenticacaoService } from "../../services/autenticacao.service";
 import { MatInputModule } from "@angular/material/input";
 import { NgOtpInputComponent } from 'ng-otp-input';
 import { LogoComponent } from "../../../core/common_components/logo.component";
-import { PofLoaderComponent } from "../../../core/common_components/pof_loader/pof.loader.component";
 
 @Component({
     selector: 'app-cadastro',
     templateUrl: './mudar.senha.component.html',
     styleUrls: ['./mudar.senha.component.scss'],
-    imports: [MatError, MatLabel, MatFormField, NgOtpInputComponent, FilledButtonComponent, MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, LogoComponent, PofLoaderComponent],
+    imports: [MatError, MatLabel, MatFormField, NgOtpInputComponent, FilledButtonComponent, MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, LogoComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })

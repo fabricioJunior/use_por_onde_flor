@@ -175,6 +175,10 @@ html, body {
 
 // Botões — primário/secundário/texto da identidade nova
 .pof-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
   background: var(--brand-primary-hover);
   color: var(--text-on-brand);
   border: none;

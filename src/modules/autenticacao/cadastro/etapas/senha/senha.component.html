@@ -31,14 +31,11 @@
     <p class="aceite-error">Você deve aceitar o regulamento do site.</p>
     }
 
-    @if(loading()){
-    <div class="row"><app-pof-loader variante="inline"></app-pof-loader></div>
-    }@else{
     <div class="row">
         <app-filled-button [label]="'Avançar'"
             [enabled]="avancaEnable()"
+            [loading]="loading()"
             (onTap)="onAvancarTap()"></app-filled-button>
     </div>
-    }
 
 </div>

@@ -3,13 +3,12 @@ import { Router } from "@angular/router";
 import { AutenticacaoService } from "../../services/autenticacao.service";
 import { FilledButtonComponent } from "../../../core/common_components/filled.button.component";
 import { LogoComponent } from "../../../core/common_components/logo.component";
-import { PofLoaderComponent } from "../../../core/common_components/pof_loader/pof.loader.component";
 
 @Component({
     selector: 'app-email-pendente',
     templateUrl: './email.pendente.component.html',
     styleUrls: ['../mudar_senha/mudar.senha.component.scss'],
-    imports: [FilledButtonComponent, LogoComponent, PofLoaderComponent],
+    imports: [FilledButtonComponent, LogoComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
