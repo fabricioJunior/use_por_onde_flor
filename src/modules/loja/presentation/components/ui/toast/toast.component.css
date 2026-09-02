@@ -16,10 +16,10 @@
 
 .ui-toast.success {
     background: var(--color-green-800);
-    color: #fff;
+    color: var(--text-on-brand);
 }
 
 .ui-toast.error {
     background: var(--state-error);
-    color: #fff;
+    color: var(--text-on-brand);
 }

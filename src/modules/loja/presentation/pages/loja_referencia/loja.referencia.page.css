@@ -87,7 +87,7 @@
     border-radius: 50%;
     border: none;
     background: rgba(0, 0, 0, 0.45);
-    color: #fff;
+    color: var(--text-on-brand);
     font-size: 20px;
     line-height: 1;
     cursor: pointer;
@@ -110,7 +110,7 @@
     left: 50%;
     transform: translateX(-50%);
     font: var(--text-caption);
-    color: #fff;
+    color: var(--text-on-brand);
     background: rgba(0, 0, 0, 0.45);
     padding: 4px 10px;
     border-radius: var(--radius-pill);
@@ -331,7 +331,7 @@ h1 {
     display: none;
     font-size: 14px;
     line-height: 1;
-    color: #fff;
+    color: var(--text-on-brand);
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
 }
 

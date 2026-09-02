@@ -27,7 +27,7 @@
 }
 
 .check {
-    color: #fff;
+    color: var(--text-on-brand);
     font-size: 12px;
     line-height: 1;
 }
