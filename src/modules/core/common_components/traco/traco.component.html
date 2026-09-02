@@ -1,0 +1,14 @@
+<svg class="pof-traco" [class.mobile]="mobile" [style.opacity]="opacidade" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+  <path
+    [attr.d]="d"
+    [class.pof-anim-desenha]="animacao === 'desenha'"
+    [class.pof-anim-percorre]="animacao === 'percorre'"
+    [style.animation-delay.ms]="animacao === 'desenha' ? delayMs : null"
+    [style.stroke]="variante === 'clara' ? '#A0B08B' : '#F8F1EB'"
+    [style.stroke-width]="mobile ? '3.2px' : '3.4px'"
+    pathLength="100"
+    stroke-dasharray="100"
+    fill="none"
+    stroke-linecap="round"
+    vector-effect="non-scaling-stroke" />
+</svg>

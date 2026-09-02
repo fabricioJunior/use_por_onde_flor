@@ -14,4 +14,11 @@
   --duration-normal: 220ms;
 
   --border-width: 1px;
+  --radius-button: 2px;
+
+  /* Durações da identidade — traço/animações. Nada no site passa de 900ms. */
+  --duration-micro: 180ms;   /* foco, link */
+  --duration-action: 280ms;  /* botão, chip, seleção */
+  --duration-content: 450ms; /* imagem, entrada de conteúdo */
+  --duration-traco: 900ms;   /* só o traço */
 }

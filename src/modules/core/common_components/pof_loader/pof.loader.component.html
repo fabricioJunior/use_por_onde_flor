@@ -1,0 +1,13 @@
+@if (variante === 'cheia') {
+  <div class="pof-loader-cheia">
+    <app-logo variante="negativa" [altura]="40"></app-logo>
+    <svg class="pof-loader-svg" viewBox="0 0 100 100" aria-hidden="true">
+      <path d="M10,50 Q50,10 90,50 Q50,90 10,50" pathLength="100" stroke-dasharray="34 66" fill="none" stroke="#F8F1EB" stroke-width="3.4" stroke-linecap="round" />
+    </svg>
+    <p>{{ texto }}</p>
+  </div>
+} @else {
+  <svg class="pof-loader-inline" viewBox="0 0 100 100" role="status" aria-label="Carregando">
+    <path d="M10,50 Q50,10 90,50 Q50,90 10,50" pathLength="100" stroke-dasharray="34 66" fill="none" stroke="var(--text-on-brand)" stroke-width="6" stroke-linecap="round" />
+  </svg>
+}

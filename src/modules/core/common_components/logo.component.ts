@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { Router } from "@angular/router";
 
 @Component(
@@ -10,6 +10,11 @@ import { Router } from "@angular/router";
     }
 )
 export class LogoComponent {
+
+    /** 'clara' = Preferencial (tinta+sálvia), fundo claro. 'negativa' = branco, fundo escuro. */
+    @Input() variante: 'clara' | 'negativa' = 'clara';
+    /** altura em px — largura acompanha proporcionalmente. */
+    @Input() altura: number = 112;
 
     constructor(private router: Router) {
     }

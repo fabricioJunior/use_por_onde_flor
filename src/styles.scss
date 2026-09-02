@@ -84,3 +84,137 @@ html, body {
   opacity: 1;
   visibility: visible;
 }
+
+// Identidade Por Onde Flor — animações derivadas do traço (ver desing system/CLAUDE.md)
+@keyframes pof-percorre {
+  0% { stroke-dashoffset: 100; }
+  45% { stroke-dashoffset: 0; }
+  55% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -100; }
+}
+@keyframes pof-desenha {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes pof-sobe {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes pof-brilho {
+  from { background-position: -140% 0; }
+  to { background-position: 240% 0; }
+}
+@keyframes pof-flutua {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+  100% { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pof-traco path,
+  .pof-anim-sobe,
+  .pof-anim-flutua,
+  .pof-skeleton {
+    animation: none !important;
+  }
+}
+
+// Campos de formulário — rótulo fora, sem caixa, borda inferior sálvia
+.pof-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  label {
+    font: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--brand-primary-hover);
+  }
+
+  input, select, textarea {
+    background: none;
+    border: none;
+    border-bottom: 1.5px solid var(--brand-primary);
+    border-radius: 0;
+    padding: 10px 2px;
+    font-size: 17px;
+    font-weight: 300;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color var(--duration-micro) var(--ease-standard);
+
+    &:focus {
+      border-bottom-color: var(--brand-primary-hover);
+    }
+  }
+
+  &.pof-field-error {
+    input, select, textarea {
+      border-bottom-color: var(--text-secondary);
+    }
+
+    .pof-field-error-msg {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+  }
+}
+
+// Rede de segurança pra mat-form-field appearance="outline" residual — visual aproximado
+// da identidade nova sem reescrever o componente. Preferir sempre migrar pra .pof-field.
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-outline-color: var(--brand-primary);
+  --mdc-outlined-text-field-focus-outline-color: var(--brand-primary-hover);
+  --mdc-outlined-text-field-label-text-color: var(--brand-primary-hover);
+  --mdc-outlined-text-field-input-text-color: var(--text-primary);
+  --mdc-outlined-text-field-error-outline-color: var(--text-secondary);
+  --mdc-outlined-text-field-error-label-text-color: var(--text-secondary);
+  font-family: var(--font-sans);
+}
+
+// Botões — primário/secundário/texto da identidade nova
+.pof-btn-primary {
+  background: var(--brand-primary-hover);
+  color: var(--text-on-brand);
+  border: none;
+  border-radius: var(--radius-button);
+  padding: 17px 44px;
+  font: var(--text-button);
+  letter-spacing: var(--tracking-button);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--duration-action) var(--ease-standard);
+
+  &:hover:not(:disabled) { background: var(--brand-primary-active); }
+  &:disabled { opacity: .38; cursor: default; }
+}
+
+.pof-btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--brand-primary);
+  border-radius: var(--radius-button);
+  padding: 17px 44px;
+  font: var(--text-button);
+  letter-spacing: var(--tracking-button);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--duration-action) var(--ease-standard);
+
+  &:hover:not(:disabled) { background: var(--brand-primary); }
+  &:disabled { opacity: .38; cursor: default; }
+}
+
+.pof-btn-text {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font: var(--text-button);
+  letter-spacing: var(--tracking-button);
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}

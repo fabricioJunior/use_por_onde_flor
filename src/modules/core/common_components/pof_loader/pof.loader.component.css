@@ -1,0 +1,37 @@
+.pof-loader-cheia {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  background: var(--color-green-800);
+}
+
+.pof-loader-cheia p {
+  color: var(--text-on-inverse);
+  font: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.pof-loader-svg {
+  width: 64px;
+  height: 64px;
+  animation: pof-percorre 1.9s cubic-bezier(.65, 0, .35, 1) infinite;
+}
+
+.pof-loader-inline {
+  width: 18px;
+  height: 18px;
+  animation: pof-percorre 1.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pof-loader-svg,
+  .pof-loader-inline {
+    animation-duration: 2.4s;
+  }
+}

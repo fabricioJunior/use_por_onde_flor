@@ -1,9 +1,13 @@
-.logo{
-    width: 112px;
-    height: 112px;
-    background-repeat:no-repeat;
-    background-position: center center;
-    background: url('/logo-primary-color.png') center center no-repeat;
-    background-size: contain;
+.logo {
+  width: auto;
+  aspect-ratio: 2480 / 2025;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url('/logo-primary-color.png');
+  background-size: contain;
   cursor: pointer;
-  }  
+}
+
+.logo.negativa {
+  background-image: url('/logo-negativo.png');
+}
