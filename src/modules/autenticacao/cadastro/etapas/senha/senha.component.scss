@@ -41,9 +41,11 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    min-height: 44px;
     font: var(--text-body-sm);
     color: var(--text-primary);
     accent-color: var(--brand-primary-hover);
+    cursor: pointer;
 }
 
 .regulamento-checkbox input {
