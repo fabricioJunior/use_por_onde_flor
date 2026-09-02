@@ -87,7 +87,7 @@
 
 .produto-preco {
     font: var(--text-body-sm);
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
 .produto-preco-original {

@@ -37,7 +37,8 @@
   --surface-inverse: var(--color-green-800);
 
   --text-primary: var(--color-ink);
-  --text-secondary: var(--color-wine-500);
+  --text-secondary: var(--color-wine-500); /* bordô — exclusivamente aviso/erro/pendência */
+  --text-support: var(--color-neutral-600); /* neutro — texto de apoio sem carga de alerta (detalhe, legenda, placeholder) */
   --text-muted: var(--color-neutral-400);
   --text-on-brand: var(--color-cream);
   --text-on-inverse: rgba(248, 241, 235, .72);

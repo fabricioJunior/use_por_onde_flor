@@ -6,7 +6,7 @@
 
 .pedidos-estado {
     text-align: center;
-    color: var(--text-secondary, var(--text-primary));
+    color: var(--text-support);
     padding: var(--space-6) 0;
 }
 
@@ -41,7 +41,7 @@
 
 .pedido-item-situacao {
     font: var(--text-body-sm);
-    color: var(--text-secondary, var(--text-primary));
+    color: var(--text-support);
 }
 
 .pedido-item-entregue {
@@ -51,7 +51,7 @@
 
 .pedido-item-data {
     font: var(--text-body-sm);
-    color: var(--text-secondary, var(--text-primary));
+    color: var(--text-support);
 }
 
 .pedido-item-valor {

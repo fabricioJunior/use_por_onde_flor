@@ -7,7 +7,7 @@
 
 label {
     font: var(--text-body-sm);
-    color: var(--text-secondary);
+    color: var(--text-support);
 }
 
 select {

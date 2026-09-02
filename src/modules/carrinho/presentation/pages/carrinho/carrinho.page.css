@@ -126,7 +126,7 @@ h1 {
 
 .carrinho-item-preco {
     font: var(--text-body-sm);
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
 .carrinho-item-preco-original {
@@ -205,7 +205,7 @@ h1 {
 
 .carrinho-resumo-total span {
     font: var(--text-body-sm);
-    color: var(--text-secondary);
+    color: var(--text-support);
 }
 
 .carrinho-resumo-total strong {
@@ -279,7 +279,7 @@ h1 {
 
     .carrinho-barra-mobile span {
         font: var(--text-caption);
-        color: var(--text-secondary);
+        color: var(--text-support);
     }
 
     .carrinho-barra-mobile strong {

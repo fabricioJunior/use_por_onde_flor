@@ -75,7 +75,7 @@
 
 .pof-auth-cabecalho p {
   font: var(--text-body);
-  color: var(--text-secondary);
+  color: var(--text-support);
   margin: 0;
 }
 
