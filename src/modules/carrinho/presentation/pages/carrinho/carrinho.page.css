@@ -147,7 +147,7 @@ h1 {
     height: 44px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border-default);
-    background: var(--surface-card, #fff);
+    background: var(--surface-card);
     color: var(--text-primary);
     cursor: pointer;
     font-size: 16px;
