@@ -4,7 +4,101 @@
     background: var(--surface-page);
 }
 
+.loja-categorias {
+    padding: var(--space-6) var(--container-padding) 0;
+}
+
+.loja-categorias-eyebrow {
+    display: block;
+    font: var(--text-eyebrow);
+    letter-spacing: var(--tracking-eyebrow);
+    color: var(--brand-primary-hover);
+    text-align: center;
+    margin-bottom: var(--space-5);
+}
+
+.loja-categorias-grid {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: var(--space-4);
+    scrollbar-width: none;
+}
+
+.loja-categorias-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.loja-categoria-card {
+    flex: 0 0 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-3);
+    background: var(--surface-secondary);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text-primary);
+}
+
+@media (min-width: 640px) {
+    .loja-categorias-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        overflow: visible;
+    }
+
+    .loja-categoria-card {
+        flex: initial;
+    }
+}
+
+.loja-categoria-icone {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.loja-categoria-icone .pof-anim-flutua {
+    display: block;
+    width: 100%;
+    height: 100%;
+    animation: pof-flutua 3.4s ease-in-out infinite;
+}
+
+.loja-categoria-icone-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.loja-categoria-nome {
+    font: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.loja-vitrine-full {
+    position: relative;
+}
+
+.loja-vitrine-traco {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
 .loja-content {
+    position: relative;
+    z-index: 1;
     max-width: var(--container-max);
     margin: 0 auto;
     padding: var(--space-6) var(--container-padding);
@@ -35,6 +129,34 @@
     display: flex;
     justify-content: center;
     margin-top: var(--space-6);
+}
+
+.loja-card-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.loja-card-skeleton-foto {
+    aspect-ratio: 3 / 4;
+    border-radius: var(--radius-md);
+}
+
+.loja-card-skeleton-linha {
+    height: 12px;
+    border-radius: var(--radius-sm, 4px);
+    width: 80%;
+}
+
+.loja-card-skeleton-linha.curta {
+    width: 40%;
+}
+
+.loja-card-skeleton-foto,
+.loja-card-skeleton-linha {
+    background: linear-gradient(100deg, #E4E7DA 30%, #EFF2E8 50%, #E4E7DA 70%);
+    background-size: 220% 100%;
+    animation: pof-brilho 1.6s linear infinite;
 }
 
 @media (min-width: 640px) {

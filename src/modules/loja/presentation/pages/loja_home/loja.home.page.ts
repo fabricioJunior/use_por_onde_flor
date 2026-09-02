@@ -1,8 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, OnInit, ViewChild, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Router } from "@angular/router";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { Router, RouterLink } from "@angular/router";
 import { LojaDataSource } from "../../../data/loja.data.source";
 import { EcommerceReferenciaDto } from "../../../data/dtos/ecommerce-referencia.dto";
 import { PromocaoDto } from "../../../data/dtos/promocao.dto";
@@ -16,6 +15,8 @@ import { HeroComponent } from "../../components/hero/hero.component";
 import { FooterComponent } from "../../components/footer/footer.component";
 import { ButtonComponent } from "../../components/ui/button/button.component";
 import { InputComponent } from "../../components/ui/input/input.component";
+import { TracoComponent } from "../../../../core/common_components/traco/traco.component";
+import { CATEGORIAS_MOCK } from "../../utils/categorias.mock";
 
 const LIMITE_POR_PAGINA = 24;
 const DEBOUNCE_BUSCA_MS = 400;
@@ -24,7 +25,7 @@ const DEBOUNCE_BUSCA_MS = 400;
     selector: 'loja-home-page',
     standalone: true,
     imports: [
-        CommonModule, FormsModule, MatProgressSpinnerModule, ProdutoCardComponent,
+        CommonModule, FormsModule, RouterLink, ProdutoCardComponent, TracoComponent,
         HeaderComponent, HeroComponent, FooterComponent, ButtonComponent, InputComponent,
     ],
     templateUrl: './loja.home.page.html',
@@ -32,6 +33,9 @@ const DEBOUNCE_BUSCA_MS = 400;
 })
 export class LojaHomePage implements OnInit {
     @ViewChild('produtos') produtosRef?: ElementRef<HTMLElement>;
+
+    categorias = CATEGORIAS_MOCK;
+    skeletonItems = Array.from({ length: 8 });
 
     loading = signal(true);
     carregandoMais = signal(false);
