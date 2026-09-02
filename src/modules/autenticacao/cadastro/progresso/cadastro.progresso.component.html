@@ -1,0 +1,8 @@
+<div class="pof-progresso">
+  <svg viewBox="0 0 100 4" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,2 L100,2" class="pof-progresso-fundo" />
+    <path d="M0,2 L100,2" class="pof-progresso-ativo"
+      [style.stroke-dashoffset]="offset" />
+  </svg>
+  <span class="pof-progresso-label">Etapa {{etapa}} de {{total}} · {{label}}</span>
+</div>

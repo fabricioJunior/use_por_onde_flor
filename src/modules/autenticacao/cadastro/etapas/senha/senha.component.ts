@@ -1,24 +1,19 @@
 import { Component, OnInit, signal } from "@angular/core";
 import { FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
-import { NgxMaskDirective } from "ngx-mask";
 import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
+import { CadastroProgressoComponent } from "../../progresso/cadastro.progresso.component";
+import { PofLoaderComponent } from "../../../../core/common_components/pof_loader/pof.loader.component";
 import { CadastroComponent } from "../../cadastro.component";
 import { Router } from "@angular/router";
 import { AutenticacaoService } from "../../../services/autenticacao.service";
-import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { recuperarEmpresaAtual, resolverEmpresaId } from "../../../../../app/config/config.service";
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatButtonModule } from "@angular/material/button";
 
 @Component(
     {
         selector: 'senha-app',
         templateUrl: './senha.component.html',
         styleUrls: ['./senha.component.scss'],
-        imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, MatSelectModule, FilledButtonComponent, MatProgressSpinner, MatCheckboxModule, MatButtonModule],
+        imports: [ReactiveFormsModule, FormsModule, FilledButtonComponent, CadastroProgressoComponent, PofLoaderComponent],
     }
 )
 export class SenhaComponent implements OnInit {
