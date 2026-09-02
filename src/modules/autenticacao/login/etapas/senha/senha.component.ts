@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
 import { merge } from "rxjs";
 import { LoginComponent } from "../../login.component";
 import { AutenticacaoService } from "../../../services/autenticacao.service";
@@ -14,7 +12,7 @@ import { FilledButtonComponent } from "../../../../core/common_components/filled
     templateUrl: './senha.component.html',
     styleUrls: ['./senha.component.css'],
     standalone: true,
-    imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, FilledButtonComponent],
+    imports: [ReactiveFormsModule, FormsModule, FilledButtonComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginSenhaComponent implements OnInit {
@@ -55,6 +53,10 @@ export class LoginSenhaComponent implements OnInit {
     onEsqueceuSenha() {
         console.log('esqueceu senha');
         this.router.navigate(['login/recuperarSenha']);
+    }
+
+    trocarEmail() {
+        this.router.navigate(['login']);
     }
 
     async login() {
