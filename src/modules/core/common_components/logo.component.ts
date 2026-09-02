@@ -14,7 +14,7 @@ export class LogoComponent {
     /** 'clara' = Preferencial (tinta+sálvia), fundo claro. 'negativa' = branco, fundo escuro. */
     @Input() variante: 'clara' | 'negativa' = 'clara';
     /** altura em px — largura acompanha proporcionalmente. */
-    @Input() altura: number = 112;
+    @Input() altura: number = 36;
 
     constructor(private router: Router) {
     }

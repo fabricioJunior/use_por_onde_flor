@@ -1,13 +1,13 @@
 .logo {
   width: auto;
-  aspect-ratio: 2480 / 2025;
+  aspect-ratio: 4397 / 469;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url('/logo-primary-color.png');
+  background-image: url('/logo-horizontal-preferencial.png');
   background-size: contain;
   cursor: pointer;
 }
 
 .logo.negativa {
-  background-image: url('/logo-negativo.png');
+  background-image: url('/logo-horizontal-negativo.png');
 }
