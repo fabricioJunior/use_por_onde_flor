@@ -1,8 +1,8 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, OnInit, ViewChild, signal, computed } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { firstValueFrom } from "rxjs";
+import { PofLoaderComponent } from "../../../../core/common_components/pof_loader/pof.loader.component";
 import { LojaDataSource } from "../../../data/loja.data.source";
 import { ReferenciaMidiaPublicaDataSource } from "../../../data/referencia.midia.publica.data.source";
 import { EcommerceReferenciaDto, EcommerceReferenciaProdutoDto } from "../../../data/dtos/ecommerce-referencia.dto";
@@ -17,7 +17,7 @@ import { PromocaoPrecoService } from "../../../services/promocao-preco.service";
 @Component({
     selector: 'loja-referencia-page',
     standalone: true,
-    imports: [CommonModule, MatProgressSpinnerModule, ButtonComponent, HeaderComponent],
+    imports: [CommonModule, PofLoaderComponent, ButtonComponent, HeaderComponent],
     templateUrl: './loja.referencia.page.html',
     styleUrl: './loja.referencia.page.css',
 })

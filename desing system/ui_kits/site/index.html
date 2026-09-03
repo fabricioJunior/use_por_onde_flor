@@ -2,18 +2,25 @@
 <!-- @startingPoint section="Site institucional" subtitle="Home completa com header, hero e grade de produtos" viewport="1440x900" -->
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<title>Por Onde Flor — Site institucional</title>
-<link rel="stylesheet" href="../../styles.css">
-<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<style>body{margin:0;background:var(--surface-page);}</style>
+  <meta charset="UTF-8">
+  <title>Por Onde Flor — Site institucional</title>
+  <link rel="stylesheet" href="../../styles.css">
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: var(--surface-page);
+    }
+  </style>
 </head>
+
 <body>
-<div id="root"></div>
-<script type="text/plain" id="app-src">
+  <div id="root"></div>
+  <script type="text/plain" id="app-src">
 const { useState } = React;
 
 function Header({ cartCount, onOpenCart }) {
@@ -101,7 +108,7 @@ function Footer() {
       <div style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: 'var(--space-8) var(--container-padding)', display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 'var(--space-6)' }}>
         <div>
           <div style={{ font: 'var(--text-h3)', fontWeight: 300, marginBottom: 'var(--space-3)' }}>Por Onde Flor</div>
-          <p style={{ font: 'var(--text-body-sm)', color: 'var(--color-neutral-300)', maxWidth: '260px' }}>Moda feminina atemporal. Cortes básicos, elegância discreta.</p>
+          <p style={{ font: 'var(--text-body-sm)', color: 'var(--color-neutral-300)', maxWidth: '260px' }}>Básico que acompanha,combina e transforma</p>
         </div>
         <div style={col}><span style={label}>Loja</span><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Novidades</a><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Roupas</a><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Acessórios</a></div>
         <div style={col}><span style={label}>Ajuda</span><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Trocas e devoluções</a><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Guia de medidas</a><a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Contato</a></div>
@@ -140,12 +147,13 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
-<script>
-(function(){
-  var src = document.getElementById('app-src').textContent;
-  var out = Babel.transform(src, {presets: [['react', {runtime: 'classic'}]]}).code;
-  (new Function(out))();
-})();
-</script>
+  <script>
+    (function () {
+      var src = document.getElementById('app-src').textContent;
+      var out = Babel.transform(src, { presets: [['react', { runtime: 'classic' }]] }).code;
+      (new Function(out))();
+    })();
+  </script>
 </body>
+
 </html>

@@ -1,22 +1,26 @@
 <div class="email-group" [formGroup]="formGroup">
 
-  <mat-form-field appearance="outline">
-    <mat-label>Senha</mat-label>
-    <input type="password" matInput placeholder="Senha"
+  <div class="pof-email-atual">
+    <span>{{formGroup.get('email')?.value}}</span>
+    <button type="button" class="pof-btn-text" (click)="trocarEmail()">Trocar</button>
+  </div>
+
+  <div class="pof-field" [class.pof-field-error]="errorMessage()">
+    <label for="login-senha">Senha</label>
+    <input id="login-senha" type="password" placeholder="Sua senha"
       formControlName="senha">
-  </mat-form-field>
-  <mat-error class="error-message">{{errorMessage()}}</mat-error>
+    @if (errorMessage()) {
+    <span class="pof-field-error-msg">{{errorMessage()}}</span>
+    }
+  </div>
 
   <div class="row">
     <button type="button" id="esqueceu-seu-email-button"
       (click)="onEsqueceuSenha()"
-      class="text-button text-button-text" placeholder>Esqueceu sua senha ?
-
+      class="pof-btn-text">Esqueceu sua senha?
     </button>
-    <app-filled-button [label]="'Avançar'" [color]="'red'"
-      [enabled]="avancaEnable()" (onTap)="login()"
-      class="button avanca-button"></app-filled-button>
-
+    <app-filled-button [label]="'Avançar'"
+      [enabled]="avancaEnable()" (onTap)="login()"></app-filled-button>
   </div>
 
 </div>

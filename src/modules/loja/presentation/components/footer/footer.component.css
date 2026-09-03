@@ -1,9 +1,20 @@
 .loja-footer {
+    position: relative;
+    overflow: hidden;
     background: var(--surface-inverse);
     color: var(--text-on-inverse);
 }
 
+.loja-footer-traco {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
 .loja-footer-grid {
+    position: relative;
+    z-index: 1;
     max-width: var(--container-max);
     margin: 0 auto;
     padding: var(--space-8) var(--container-padding);
@@ -12,17 +23,11 @@
     gap: var(--space-6);
 }
 
-.loja-footer-marca {
-    font: var(--text-h3);
-    font-weight: 300;
-    margin-bottom: var(--space-3);
-}
-
 .loja-footer-descricao {
     font: var(--text-body-sm);
-    color: var(--color-neutral-300);
+    color: var(--text-on-inverse);
     max-width: 260px;
-    margin: 0;
+    margin: var(--space-3) 0 0;
 }
 
 .loja-footer-coluna {
@@ -30,7 +35,7 @@
     flex-direction: column;
     gap: var(--space-3);
     font: var(--text-body-sm);
-    color: var(--color-neutral-300);
+    color: var(--text-on-inverse);
 }
 
 .loja-footer-coluna a {
@@ -46,10 +51,12 @@
 }
 
 .loja-footer-copy {
+    position: relative;
+    z-index: 1;
     border-top: 1px solid var(--color-neutral-800);
     padding: var(--space-4) var(--container-padding);
     font: var(--text-caption);
-    color: var(--color-neutral-400);
+    color: var(--text-on-inverse);
     text-align: center;
 }
 

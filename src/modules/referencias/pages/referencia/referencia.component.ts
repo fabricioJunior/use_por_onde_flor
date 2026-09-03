@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, OnInit, signal } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { MatIconModule } from "@angular/material/icon";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { PofLoaderComponent } from "../../../core/common_components/pof_loader/pof.loader.component";
 import { ReferenciaDto, ReferenciaMidiaDto } from "../../data/referencia.data.source";
 import { ReferenciaService } from "../../services/referencia.service";
 
@@ -12,7 +12,7 @@ import { ReferenciaService } from "../../services/referencia.service";
     styleUrls: ['./referencia.component.scss'],
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, MatIconModule, MatProgressSpinnerModule],
+    imports: [CommonModule, MatIconModule, PofLoaderComponent],
 })
 export class ReferenciaComponent implements OnInit {
     loading = signal(true);

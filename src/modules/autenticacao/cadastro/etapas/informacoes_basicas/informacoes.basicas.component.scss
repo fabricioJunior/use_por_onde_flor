@@ -1,32 +1,45 @@
-.data_nascimento_container{ 
-    margin-bottom: 0px;
-    display:flex;
-    flex-direction: row;
-    gap: 16px;
-   
-} 
-
-.cpf-container { 
-    display:flex;
-    flex-direction: column;
+.pof-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.row{
-    display: flex;
-    justify-content: end;
-    align-items: end;
+.data_nascimento_container {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
 }
 
-app-outline-input {
-    box-sizing:border-box !important;
-    margin-bottom: 0px !important;
-    flex-direction: none;
+.campo-dia,
+.campo-ano {
+  flex: 1;
+  min-width: 0;
 }
 
-#data_error_box{ 
-  margin-bottom: 16px;
+.campo-mes {
+  flex: 2;
+  min-width: 0;
+}
+
+.row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 #acao-container {
-    padding-bottom: 40px;
+  padding-bottom: 32px;
+}
+
+.title {
+  font: var(--text-h1);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+#acao-container p {
+  font: var(--text-body);
+  color: var(--text-support);
+  margin: 0;
 }

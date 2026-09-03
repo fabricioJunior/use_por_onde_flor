@@ -1,0 +1,62 @@
+:root {
+  /* Brand hues — sampled diretamente da paleta oficial (Por Onde Flor, Éllis Studio & Co.), não alterar */
+  --color-green-50: #EFF2EA;
+  --color-green-100: #E1E7D9;
+  --color-green-200: #CBD5BE;
+  --color-green-300: #B3C1A3;
+  --color-green-400: #A0B08B; /* verde sálvia — cor exata do logotipo */
+  --color-green-500: #8A9C77;
+  --color-green-600: #6A755B; /* verde oliva — swatch oficial da paleta */
+  --color-green-700: #4C5542;
+  --color-green-800: #3E4636; /* oliva escura — superfícies escuras (footer, painel login, hover de botão) */
+  --color-green-900: #25291F; /* verde-carvão — tom mais escuro da escala, uso pontual */
+
+  --color-wine-500: #6D4141; /* bordô — exclusivamente texto secundário, avisos, erros, pendências */
+  --color-ink: #2B1919; /* marrom quase-preto — cor do texto/logotipo "Preferencial" */
+  --color-cream: #F8F1EB; /* creme quente — swatch oficial da paleta */
+  --color-surface-secondary: #ECEDE3; /* mistura cru + sálvia — card, placeholder de foto, resumo */
+
+  /* Warm neutrals — sophisticated, low-chroma, not stark */
+  --color-neutral-0: #FFFFFF;
+  --color-neutral-50: oklch(98% 0.004 75);
+  --color-neutral-100: oklch(95.5% 0.006 75);
+  --color-neutral-200: oklch(90% 0.008 75);
+  --color-neutral-300: oklch(82% 0.01 75);
+  --color-neutral-400: oklch(70% 0.012 75);
+  --color-neutral-500: oklch(58% 0.012 75);
+  --color-neutral-600: oklch(46% 0.01 75);
+  --color-neutral-700: oklch(36% 0.01 75);
+  --color-neutral-800: oklch(26% 0.008 75);
+  --color-neutral-900: oklch(17% 0.006 75);
+
+  /* Semantic aliases */
+  --surface-page: var(--color-cream);
+  --surface-card: var(--color-surface-secondary);
+  --surface-secondary: var(--color-surface-secondary);
+  --surface-sunken: var(--color-surface-secondary);
+  --surface-inverse: var(--color-green-800);
+
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-wine-500); /* bordô — exclusivamente aviso/erro/pendência */
+  --text-support: var(--color-neutral-600); /* neutro — texto de apoio sem carga de alerta (detalhe, legenda, placeholder) */
+  --text-muted: var(--color-neutral-400);
+  --text-on-brand: var(--color-cream);
+  --text-on-inverse: rgba(248, 241, 235, .72);
+
+  --border-subtle: rgba(160, 176, 139, .45); /* borda de card, padrão sálvia */
+  --border-default: var(--color-green-400);
+
+  --brand-primary: var(--color-green-400); /* sálvia — bordas, linhas de campo, detalhes */
+  --brand-primary-hover: var(--color-green-600); /* oliva — ações primárias, seleção ativa */
+  --brand-primary-deep: var(--color-green-600);
+  --brand-primary-active: var(--color-green-800); /* oliva escura — hover de botão */
+  --brand-tint: var(--color-green-50);
+  --brand-accent: var(--color-wine-500);
+
+  --link-color: var(--color-green-600);
+  --link-color-hover: var(--color-green-800);
+
+  --state-success: var(--color-green-500);
+  --state-error: var(--color-wine-500);
+  --state-warning: var(--color-wine-500);
+}

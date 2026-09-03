@@ -1,0 +1,15 @@
+.pof-traco {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.pof-anim-desenha {
+  animation: pof-desenha 1.1s cubic-bezier(.4, 0, .2, 1) forwards;
+}
+
+.pof-anim-percorre {
+  animation: pof-percorre .9s cubic-bezier(.65, 0, .35, 1) infinite;
+}

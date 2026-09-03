@@ -11,7 +11,7 @@
     <div class="row">
         <button type="button" id="esqueceu-seu-email-button"
             (click)="irParaPagindaDoCodigo()"
-            class="text-button text-button-text" placeholder>Ir para o login
+            class="pof-btn-text" placeholder>Ir para o login
         </button>
 
     </div>
@@ -33,15 +33,11 @@
     </mat-form-field>
     <mat-error class="error-message">{{errorMessageSenha()}}</mat-error>
 
-    @if (!carregando()) {
     <div class="button-group">
-        <app-filled-button [label]="'Atualizar Senha'" [color]="'red'"
-            [enabled]="atualizarSenhaEnabled()" (onTap)="atualizarSenha()"
+        <app-filled-button [label]="'Atualizar Senha'"
+            [enabled]="atualizarSenhaEnabled()" [loading]="carregando()" (onTap)="atualizarSenha()"
             class="button avanca-button"></app-filled-button>
     </div>
-    }@else {
-    <mat-spinner></mat-spinner>
-    }
 
     }
 

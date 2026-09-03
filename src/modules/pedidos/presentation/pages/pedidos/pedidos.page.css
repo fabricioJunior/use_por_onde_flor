@@ -6,7 +6,7 @@
 
 .pedidos-estado {
     text-align: center;
-    color: var(--text-secondary, var(--text-primary));
+    color: var(--text-support);
     padding: var(--space-6) 0;
 }
 
@@ -36,26 +36,26 @@
 }
 
 .pedido-item-numero {
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .pedido-item-situacao {
     font: var(--text-body-sm);
-    color: var(--text-secondary, var(--text-primary));
+    color: var(--text-support);
 }
 
 .pedido-item-entregue {
     color: var(--state-success, #1a8f4c);
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .pedido-item-data {
     font: var(--text-body-sm);
-    color: var(--text-secondary, var(--text-primary));
+    color: var(--text-support);
 }
 
 .pedido-item-valor {
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .pedidos-carregar-mais {

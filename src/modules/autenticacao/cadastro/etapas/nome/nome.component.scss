@@ -1,14 +1,28 @@
+.pof-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 
-.input-group {
-    margin-bottom: 15px;
-    display:flex;
-    flex-direction: column;
-}
 #acao-container {
-    padding-bottom: 40px;
+  padding-bottom: 32px;
 }
-.row{
-    display: flex;
-    justify-content: end;
-    align-items: end;
+
+.title {
+  font: var(--text-h1);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+#acao-container p {
+  font: var(--text-body);
+  color: var(--text-support);
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }

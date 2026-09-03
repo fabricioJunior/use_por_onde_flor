@@ -3,14 +3,13 @@ import { CruzamentoTamanhoCorView, ProdutoService } from "../../services/produto
 import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 
 @Component({
     selector: 'app-produtos',
     templateUrl: './produto.component.html',
     styleUrls: ['./produto.component.scss'],
-    imports: [MatTableModule, CommonModule, RouterLink, MatButtonModule, MatIconModule],
+    imports: [MatTableModule, CommonModule, RouterLink, MatIconModule],
 })
 export class ProdutoComponent implements OnInit {
 

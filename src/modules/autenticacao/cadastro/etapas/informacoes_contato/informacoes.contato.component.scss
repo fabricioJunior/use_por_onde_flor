@@ -1,27 +1,28 @@
-.row{
-    display: flex;
-    justify-content: end;
-    align-items: end;
+.pof-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-mat-form-field{
-    width: 100%;
-  }
-
-  #acao-container {
-    padding-bottom: 40px;
+.row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
-.text-button {
-    text-align: start;
-    color: var(--material-theme-sys-light-primary, #006B5B) !important;
-    font-family: Roboto;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 800;
-    line-height: normal;
-    outline: none;
-    border: none;
-    padding: 0px;
-    background-color: inherit;
+#acao-container {
+  padding-bottom: 8px;
+}
+
+.title {
+  font: var(--text-h1);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+#acao-container p {
+  font: var(--text-body);
+  color: var(--text-support);
+  margin: 0;
 }

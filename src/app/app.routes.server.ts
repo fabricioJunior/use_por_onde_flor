@@ -22,6 +22,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
+    path: 'loja/categoria/:slug',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'pedidos/:id',
     renderMode: RenderMode.Client,
   },

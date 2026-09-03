@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule, Validators, FormsModule, FormGroup } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
 import { merge, single } from "rxjs";
 import { Output, EventEmitter } from '@angular/core';
 import { LoginComponent } from "../../login.component";
@@ -14,7 +12,7 @@ import { AutenticacaoService } from "../../../services/autenticacao.service";
     selector: 'app-email',
     templateUrl: './email.component.html',
     styleUrls: ['./email.component.css'],
-    imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, FilledButtonComponent],
+    imports: [ReactiveFormsModule, FormsModule, FilledButtonComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailComponent {

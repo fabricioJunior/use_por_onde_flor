@@ -1,69 +1,63 @@
+<app-cadastro-progresso [etapa]="2" [total]="4" [label]="'Dados'"></app-cadastro-progresso>
+
 <div id="acao-container">
-  <div id="acao-container">
-    <h2 class="title">Informações básicas</h2>
-    <p> Insira seu nome</p>
-  </div>
+  <h1 class="title">Informações básicas</h1>
+  <p>Insira sua data de nascimento e CPF</p>
 </div>
-<div [formGroup]="formGroup">
+
+<div [formGroup]="formGroup" class="pof-auth-form">
 
   <div class="data_nascimento_container">
-    <mat-form-field appearance="outline">
-      <mat-label>Dia</mat-label>
-      <input matInput placeholder="Dia" maxlength="2" formControlName="dia"
-        [value]="formGroup.get('dia')?.value">
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Mês</mat-label>
-      <mat-select formControlName="mes" [value]="formGroup.get('mes')?.value">
-        <mat-option value=1>Janeiro</mat-option>
-        <mat-option value=2>Fevereiro</mat-option>
-        <mat-option value=3>Março</mat-option>
-        <mat-option value=4>Abril</mat-option>
-        <mat-option value=5>Maio</mat-option>
-        <mat-option value=6>Junho</mat-option>
-        <mat-option value=7>Julho</mat-option>
-        <mat-option value=8>Agosto</mat-option>
-        <mat-option value=9>Setembro</mat-option>
-        <mat-option value=10>Outubro</mat-option>
-        <mat-option value=11>Novembro</mat-option>
-        <mat-option value=12>Dezembro</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="pof-field campo-dia">
+      <label for="cadastro-dia">Dia</label>
+      <input id="cadastro-dia" type="text" placeholder="Dia" maxlength="2"
+        formControlName="dia" [value]="formGroup.get('dia')?.value">
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Ano</mat-label>
-      <input matInput placeholder="Ano" [maxLength]="4" formControlName="ano"
-        [value]="formGroup.get('ano')?.value">
-    </mat-form-field>
+    <div class="pof-field campo-mes">
+      <label for="cadastro-mes">Mês</label>
+      <select id="cadastro-mes" formControlName="mes"
+        [value]="formGroup.get('mes')?.value">
+        <option value="1">Janeiro</option>
+        <option value="2">Fevereiro</option>
+        <option value="3">Março</option>
+        <option value="4">Abril</option>
+        <option value="5">Maio</option>
+        <option value="6">Junho</option>
+        <option value="7">Julho</option>
+        <option value="8">Agosto</option>
+        <option value="9">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
+    </div>
+
+    <div class="pof-field campo-ano">
+      <label for="cadastro-ano">Ano</label>
+      <input id="cadastro-ano" type="text" placeholder="Ano" [maxLength]="4"
+        formControlName="ano" [value]="formGroup.get('ano')?.value">
+    </div>
   </div>
-  <div id="data_error_box">
-    <mat-error>
-      {{dataError()}}
-    </mat-error>
-  </div>
+  @if (dataError()) {
+  <span class="pof-field-error-msg">{{dataError()}}</span>
+  }
 
-  <div class="cpf-container">
-    <mat-form-field appearance="outline">
-      <mat-label>CPF</mat-label>
-      <input matInput placeholder="CPF" [maxLength]="14" formControlName="cpf"
-        [value]="formGroup.get('cpf')?.value"
-        mask="000.000.000-00||00.000.000/0000-00">
-
-    </mat-form-field>
-    <mat-error>
-      {{cpfError()}}
-    </mat-error>
-  </div>
-  <div class="row">
-    @if(loading()){
-    <mat-spinner></mat-spinner>
-
-    } @else {
-    <app-filled-button [label]="'Avançar'" [color]="'red'"
-      [enabled]="avancaEnable()"
-      (onTap)="onAvancarTap()"></app-filled-button>
+  <div class="pof-field" [class.pof-field-error]="cpfError()">
+    <label for="cadastro-cpf">CPF</label>
+    <input id="cadastro-cpf" type="text" placeholder="CPF" [maxLength]="14"
+      formControlName="cpf" [value]="formGroup.get('cpf')?.value"
+      mask="000.000.000-00||00.000.000/0000-00">
+    @if (cpfError()) {
+    <span class="pof-field-error-msg">{{cpfError()}}</span>
     }
+  </div>
 
+  <div class="row">
+    <app-filled-button [label]="'Avançar'"
+      [enabled]="avancaEnable()"
+      [loading]="loading()"
+      (onTap)="onAvancarTap()"></app-filled-button>
   </div>
 
 </div>

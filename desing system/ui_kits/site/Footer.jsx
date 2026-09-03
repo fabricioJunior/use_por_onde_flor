@@ -6,7 +6,7 @@ export function Footer() {
       <div style={{ maxWidth: 'var(--container-max)', margin: '0 auto', padding: 'var(--space-8) var(--container-padding)', display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 'var(--space-6)' }}>
         <div>
           <div style={{ font: 'var(--text-h3)', fontWeight: 300, marginBottom: 'var(--space-3)' }}>Por Onde Flor</div>
-          <p style={{ font: 'var(--text-body-sm)', color: 'var(--color-neutral-300)', maxWidth: '260px' }}>Moda feminina atemporal. Cortes básicos, elegância discreta.</p>
+          <p style={{ font: 'var(--text-body-sm)', color: 'var(--color-neutral-300)', maxWidth: '260px' }}>Básico que acompanha,combina e transforma</p>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', font: 'var(--text-body-sm)', color: 'var(--color-neutral-300)' }}>
           <span style={{ color: 'var(--text-on-inverse)', font: 'var(--text-eyebrow)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-eyebrow)' }}>Loja</span>

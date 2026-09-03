@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, OnInit, signal } from '@a
 import { TextButtonComponent } from "../../core/common_components/text.button.component";
 import { FilledButtonComponent } from "../../core/common_components/filled.button.component";
 import { LogoComponent } from "../../core/common_components/logo.component";
+import { TracoComponent } from "../../core/common_components/traco/traco.component";
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,7 +15,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
     selector: 'Login',
     templateUrl: './login.component.html',
     styleUrl: './login.component.css',
-    imports: [TextButtonComponent, LogoComponent, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, RouterModule],
+    imports: [TextButtonComponent, LogoComponent, TracoComponent, MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, RouterModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
@@ -29,6 +30,9 @@ export class LoginComponent implements OnInit {
 
     // URL pra onde voltar após login (ex: veio do checkout finalizar compra).
     returnUrl = signal<string | null>(null);
+
+    // Traço decorativo do painel — path livre em coordenadas 0-100 (decisão de design, sem referência visual).
+    tracoPath = 'M0,68 C20,45 35,88 55,58 C72,34 85,62 100,40';
 
     constructor(private router: Router, private route: ActivatedRoute) { }
     ngOnInit(): void {

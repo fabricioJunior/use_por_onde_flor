@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit, signal } from "@angular/core";
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { ProdutoService } from "../../services/produto.service";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatTreeModule } from '@angular/material/tree';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatList, MatListModule } from "@angular/material/list";
@@ -10,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from "@angular/material/icon";
 import { MatDividerModule } from "@angular/material/divider";
 import { FilledButtonComponent } from "../../../core/common_components/filled.button.component";
+import { PofLoaderComponent } from "../../../core/common_components/pof_loader/pof.loader.component";
 
 @Component({
     selector: 'filtro-tamanho-cor',
@@ -17,7 +17,7 @@ import { FilledButtonComponent } from "../../../core/common_components/filled.bu
     styleUrls: [
         './filtro.tamanho.cor.modal.scss'
     ],
-    imports: [MatProgressSpinnerModule, MatTreeModule, MatExpansionModule, MatListModule, MatCheckboxModule, MatButtonModule, MatDividerModule, MatIconModule]
+    imports: [PofLoaderComponent, MatTreeModule, MatExpansionModule, MatListModule, MatCheckboxModule, MatButtonModule, MatDividerModule, MatIconModule]
 })
 export class FiltroTamanhoCorModal implements OnInit {
     loading = signal(true);

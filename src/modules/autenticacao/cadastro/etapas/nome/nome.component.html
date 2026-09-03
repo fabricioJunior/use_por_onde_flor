@@ -1,30 +1,27 @@
+<app-cadastro-progresso [etapa]="1" [total]="4" [label]="'Nome'"></app-cadastro-progresso>
 
 <div id="acao-container">
-  <h2 class="title">Informações básicas</h2>
-  <p> Insira seu nome</p>
+  <h1 class="title">Como podemos te chamar?</h1>
+  <p>Insira seu nome</p>
 </div>
-<form [formGroup]="formGroup">
 
-  <div class="input-group">
-    <mat-form-field appearance="outline">
-      <mat-label>Nome</mat-label>
-      <input matInput placeholder="Digite seu nome" id="nome"
-        [value]="formGroup.get('nome')?.value"
-        formControlName="nome">
-    </mat-form-field>
+<form [formGroup]="formGroup" class="pof-auth-form">
 
-    <mat-form-field appearance="outline">
-      <mat-label>Sobrenome</mat-label>
-      <input matInput placeholder="Digite seu sobrenome" id="nome"
-        [value]="formGroup.get('sobrenome')?.value"
-        formControlName="sobrenome">
-    </mat-form-field>
+  <div class="pof-field">
+    <label for="cadastro-nome">Nome</label>
+    <input id="cadastro-nome" type="text" placeholder="Digite seu nome"
+      [value]="formGroup.get('nome')?.value" formControlName="nome">
+  </div>
 
-    <div class="row">
-      <app-filled-button [label]="'Avançar'"
-        [color]="'red'"
-        [enabled]="avancarEnable()"
-        (onTap)="onAvancarTap()"></app-filled-button>
-    </div>
+  <div class="pof-field">
+    <label for="cadastro-sobrenome">Sobrenome</label>
+    <input id="cadastro-sobrenome" type="text" placeholder="Digite seu sobrenome"
+      [value]="formGroup.get('sobrenome')?.value" formControlName="sobrenome">
+  </div>
+
+  <div class="row">
+    <app-filled-button [label]="'Avançar'"
+      [enabled]="avancarEnable()"
+      (onTap)="onAvancarTap()"></app-filled-button>
   </div>
 </form>

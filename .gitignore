@@ -41,3 +41,8 @@ testem.log
 .DS_Store
 Thumbs.db
 .vercel
+
+# Fonte de design (assets pesados, não versionados — ver CLAUDE.md)
+Logo/
+Tipografia/
+Apresentação Por onde flor By Ellis.pdf

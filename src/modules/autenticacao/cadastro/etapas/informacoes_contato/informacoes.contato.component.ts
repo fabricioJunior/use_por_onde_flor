@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
 import { NgxMaskDirective } from "ngx-mask";
 import { CadastroComponent } from "../../cadastro.component";
 import { NgxMaskConfig } from 'ngx-mask'
 import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
+import { CadastroProgressoComponent } from "../../progresso/cadastro.progresso.component";
 import { AutenticacaoService } from "../../../services/autenticacao.service";
 import { Router } from "@angular/router";
 
@@ -16,7 +14,7 @@ import { Router } from "@angular/router";
     selector: 'app-informacoes-basicas',
     templateUrl: './informacoes.contato.component.html',
     styleUrls: ['./informacoes.contato.component.scss'],
-    imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, MatSelectModule, NgxMaskDirective, NgxMaskDirective, FilledButtonComponent],
+    imports: [ReactiveFormsModule, FormsModule, NgxMaskDirective, FilledButtonComponent, CadastroProgressoComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })

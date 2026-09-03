@@ -3,7 +3,7 @@
     height: 24px;
     background-repeat:no-repeat;
     background-position: center center;
-    //background: url('/flor.png') center center no-repeat;
+    //background: url('/imagens/flor.png') center center no-repeat;
     background-size: contain;
     padding: 24px;
 }  
@@ -12,7 +12,7 @@
 .body {
     width: 40px;
     height: 40px;
-    background-color: #237266;
+    background-color: var(--brand-primary-hover);
     border-radius: 100%;
     display: flex; /* Ativa o Flexbox */
     justify-content: center; /* Alinha os elementos horizontalmente no centro */

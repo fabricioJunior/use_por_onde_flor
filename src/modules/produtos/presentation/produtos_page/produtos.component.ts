@@ -4,7 +4,7 @@ import { MatInputModule } from "@angular/material/input";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatListModule } from '@angular/material/list';
 import { ProdutoDto } from "../../data/dtos/produto.dto";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { PofLoaderComponent } from "../../../core/common_components/pof_loader/pof.loader.component";
 import { MatCardModule } from '@angular/material/card';
 import { debounceTime } from 'rxjs/operators';
 import { MatIconModule } from "@angular/material/icon";
@@ -17,7 +17,7 @@ import { ActivatedRoute, Router } from "@angular/router";
     selector: 'app-produtos',
     templateUrl: './produtos.component.html',
     styleUrls: ['./produtos.component.scss'],
-    imports: [MatRippleModule, MatInputModule, MatCardModule, MatListModule, MatProgressSpinnerModule, ReactiveFormsModule, MatIconModule, MatButtonModule]
+    imports: [MatRippleModule, MatInputModule, MatCardModule, MatListModule, PofLoaderComponent, ReactiveFormsModule, MatIconModule, MatButtonModule]
 })
 export class ProdutosComponent {
     onTapProduto(produto: ProdutoDto) {

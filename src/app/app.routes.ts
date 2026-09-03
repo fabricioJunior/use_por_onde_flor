@@ -25,6 +25,7 @@ import { RegulamentoComponent } from '../modules/fidelizacao/pontos/pages/regula
 import { ReferenciaComponent } from '../modules/referencias/pages/referencia/referencia.component';
 import { LojaHomePage } from '../modules/loja/presentation/pages/loja_home/loja.home.page';
 import { LojaReferenciaPage } from '../modules/loja/presentation/pages/loja_referencia/loja.referencia.page';
+import { LojaCategoriaPage } from '../modules/loja/presentation/pages/loja_categoria/loja.categoria.page';
 import { CarrinhoPage } from '../modules/carrinho/presentation/pages/carrinho/carrinho.page';
 import { CheckoutPage } from '../modules/checkout/presentation/pages/checkout/checkout.page';
 
@@ -116,6 +117,9 @@ export const routes: Routes = [
     },
     {
         path: 'loja/referencia/:id', component: LojaReferenciaPage,
+    },
+    {
+        path: 'loja/categoria/:slug', component: LojaCategoriaPage,
     },
     {
         path: 'carrinho', component: CarrinhoPage,

@@ -1,10 +1,7 @@
 <div class="pagina-shell">
     <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
     @if (loading()) {
-    <div class="pagina-estado">
-        <mat-spinner diameter="42"></mat-spinner>
-        <p>Carregando produto...</p>
-    </div>
+    <app-pof-loader variante="cheia"></app-pof-loader>
     } @else if (erro()) {
     <div class="pagina-estado">
         <p>{{ erro() }}</p>
