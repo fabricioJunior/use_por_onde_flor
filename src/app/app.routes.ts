@@ -119,7 +119,7 @@ export const routes: Routes = [
         path: 'loja/referencia/:id', component: LojaReferenciaPage,
     },
     {
-        path: 'loja/categoria/:slug', component: LojaCategoriaPage,
+        path: 'loja/categoria/:id', component: LojaCategoriaPage,
     },
     {
         path: 'carrinho', component: CarrinhoPage,

@@ -20,11 +20,20 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
         return { ecommerceId: environment.ecommerceId.toString() };
     }
 
-    listarReferencias(page: number, limit: number, search?: string): Observable<PaginationDto<EcommerceReferenciaDto>> {
+    listarReferencias(
+        page: number, limit: number, search?: string, categoriaIds?: number[],
+    ): Observable<PaginationDto<EcommerceReferenciaDto>> {
+        const queryParameters: Record<string, string | number> = { page, limit };
+        if (search) {
+            queryParameters['search'] = search;
+        }
+        if (categoriaIds?.length) {
+            queryParameters['categoriaIds'] = categoriaIds.join(',');
+        }
         return this.get({
             pathArguments: this.ecommerceArgs(),
             path: '/catalogos/referencias',
-            queryParameters: search ? { page, limit, search } : { page, limit },
+            queryParameters,
         });
     }
 

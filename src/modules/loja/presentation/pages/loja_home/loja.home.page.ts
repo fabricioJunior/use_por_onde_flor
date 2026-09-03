@@ -16,7 +16,8 @@ import { FooterComponent } from "../../components/footer/footer.component";
 import { ButtonComponent } from "../../components/ui/button/button.component";
 import { InputComponent } from "../../components/ui/input/input.component";
 import { TracoComponent } from "../../../../core/common_components/traco/traco.component";
-import { CATEGORIAS_MOCK } from "../../utils/categorias.mock";
+import { CategoriaDataSource } from "../../../data/categoria.data.source";
+import { CategoriaDto } from "../../../data/dtos/categoria.dto";
 
 const LIMITE_POR_PAGINA = 24;
 const DEBOUNCE_BUSCA_MS = 400;
@@ -32,9 +33,10 @@ const DEBOUNCE_BUSCA_MS = 400;
     styleUrl: './loja.home.page.css',
 })
 export class LojaHomePage implements OnInit {
-    categorias = CATEGORIAS_MOCK;
+    categorias = signal<CategoriaDto[]>([]);
     skeletonItems = Array.from({ length: 8 });
 
+    lojaFechada = signal(false);
     loading = signal(true);
     carregandoMais = signal(false);
     erro = signal('');
@@ -50,6 +52,7 @@ export class LojaHomePage implements OnInit {
 
     constructor(
         private lojaDataSource: LojaDataSource,
+        private categoriaDataSource: CategoriaDataSource,
         private carrinhoFacadeService: CarrinhoFacadeService,
         private promocaoPrecoService: PromocaoPrecoService,
         private router: Router,
@@ -57,8 +60,27 @@ export class LojaHomePage implements OnInit {
     ) { }
 
     async ngOnInit(): Promise<void> {
-        await Promise.all([this.carregarPromocoes(), this.atualizarContagemCarrinho()]);
+        await this.carregarCategorias();
+        await this.atualizarContagemCarrinho();
+
+        // Falha ao consultar o status não pode travar a loja -- segue como se estivesse aberta.
+        const status = await firstValueFrom(this.lojaDataSource.status()).catch(() => ({ aberto: true }));
+        if (!status.aberto) {
+            this.lojaFechada.set(true);
+            this.loading.set(false);
+            return;
+        }
+
+        await this.carregarPromocoes();
         await this.carregarPagina(1);
+    }
+
+    private async carregarCategorias(): Promise<void> {
+        try {
+            this.categorias.set(await firstValueFrom(this.categoriaDataSource.listar()));
+        } catch (error) {
+            console.error('Erro ao carregar categorias', error);
+        }
     }
 
     private async carregarPromocoes(): Promise<void> {

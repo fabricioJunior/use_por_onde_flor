@@ -3,6 +3,8 @@ import { Component, OnInit, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 import { LojaDataSource } from "../../../data/loja.data.source";
+import { CategoriaDataSource } from "../../../data/categoria.data.source";
+import { CategoriaDto } from "../../../data/dtos/categoria.dto";
 import { EcommerceReferenciaDto } from "../../../data/dtos/ecommerce-referencia.dto";
 import { PromocaoDto } from "../../../data/dtos/promocao.dto";
 import { PromocaoPrecoService } from "../../../services/promocao-preco.service";
@@ -12,7 +14,6 @@ import { ToastService } from "../../components/ui/toast/toast.service";
 import { HeaderComponent } from "../../components/header/header.component";
 import { FooterComponent } from "../../components/footer/footer.component";
 import { TracoComponent } from "../../../../core/common_components/traco/traco.component";
-import { CATEGORIAS_MOCK, CategoriaMock } from "../../utils/categorias.mock";
 
 const LIMITE_POR_PAGINA = 24;
 
@@ -27,12 +28,14 @@ const LIMITE_POR_PAGINA = 24;
     styleUrl: './loja.categoria.page.css',
 })
 export class LojaCategoriaPage implements OnInit {
-    categorias = CATEGORIAS_MOCK;
-    categoria = signal<CategoriaMock | undefined>(undefined);
+    categoria = signal<CategoriaDto | undefined>(undefined);
+    categorias = signal<CategoriaDto[]>([]);
+    lojaFechada = signal(false);
     loading = signal(true);
     referencias = signal<EcommerceReferenciaDto[]>([]);
     itensNoCarrinho = signal(0);
 
+    private categoriaId = 0;
     private mapaPromocoesPorReferencia = new Map<number, PromocaoDto>();
     private promocoesGerais: PromocaoDto[] = [];
     private nomesFormaPagamento = new Map<number, string>();
@@ -41,18 +44,43 @@ export class LojaCategoriaPage implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private lojaDataSource: LojaDataSource,
+        private categoriaDataSource: CategoriaDataSource,
         private carrinhoFacadeService: CarrinhoFacadeService,
         private promocaoPrecoService: PromocaoPrecoService,
         private toastService: ToastService,
     ) { }
 
     async ngOnInit(): Promise<void> {
-        this.route.paramMap.subscribe((params) => {
-            const slug = params.get('slug') ?? '';
-            this.categoria.set(this.categorias.find((c) => c.slug === slug));
-        });
-        await Promise.all([this.carregarPromocoes(), this.atualizarContagemCarrinho()]);
+        this.categoriaId = Number(this.route.snapshot.paramMap.get('id'));
+        await Promise.all([this.carregarCategoria(), this.carregarCategorias()]);
+        await this.atualizarContagemCarrinho();
+
+        // Falha ao consultar o status não pode travar a loja -- segue como se estivesse aberta.
+        const status = await firstValueFrom(this.lojaDataSource.status()).catch(() => ({ aberto: true }));
+        if (!status.aberto) {
+            this.lojaFechada.set(true);
+            this.loading.set(false);
+            return;
+        }
+
+        await this.carregarPromocoes();
         await this.carregarProdutos();
+    }
+
+    private async carregarCategoria(): Promise<void> {
+        try {
+            this.categoria.set(await firstValueFrom(this.categoriaDataSource.buscar(this.categoriaId)));
+        } catch (error) {
+            console.error('Erro ao carregar categoria', error);
+        }
+    }
+
+    private async carregarCategorias(): Promise<void> {
+        try {
+            this.categorias.set(await firstValueFrom(this.categoriaDataSource.listar()));
+        } catch (error) {
+            console.error('Erro ao carregar categorias', error);
+        }
     }
 
     private async carregarPromocoes(): Promise<void> {
@@ -71,10 +99,8 @@ export class LojaCategoriaPage implements OnInit {
 
     private async carregarProdutos(): Promise<void> {
         try {
-            // Sem categoria->produto no backend ainda (ver categorias.mock.ts) -- mostra o catálogo
-            // completo aqui até existir o endpoint real de filtro por categoria.
             const resposta = await firstValueFrom(
-                this.lojaDataSource.listarReferencias(1, LIMITE_POR_PAGINA),
+                this.lojaDataSource.listarReferencias(1, LIMITE_POR_PAGINA, undefined, [this.categoriaId]),
             );
             this.referencias.set(resposta.items.map((referencia) => ({
                 ...referencia,
