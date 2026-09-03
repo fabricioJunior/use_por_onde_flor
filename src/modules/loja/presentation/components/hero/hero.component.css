@@ -5,9 +5,9 @@
 .loja-hero-imagem {
     position: relative;
     overflow: hidden;
-    background: url('/imagem-principal-mobile.jpg') center / cover no-repeat;
+    background: url('/imagens/imagem-principal-mobile.jpg') center / cover no-repeat;
     width: 100%;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 1406 / 825;
 }
 
 .loja-hero-traco {
@@ -15,23 +15,16 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-}
-
-.loja-hero-cta {
-    position: absolute;
-    z-index: 1;
-    left: var(--space-4);
-    bottom: var(--space-4);
+    opacity: .3;
 }
 
 @media (min-width: 900px) {
     .loja-hero-imagem {
-        background-image: url('/imagem-principal.jpg');
+        background-image: url('/imagens/imagem-principal.jpg');
         aspect-ratio: 2400 / 840;
     }
 
-    .loja-hero-cta {
-        left: var(--container-padding);
-        bottom: var(--space-6);
+    .loja-hero-traco {
+        opacity: 1;
     }
 }

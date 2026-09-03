@@ -55,6 +55,11 @@
 .produto-nome {
     font: var(--text-body);
     color: var(--text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: calc(1.65em * 2);
 }
 
 .produto-detalhe {

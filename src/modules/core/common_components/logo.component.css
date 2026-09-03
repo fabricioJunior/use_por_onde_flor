@@ -3,11 +3,11 @@
   aspect-ratio: 4397 / 469;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url('/logo-horizontal-preferencial.png');
+  background-image: url('/imagens/logo-horizontal-preferencial.png');
   background-size: contain;
   cursor: pointer;
 }
 
 .logo.negativa {
-  background-image: url('/logo-horizontal-negativo.png');
+  background-image: url('/imagens/logo-horizontal-negativo.png');
 }

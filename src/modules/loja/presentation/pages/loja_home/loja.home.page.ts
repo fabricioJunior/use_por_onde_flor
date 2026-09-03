@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, OnInit, ViewChild, signal } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { LojaDataSource } from "../../../data/loja.data.source";
@@ -32,8 +32,6 @@ const DEBOUNCE_BUSCA_MS = 400;
     styleUrl: './loja.home.page.css',
 })
 export class LojaHomePage implements OnInit {
-    @ViewChild('produtos') produtosRef?: ElementRef<HTMLElement>;
-
     categorias = CATEGORIAS_MOCK;
     skeletonItems = Array.from({ length: 8 });
 
@@ -131,13 +129,6 @@ export class LojaHomePage implements OnInit {
 
     async atualizarContagemCarrinho(): Promise<void> {
         this.itensNoCarrinho.set(await this.carrinhoFacadeService.contarItens());
-    }
-
-    scrollParaProdutos(): void {
-        if (typeof window === 'undefined') {
-            return;
-        }
-        this.produtosRef?.nativeElement.scrollIntoView({ behavior: 'smooth' });
     }
 
     abrirReferencia(referencia: EcommerceReferenciaDto): void {

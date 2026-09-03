@@ -41,6 +41,8 @@
     z-index: 1;
     display: inline-flex;
     align-items: center;
+    flex: 0 1 auto;
+    min-width: 0;
 }
 
 .loja-logo-link {
@@ -84,6 +86,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-6);
+    flex: 0 0 auto;
 }
 
 .loja-login-link {
@@ -151,5 +154,62 @@
 .loja-conta-menu a:hover,
 .loja-conta-menu button:hover {
     background: var(--surface-hover, var(--border-subtle));
+}
+
+@media (max-width: 640px) {
+    .loja-header-inner {
+        height: 64px;
+        gap: var(--space-3);
+    }
+
+    .loja-header-acoes {
+        gap: var(--space-4);
+    }
+
+    .loja-logo-wrap ::ng-deep .logo {
+        height: 20px !important;
+    }
+
+    .loja-sacola-texto {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
+
+    .loja-sacola {
+        justify-content: center;
+        min-width: 44px;
+        padding: 0;
+    }
+
+    .loja-sacola::before {
+        content: '';
+        width: 22px;
+        height: 22px;
+        background: url('/assets/icones/sacola.svg') no-repeat center / contain;
+    }
+
+    .loja-sacola-badge {
+        position: absolute;
+        top: 4px;
+        right: -2px;
+    }
+
+    .loja-login-link {
+        border: none;
+        padding: 0 var(--space-2);
+        font-size: 12px;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    .loja-conta-resumo {
+        max-width: 88px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
 

@@ -1,7 +1,7 @@
 <div class="loja-shell">
     <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
 
-    <loja-hero (verColecao)="scrollParaProdutos()"></loja-hero>
+    <loja-hero></loja-hero>
 
     <section class="loja-categorias" aria-label="Categorias">
         <span class="loja-categorias-eyebrow">Categorias</span>
@@ -25,7 +25,7 @@
     <div class="loja-vitrine-full">
         <app-traco class="loja-vitrine-traco" d="M72,0 Q45,25 55,50 Q65,72 30,82 Q16,88 14,100" variante="clara"
             [opacidade]="0.5"></app-traco>
-        <main class="loja-content" id="produtos" #produtos>
+        <main class="loja-content" id="produtos">
         <div class="loja-busca-linha">
             <ui-input class="loja-busca" placeholder="Buscar produtos..." [ngModel]="busca()"
                 (ngModelChange)="onBuscaChange($event)"></ui-input>

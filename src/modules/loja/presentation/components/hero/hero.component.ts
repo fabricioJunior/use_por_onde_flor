@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, Output, EventEmitter } from "@angular/core";
+import { Component } from "@angular/core";
 import { TracoComponent } from "../../../../core/common_components/traco/traco.component";
 
 // Porta Angular de `desing system/ui_kits/site/Hero.jsx`.
@@ -11,5 +11,4 @@ import { TracoComponent } from "../../../../core/common_components/traco/traco.c
     styleUrl: './hero.component.css',
 })
 export class HeroComponent {
-    @Output() verColecao = new EventEmitter<void>();
 }
