@@ -2,11 +2,12 @@
     position: sticky;
     top: 0;
     z-index: 20;
-    border-bottom: 1px solid var(--border-subtle);
-    background: var(--surface-card);
+    background: var(--surface-page);
 }
 
 .loja-header-inner {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -14,8 +15,34 @@
     max-width: var(--container-max);
     margin: 0 auto;
     padding: 0 var(--container-padding);
-    height: 84px;
+    height: 96px;
     box-sizing: border-box;
+}
+
+/* Máscara só do traço — não pode ser o header inteiro, senão o dropdown
+   de conta (que renderiza abaixo do header) fica cortado junto. */
+.loja-header-traco-mask {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.loja-header-traco {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.loja-logo-wrap {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    flex: 0 1 auto;
+    min-width: 0;
 }
 
 .loja-logo-link {
@@ -23,42 +50,61 @@
     align-items: center;
 }
 
-.loja-logo-img {
-    height: 56px;
-}
-
 .loja-sacola {
     position: relative;
-    font: var(--text-body-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 var(--space-2);
     color: var(--text-primary);
     text-decoration: none;
 }
 
+.loja-sacola-texto {
+    font: var(--text-body-sm);
+    letter-spacing: .06em;
+}
+
 .loja-sacola-badge {
-    position: absolute;
-    top: -8px;
-    right: -14px;
-    background: var(--brand-primary-deep);
-    color: var(--text-on-brand);
-    border-radius: var(--radius-circle);
-    width: 16px;
-    height: 16px;
-    font-size: 10px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: var(--radius-pill);
+    background: var(--brand-primary);
+    color: var(--text-primary);
+    font-size: 11px;
+    font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform var(--duration-action) cubic-bezier(.2, 1.6, .4, 1);
 }
 
 .loja-header-acoes {
     display: flex;
     align-items: center;
     gap: var(--space-6);
+    flex: 0 0 auto;
 }
 
 .loja-login-link {
-    font: var(--text-body-sm);
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 10px 20px;
+    border: 1px solid rgba(160, 176, 139, .7);
+    border-radius: var(--radius-button);
+    font-size: 13px;
+    letter-spacing: .06em;
     color: var(--text-primary);
     text-decoration: none;
+    transition: background var(--duration-action) var(--ease-standard);
+}
+
+.loja-login-link:hover {
+    background: var(--brand-primary);
 }
 
 .loja-conta {
@@ -108,5 +154,62 @@
 .loja-conta-menu a:hover,
 .loja-conta-menu button:hover {
     background: var(--surface-hover, var(--border-subtle));
+}
+
+@media (max-width: 640px) {
+    .loja-header-inner {
+        height: 64px;
+        gap: var(--space-3);
+    }
+
+    .loja-header-acoes {
+        gap: var(--space-4);
+    }
+
+    .loja-logo-wrap ::ng-deep .logo {
+        height: 20px !important;
+    }
+
+    .loja-sacola-texto {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+    }
+
+    .loja-sacola {
+        justify-content: center;
+        min-width: 44px;
+        padding: 0;
+    }
+
+    .loja-sacola::before {
+        content: '';
+        width: 22px;
+        height: 22px;
+        background: url('/assets/icones/sacola.svg') no-repeat center / contain;
+    }
+
+    .loja-sacola-badge {
+        position: absolute;
+        top: 4px;
+        right: -2px;
+    }
+
+    .loja-login-link {
+        border: none;
+        padding: 0 var(--space-2);
+        font-size: 12px;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    .loja-conta-resumo {
+        max-width: 88px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
 

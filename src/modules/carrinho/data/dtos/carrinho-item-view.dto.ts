@@ -8,6 +8,9 @@ export interface CarrinhoItemViewDto {
     nome?: string;
     corNome?: string;
     tamanhoNome?: string;
+    // Opcional, mesma ressalva de EcommerceReferenciaProdutoDto.estampaNome -- backend ainda não
+    // preenche em CarrinhoItemResponse.
+    estampaNome?: string;
     valor?: number;
     valorPromocional?: number;
     // Regras/condições de troca da promoção que gerou `valorPromocional`, quando ela tiver

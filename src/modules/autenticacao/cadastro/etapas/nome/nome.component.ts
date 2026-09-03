@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output, signal, } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
+import { CadastroProgressoComponent } from "../../progresso/cadastro.progresso.component";
 import { Router } from '@angular/router';
 import { CadastroComponent } from '../../cadastro.component';
 
@@ -11,7 +10,7 @@ import { CadastroComponent } from '../../cadastro.component';
     selector: 'app-nome-cadastro',
     templateUrl: './nome.component.html',
     styleUrls: ['./nome.component.scss'],
-    imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, FormsModule, FilledButtonComponent],
+    imports: [ReactiveFormsModule, FormsModule, FilledButtonComponent, CadastroProgressoComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })

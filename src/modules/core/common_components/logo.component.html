@@ -1,3 +1,4 @@
-<div class="logo" role="button" tabindex="0" (click)="onLogoTap()"
+<div class="logo" [class.negativa]="variante === 'negativa'" [style.height.px]="altura"
+    role="button" tabindex="0" (click)="onLogoTap()"
     (keydown.enter)="onLogoTap()" (keydown.space)="onLogoTap()">
 </div>

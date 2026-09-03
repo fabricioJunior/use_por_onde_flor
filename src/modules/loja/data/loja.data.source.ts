@@ -65,6 +65,7 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
         nome?: string;
         corNome?: string;
         tamanhoNome?: string;
+        estampaNome?: string;
         valor?: number;
         imagemUrl?: string;
         saldo?: number;

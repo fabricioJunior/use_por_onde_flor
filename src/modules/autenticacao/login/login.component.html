@@ -1,36 +1,34 @@
-<div class="body-all">
-  <div class="container">
-    <div class="acoes-primarias">
+<div class="pof-auth-layout">
+  <aside class="pof-auth-painel">
+    <app-logo variante="negativa" [altura]="36"></app-logo>
 
-      <app-logo></app-logo>
+    <div class="pof-auth-painel-texto">
+      <p class="pof-auth-frase">Sua conta guarda o caminho de volta.</p>
+      <p class="pof-auth-paragrafo">
+        Ganhe 20% de desconto toda vez que completar seu cartão fidelidade,
+        acompanhe seus pedidos e finalize suas compras mais rápido.
+      </p>
+    </div>
 
-      <div class="informacoes">
-        <h2>Fazer login</h2>
+    <app-traco class="pof-auth-traco" [d]="tracoPath" variante="sobre-escuro"
+      [opacidade]="0.5" animacao="desenha"></app-traco>
+  </aside>
+
+  <div class="pof-auth-conteudo">
+    <div class="pof-auth-form-wrap">
+      <div class="pof-auth-cabecalho">
+        <h1>Fazer login</h1>
         <p>Acesso a fidelidade, pedidos e compra rápida</p>
       </div>
 
-      <div class="formulario-login">
-        <form [formGroup]="loginGroup">
-          <router-outlet></router-outlet>
-        </form>
-      </div>
-
-      <b>
-        Ganhe 20% de desconto toda vez que completar seu cartão fidelidade,
-        acompanhe seus pedidos e finalize suas compras mais rápido.
-      </b>
-
+      <form [formGroup]="loginGroup" class="pof-auth-form">
+        <router-outlet></router-outlet>
+      </form>
     </div>
 
-  </div>
-  <div class="botoes-inferiores">
-    <app-text-button
-      [label]="'Ajuda'"
-      [action]="onAjudaTap">
-    </app-text-button>
-    <app-text-button
-      [label]="'Privacidade'"
-      [action]="onAjudaTap">
-    </app-text-button>
+    <footer class="pof-auth-rodape">
+      <app-text-button [label]="'Ajuda'" [action]="onAjudaTap"></app-text-button>
+      <app-text-button [label]="'Privacidade'" [action]="onAjudaTap"></app-text-button>
+    </footer>
   </div>
 </div>

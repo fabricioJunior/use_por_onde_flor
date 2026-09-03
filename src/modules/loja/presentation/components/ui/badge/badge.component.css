@@ -8,6 +8,6 @@
     display: inline-block;
 }
 
-.ui-badge.neutral { background: var(--surface-sunken); color: var(--text-secondary); }
+.ui-badge.neutral { background: var(--surface-sunken); color: var(--text-support); }
 .ui-badge.brand { background: var(--brand-tint); color: var(--brand-primary-deep); }
 .ui-badge.inverse { background: var(--surface-inverse); color: var(--text-on-inverse); }

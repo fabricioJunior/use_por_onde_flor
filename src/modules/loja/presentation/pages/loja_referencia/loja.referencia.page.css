@@ -21,7 +21,7 @@
     justify-content: center;
     gap: var(--space-3);
     padding: var(--space-9) 0;
-    color: var(--text-secondary);
+    color: var(--text-support);
 }
 
 .pagina-conteudo {
@@ -87,7 +87,7 @@
     border-radius: 50%;
     border: none;
     background: rgba(0, 0, 0, 0.45);
-    color: #fff;
+    color: var(--text-on-brand);
     font-size: 20px;
     line-height: 1;
     cursor: pointer;
@@ -110,7 +110,7 @@
     left: 50%;
     transform: translateX(-50%);
     font: var(--text-caption);
-    color: #fff;
+    color: var(--text-on-brand);
     background: rgba(0, 0, 0, 0.45);
     padding: 4px 10px;
     border-radius: var(--radius-pill);
@@ -205,7 +205,7 @@ h1 {
 
 .descricao {
     font: var(--text-body);
-    color: var(--text-secondary);
+    color: var(--text-support);
     margin: 0 0 var(--space-5);
     white-space: pre-line;
 }
@@ -218,8 +218,8 @@ h1 {
 
 .secao-titulo {
     font: var(--text-body-sm);
-    font-weight: 600;
-    color: var(--text-secondary);
+    font-weight: 500;
+    color: var(--text-support);
     margin: 0 0 var(--space-2);
 }
 
@@ -318,20 +318,20 @@ h1 {
 
 .chip-cor-nome {
     font: var(--text-caption);
-    color: var(--text-secondary);
+    color: var(--text-support);
     white-space: nowrap;
 }
 
 .chip-cor.ativo .chip-cor-nome {
     color: var(--brand-primary-deep);
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .swatch-check {
     display: none;
     font-size: 14px;
     line-height: 1;
-    color: #fff;
+    color: var(--text-on-brand);
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
 }
 

@@ -1,8 +1,8 @@
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, OnInit, ViewChild, signal, computed } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { firstValueFrom } from "rxjs";
+import { PofLoaderComponent } from "../../../../core/common_components/pof_loader/pof.loader.component";
 import { LojaDataSource } from "../../../data/loja.data.source";
 import { ReferenciaMidiaPublicaDataSource } from "../../../data/referencia.midia.publica.data.source";
 import { EcommerceReferenciaDto, EcommerceReferenciaProdutoDto } from "../../../data/dtos/ecommerce-referencia.dto";
@@ -17,16 +17,18 @@ import { PromocaoPrecoService } from "../../../services/promocao-preco.service";
 @Component({
     selector: 'loja-referencia-page',
     standalone: true,
-    imports: [CommonModule, MatProgressSpinnerModule, ButtonComponent, HeaderComponent],
+    imports: [CommonModule, PofLoaderComponent, ButtonComponent, HeaderComponent],
     templateUrl: './loja.referencia.page.html',
     styleUrl: './loja.referencia.page.css',
 })
 export class LojaReferenciaPage implements OnInit {
     @ViewChild('secaoCor') secaoCorRef?: ElementRef<HTMLElement>;
     @ViewChild('secaoTamanho') secaoTamanhoRef?: ElementRef<HTMLElement>;
+    @ViewChild('secaoEstampa') secaoEstampaRef?: ElementRef<HTMLElement>;
     @ViewChild('thumbLista') thumbListaRef?: ElementRef<HTMLElement>;
     @ViewChild('corLista') corListaRef?: ElementRef<HTMLElement>;
     @ViewChild('tamanhoLista') tamanhoListaRef?: ElementRef<HTMLElement>;
+    @ViewChild('estampaLista') estampaListaRef?: ElementRef<HTMLElement>;
 
     loading = signal(true);
     erro = signal('');
@@ -46,6 +48,8 @@ export class LojaReferenciaPage implements OnInit {
     podeRolarCorDireita = signal(false);
     podeRolarTamanhoEsquerda = signal(false);
     podeRolarTamanhoDireita = signal(false);
+    podeRolarEstampaEsquerda = signal(false);
+    podeRolarEstampaDireita = signal(false);
 
     // Estado de gesto (pointer down/move/up) -- não precisa ser signal, só usado durante o drag.
     private gestoAtivo = false;
@@ -60,6 +64,7 @@ export class LojaReferenciaPage implements OnInit {
 
     corSelecionada = signal<string | null>(null);
     tamanhoSelecionado = signal<string | null>(null);
+    estampaSelecionada = signal<string | null>(null);
     adicionando = signal(false);
     adicionado = signal(false);
     quantidade = signal(1);
@@ -73,6 +78,7 @@ export class LojaReferenciaPage implements OnInit {
     });
 
     tamanhoSelecionadoLabel = computed(() => this.tamanhoSelecionado() ?? 'Selecione um tamanho');
+    estampaSelecionadaLabel = computed(() => this.estampaSelecionada() ?? 'Selecione uma estampa');
 
     // "disponivel" é flag manual do admin (vínculo produto<->e-commerce), independente do estoque
     // -- produto pode estar disponivel=true com quantidadeDisponivel=0 (sem saldo real, ou saldo
@@ -107,6 +113,25 @@ export class LojaReferenciaPage implements OnInit {
         );
     });
 
+    // Estampa é a 3ª dimensão, opcional -- a maioria das referências não tem nenhum produto com
+    // estampa, então a seção só aparece quando existir pelo menos um. Reaproveita o mesmo padrão de
+    // cascata do tamanho (filtrado pela cor/tamanho já escolhidos).
+    referenciaTemEstampa = computed(() => this.produtos().some((produto) => !!produto.estampaNome));
+
+    estampasParaSelecaoAtual = computed(() => {
+        const cor = this.corSelecionada();
+        const tamanho = this.tamanhoSelecionado();
+        return LojaReferenciaPage.primeiraOcorrencia(
+            this.produtos()
+                .filter((produto) =>
+                    (!cor || produto.corNome === cor) &&
+                    (!tamanho || produto.tamanhoNome === tamanho) &&
+                    !!produto.estampaNome,
+                )
+                .map((produto) => produto.estampaNome!),
+        );
+    });
+
     corHex(cor: string): string | null {
         return corParaHex(normalizarNomeCor(cor));
     }
@@ -126,11 +151,24 @@ export class LojaReferenciaPage implements OnInit {
         );
     }
 
+    estampaDisponivel(estampa: string): boolean {
+        const cor = this.corSelecionada();
+        const tamanho = this.tamanhoSelecionado();
+        return this.produtos().some((produto) =>
+            (!cor || produto.corNome === cor) &&
+            (!tamanho || produto.tamanhoNome === tamanho) &&
+            produto.estampaNome === estampa && this.temEstoque(produto),
+        );
+    }
+
     produtoSelecionado = computed(() => {
         const cor = this.corSelecionada();
         const tamanho = this.tamanhoSelecionado();
+        const estampa = this.estampaSelecionada();
         const candidatos = this.produtos().filter((produto) =>
-            (!cor || produto.corNome === cor) && (!tamanho || produto.tamanhoNome === tamanho),
+            (!cor || produto.corNome === cor) &&
+            (!tamanho || produto.tamanhoNome === tamanho) &&
+            (!estampa || produto.estampaNome === estampa),
         );
         return candidatos.find((produto) => this.temEstoque(produto)) ?? null;
     });
@@ -198,10 +236,12 @@ export class LojaReferenciaPage implements OnInit {
             if (disponiveis.length === 1) {
                 this.corSelecionada.set(disponiveis[0].corNome);
                 this.tamanhoSelecionado.set(disponiveis[0].tamanhoNome);
+                this.estampaSelecionada.set(disponiveis[0].estampaNome ?? null);
             }
             setTimeout(() => {
                 this.atualizarSetasCor();
                 this.atualizarSetasTamanho();
+                this.atualizarSetasEstampa();
             });
         } catch (error) {
             console.error('Erro ao carregar referência da loja', error);
@@ -332,6 +372,14 @@ export class LojaReferenciaPage implements OnInit {
         this.atualizarSetas(this.tamanhoListaRef, this.podeRolarTamanhoEsquerda, this.podeRolarTamanhoDireita);
     }
 
+    rolarEstampa(direcao: 1 | -1): void {
+        this.rolar(this.estampaListaRef, direcao);
+    }
+
+    atualizarSetasEstampa(): void {
+        this.atualizarSetas(this.estampaListaRef, this.podeRolarEstampaEsquerda, this.podeRolarEstampaDireita);
+    }
+
     // Mesma lógica de rolagem/detecção de fim de tira, reaproveitada pelas 3 tiras horizontais
     // (fotos, cores, tamanhos) -- só muda a ref e os signals.
     private rolar(ref: ElementRef<HTMLElement> | undefined, direcao: 1 | -1): void {
@@ -358,10 +406,15 @@ export class LojaReferenciaPage implements OnInit {
         this.mensagemValidacao.set(null);
         this.corSelecionada.set(cor);
         this.tamanhoSelecionado.set(null);
+        this.estampaSelecionada.set(null);
         this.quantidade.set(1);
         this.adicionado.set(false);
-        // Lista de tamanhos muda de conteúdo (filtrada pela cor) -- recalcula depois do DOM atualizar.
-        setTimeout(() => this.atualizarSetasTamanho());
+        // Lista de tamanhos/estampas muda de conteúdo (filtrada pela cor) -- recalcula depois do DOM
+        // atualizar.
+        setTimeout(() => {
+            this.atualizarSetasTamanho();
+            this.atualizarSetasEstampa();
+        });
     }
 
     selecionarTamanho(tamanho: string): void {
@@ -370,8 +423,34 @@ export class LojaReferenciaPage implements OnInit {
         }
         this.mensagemValidacao.set(null);
         this.tamanhoSelecionado.set(tamanho);
+        this.estampaSelecionada.set(null);
         this.quantidade.set(1);
         this.adicionado.set(false);
+        setTimeout(() => this.atualizarSetasEstampa());
+    }
+
+    selecionarEstampa(estampa: string): void {
+        if (!this.estampaDisponivel(estampa)) {
+            return;
+        }
+        this.mensagemValidacao.set(null);
+        this.estampaSelecionada.set(estampa);
+        this.quantidade.set(1);
+        this.adicionado.set(false);
+        this.aplicarFotoParaEstampa(estampa);
+    }
+
+    // Fotos da referência podem indicar a qual estampa pertencem (ReferenciaMediaEntity.estampa,
+    // texto livre, mesmo padrão de cor/tamanho). Ao trocar de estampa, troca a foto principal pra
+    // uma que bata (comparação exata do nome); sem match, volta pra foto padrão em vez de manter
+    // uma foto de estampa errada na tela.
+    private aplicarFotoParaEstampa(estampa: string): void {
+        const midias = this.midias();
+        const correspondente = midias.find((midia) => midia.estampa === estampa);
+        const alvo = correspondente ?? midias.find((midia) => midia.isDefault) ?? midias[0] ?? null;
+        if (alvo) {
+            this.selecionarMidia(alvo);
+        }
     }
 
     // Retorna true quando pode seguir (produto totalmente selecionado). Quando falta cor/tamanho,
@@ -389,6 +468,11 @@ export class LojaReferenciaPage implements OnInit {
         if (!this.tamanhoSelecionado()) {
             this.mensagemValidacao.set('Selecione um tamanho.');
             this.secaoTamanhoRef?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return false;
+        }
+        if (this.referenciaTemEstampa() && !this.estampaSelecionada()) {
+            this.mensagemValidacao.set('Selecione uma estampa.');
+            this.secaoEstampaRef?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return false;
         }
         if (!this.produtoSelecionado()) {

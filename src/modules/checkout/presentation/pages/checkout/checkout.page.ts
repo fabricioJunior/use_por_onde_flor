@@ -3,7 +3,6 @@ import { Component, OnDestroy, OnInit, computed, signal } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { ClipboardModule } from "@angular/cdk/clipboard";
 import { NgxMaskDirective, provideNgxMask } from "ngx-mask";
 import { cpf } from "cpf-cnpj-validator";
@@ -23,8 +22,12 @@ import { OpcaoFreteDto } from "../../../data/dtos/frete.dto";
 import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
 import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
 import { PedidosService } from "../../../../pedidos/services/pedidos.service";
+import { descricaoVariacao } from "../../../../loja/presentation/utils/variacao-apresentacao.util";
+import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
+import { PofLoaderComponent } from "../../../../core/common_components/pof_loader/pof.loader.component";
 
 const CEP_VALIDO = /^\d{5}-?\d{3}$/;
+const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function cpfValidator(control: { value: string }) {
     if (!control.value) {
@@ -36,12 +39,13 @@ function cpfValidator(control: { value: string }) {
 @Component({
     selector: 'checkout-page',
     standalone: true,
-    imports: [CommonModule, RouterLink, ReactiveFormsModule, FormsModule, NgxMaskDirective, MatProgressSpinnerModule, ClipboardModule, ButtonComponent, HeaderComponent],
+    imports: [CommonModule, RouterLink, ReactiveFormsModule, FormsModule, NgxMaskDirective, ClipboardModule, ButtonComponent, HeaderComponent, FilledButtonComponent, PofLoaderComponent],
     templateUrl: './checkout.page.html',
     styleUrl: './checkout.page.css',
     providers: [provideNgxMask()],
 })
 export class CheckoutPage implements OnInit, OnDestroy {
+    descricaoVariacao = descricaoVariacao;
     loading = signal(true);
     finalizando = signal(false);
     erro = signal('');
@@ -90,8 +94,18 @@ export class CheckoutPage implements OnInit, OnDestroy {
     verificandoPagamento = signal(false);
     pagamentoNaoConfirmado = signal(false);
     cotandoPreco = signal(false);
+    // Só feedback visual do botão "Copiar código" (cdkCopyToClipboard já faz a cópia de verdade) --
+    // volta ao texto original depois de um tempo pra não ficar "Código copiado" pra sempre.
+    codigoPixCopiado = signal(false);
 
     autenticado: boolean;
+    // Cadastro feito pelo proprio site sempre exige e-mail (ver InformacoesContatoComponent) --
+    // conta autenticada sem e-mail valido so acontece por dado vindo de outra origem (loja
+    // fisica/PDV, sem essa validacao). Backend ignora `cliente` do payload quando autenticado
+    // (usa sempre a pessoa do token, ver EcommerceCheckoutService.checkout), entao a unica forma
+    // de garantir e-mail valido pro gateway de pagamento e' bloquear aqui antes de seguir --
+    // mudar o e-mail da conta exige o fluxo de verificacao (fora do escopo do checkout).
+    emailContaAusente = false;
 
     opcoesFrete = signal<OpcaoFreteDto[]>([]);
     freteSelecionado = signal<OpcaoFreteDto | null>(null);
@@ -130,6 +144,10 @@ export class CheckoutPage implements OnInit, OnDestroy {
         public router: Router,
     ) {
         this.autenticado = this.autenticacaoService.estaAutenticado();
+        if (this.autenticado) {
+            const pessoa = this.localStorageService.get<UsuarioDto>('usuario_da_sessao') as UsuarioDto | null;
+            this.emailContaAusente = !EMAIL_VALIDO.test(pessoa?.email ?? '');
+        }
 
         // getCurrentNavigation() só existe durante a navegação em si -- precisa ler aqui no
         // constructor, no ngOnInit já voltaria null.
@@ -342,6 +360,11 @@ export class CheckoutPage implements OnInit, OnDestroy {
         return (valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
+    marcarCodigoPixCopiado(): void {
+        this.codigoPixCopiado.set(true);
+        setTimeout(() => this.codigoPixCopiado.set(false), 3000);
+    }
+
     formatarTempoRestante(segundos: number): string {
         const minutos = Math.floor(segundos / 60);
         const resto = segundos % 60;
@@ -390,6 +413,8 @@ export class CheckoutPage implements OnInit, OnDestroy {
 
         if (!this.autenticado) {
             pendencias.push(...this.camposInvalidos(this.clienteForm));
+        } else if (this.emailContaAusente) {
+            pendencias.push('Seu cadastro não tem um e-mail válido. Atualize seu cadastro para continuar.');
         }
 
         if (this.modalidadeEntrega() === 'entrega') {

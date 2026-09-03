@@ -31,6 +31,10 @@ export interface EcommerceReferenciaProdutoDto {
     idExterno: string;
     corNome: string;
     tamanhoNome: string;
+    // 3ª dimensão de variação, opcional -- maioria dos produtos não tem. Ausente enquanto o backend
+    // não expuser esse campo na view flatten do ecommerce (só o Produto "cru" já retorna
+    // `estampa?: {id, nome}` -- ver .claude/context/nestjs/catalogo.md).
+    estampaNome?: string;
     disponivel: boolean;
     saldo: number;
     // saldo real MENOS o que outros pedidos já reservaram (estoque virtual) -- limite de verdade

@@ -1,3 +1,6 @@
-<button  mat-flat-button disabled	[color]="'red'"  class="text-button" (click)="onTap.emit()" [disabled]="!enabled">
-    {{ label }}
+<button class="pof-btn-primary" (click)="onTap.emit()" [disabled]="!enabled || loading">
+    @if (loading) {
+      <app-pof-loader variante="inline"></app-pof-loader>
+    }
+    {{ loading ? (loadingLabel ?? 'Processando') : label }}
   </button>

@@ -1,11 +1,17 @@
 <header class="loja-header">
     <div class="loja-header-inner">
-        <a routerLink="/loja" class="loja-logo-link">
-            <img src="/logo-primary-color.png" alt="Por Onde Flor" class="loja-logo-img">
-        </a>
+        <div class="loja-header-traco-mask" aria-hidden="true">
+            <app-traco class="loja-header-traco" d="M0,50 Q8,18 16,50 Q24,82 32,50 Q40,20 48,50 C60,25 75,68 100,55"
+                variante="clara" [opacidade]="1" animacao="desenha"></app-traco>
+        </div>
+        <div class="loja-logo-wrap">
+            <a routerLink="/loja" class="loja-logo-link" aria-label="Por Onde Flor">
+                <app-logo variante="clara" [altura]="36"></app-logo>
+            </a>
+        </div>
         <div class="loja-header-acoes">
-            <a routerLink="/carrinho" class="loja-sacola">
-                Sacola
+            <a routerLink="/carrinho" class="loja-sacola" aria-label="Sacola">
+                <span class="loja-sacola-texto">Sacola</span>
                 @if (itensNoCarrinho > 0) {
                 <span class="loja-sacola-badge">{{ itensNoCarrinho }}</span>
                 }
@@ -13,7 +19,6 @@
             @if (estaAutenticado()) {
             <details class="loja-conta">
                 <summary class="loja-conta-resumo">
-                    <span class="loja-conta-icone">&#128100;</span>
                     {{ nomeDoUsuario() }}
                 </summary>
                 <div class="loja-conta-menu">
@@ -23,7 +28,7 @@
                 </div>
             </details>
             } @else {
-            <a routerLink="/login" [queryParams]="{returnUrl: router.url}" class="loja-login-link">Login</a>
+            <a routerLink="/login" [queryParams]="{returnUrl: router.url}" class="loja-login-link">Entrar</a>
             }
         </div>
     </div>

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { NomeComponent } from "./etapas/nome/nome.component";
 import { LogoComponent } from "../../core/common_components/logo.component";
+import { TracoComponent } from "../../core/common_components/traco/traco.component";
 import { FilledButtonComponent } from "../../core/common_components/filled.button.component";
 import { InformacoesBasicasComponent } from "./etapas/informacoes_basicas/informacoes.basicas.component";
 import { ActivatedRoute, NavigationStart, Router, RouterModule } from '@angular/router';
@@ -14,7 +15,7 @@ import { LocalStorageService } from '../../core/local_storage/local-storage.serv
     selector: 'app-cadastro',
     templateUrl: './cadastro.component.html',
     styleUrls: ['./cadastro.component.scss'],
-    imports: [LogoComponent, RouterModule],
+    imports: [LogoComponent, TracoComponent, RouterModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })
@@ -40,6 +41,9 @@ export class CadastroComponent implements OnInit, OnDestroy {
 
     // URL pra onde voltar após concluir cadastro + login (ex: veio do checkout).
     returnUrl = signal<string | null>(null);
+
+    // Traço decorativo do painel — path livre em coordenadas 0-100 (decisão de design, sem referência visual).
+    tracoPath = 'M0,35 C18,60 30,20 48,45 C65,68 82,30 100,55';
 
     constructor(private localStorageService: LocalStorageService, private router: Router, private route: ActivatedRoute) {
 

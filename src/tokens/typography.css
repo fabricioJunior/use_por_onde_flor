@@ -1,0 +1,40 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Variable.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Italic-Variable.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Título de página — desktop 46px, mobile 30px via clamp */
+  --text-display: 300 clamp(1.875rem, 4vw, 2.875rem)/1.05 var(--font-sans);
+  --text-h1: 300 clamp(1.875rem, 4vw, 2.875rem)/1.05 var(--font-sans);
+  --text-h2: 400 clamp(1.5rem, 2.2vw, 2.125rem)/1.2 var(--font-sans);
+  --text-h3: 500 1.375rem/1.3 var(--font-sans);
+  /* Título de seção — caixa alta, cor Oliva (aplicar --brand-primary-hover no elemento) */
+  --text-eyebrow: 500 0.8125rem/1.4 var(--font-sans);
+  --text-body-lg: 300 1.0625rem/1.65 var(--font-sans);
+  --text-body: 300 1rem/1.65 var(--font-sans);
+  --text-body-sm: 300 0.9375rem/1.65 var(--font-sans);
+  --text-caption: 400 0.75rem/1.4 var(--font-sans);
+  /* Rótulo de campo — caixa alta, cor Oliva */
+  --text-label: 400 0.6875rem/1.4 var(--font-sans);
+  /* Botão — caixa alta */
+  --text-button: 500 0.75rem/1 var(--font-sans);
+
+  --tracking-eyebrow: 0.18em;
+  --tracking-label: 0.16em;
+  --tracking-button: 0.12em;
+  --tracking-tight: -0.02em;
+}

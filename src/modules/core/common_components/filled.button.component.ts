@@ -1,18 +1,16 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatIconModule } from "@angular/material/icon";
-
+import { PofLoaderComponent } from "./pof_loader/pof.loader.component";
 
 @Component({
     selector: 'app-filled-button',
     templateUrl: './filled.button.component.html',
     styleUrls: ['./filled.button.component.css'],
-    imports: [MatButtonModule, MatDividerModule, MatIconModule]
+    imports: [PofLoaderComponent],
 })
 export class FilledButtonComponent {
     @Input() label: string = 'Button';
     @Output() onTap = new EventEmitter<void>()
     @Input() enabled: boolean = true;
-    @Input() color: string = 'red';
+    @Input() loading: boolean = false;
+    @Input() loadingLabel?: string;
 }

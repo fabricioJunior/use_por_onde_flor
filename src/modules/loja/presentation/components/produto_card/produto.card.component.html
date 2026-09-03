@@ -19,6 +19,9 @@
         </span>
         }
         <span class="produto-nome">{{ referencia.nome }}</span>
+        @if (referencia.descricao) {
+        <span class="produto-detalhe">{{ referencia.descricao }}</span>
+        }
         <div class="produto-precos">
             @if (referencia.valorPromocional != null) {
             <span class="produto-preco-original">{{ formatarPreco(referencia.valor) }}</span>

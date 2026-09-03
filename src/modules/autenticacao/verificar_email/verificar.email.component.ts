@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { MatProgressSpinner, MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FilledButtonComponent } from "../../core/common_components/filled.button.component";
 import { LogoComponent } from "../../core/common_components/logo.component";
+import { PofLoaderComponent } from "../../core/common_components/pof_loader/pof.loader.component";
 import { AutenticacaoService } from "../services/autenticacao.service";
 
 @Component({
     selector: 'app-verificar-email',
     templateUrl: './verificar.email.component.html',
     styleUrls: ['./verificar.email.component.scss'],
-    imports: [FilledButtonComponent, LogoComponent, MatProgressSpinner, MatProgressSpinnerModule],
+    imports: [FilledButtonComponent, LogoComponent, PofLoaderComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
 })

@@ -2,7 +2,7 @@
     <div class="page-content">
         @if(loading()) {
         <section class="state-card loading-card">
-            <mat-spinner diameter="42"></mat-spinner>
+            <app-pof-loader variante="inline"></app-pof-loader>
             <p>Carregando referência...</p>
         </section>
         } @else if (errorMessage()) {

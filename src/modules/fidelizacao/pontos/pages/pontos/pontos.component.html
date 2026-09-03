@@ -11,12 +11,12 @@
 
         </app-logo>
         <div class="info-cliente">
-            <h2>Use Por Onde Flor</h2>
+            <h2>Por Onde Flor</h2>
             <p [textContent]="pessoa()?.nome"></p>
         </div>
 
         @if(historicoDePontos() == null){
-        <mat-spinner></mat-spinner>
+        <app-pof-loader variante="inline"></app-pof-loader>
         }@else {
         <div class="pontos-group">
             <div class="cartao-pontos">

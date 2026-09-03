@@ -9,12 +9,12 @@
 
         <button type="button" id="esqueceu-seu-email-button"
             (click)="irParaPagindaDoCodigo()"
-            class="text-button text-button-text" placeholder>Já recebi o e-mail
+            class="pof-btn-text" placeholder>Já recebi o e-mail
         </button>
 
         <button type="button" id="esqueceu-seu-email-button"
             (click)="voltarParaLogin()"
-            class="text-button text-button-text" placeholder>Voltar para o login
+            class="pof-btn-text" placeholder>Voltar para o login
         </button>
     </div>
 
@@ -29,15 +29,11 @@
             (input)="onEmailInput($event)" />
     </mat-form-field>
     <mat-error class="error-message">{{errorMessage()}}</mat-error>
-    @if (!carregando()) {
     <div class="button-group">
-        <app-filled-button [label]="'Avançar'" [color]="'red'"
-            [enabled]="avancaEnable()" (onTap)="solicitarRedefinicaoDeSenha()"
+        <app-filled-button [label]="'Avançar'"
+            [enabled]="avancaEnable()" [loading]="carregando()" (onTap)="solicitarRedefinicaoDeSenha()"
             class="button avanca-button"></app-filled-button>
     </div>
-    }@else {
-    <mat-spinner></mat-spinner>
-    }
 
     }
 

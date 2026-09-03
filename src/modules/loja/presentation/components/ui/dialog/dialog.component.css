@@ -16,7 +16,7 @@
 
 .body {
     font: var(--text-body);
-    color: var(--text-secondary);
+    color: var(--text-support);
 }
 
 .actions {

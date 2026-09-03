@@ -5,17 +5,17 @@
 
     @if (loading()) {
     <div class="checkout-estado">
-        <mat-spinner diameter="42"></mat-spinner>
+        <app-pof-loader variante="cheia"></app-pof-loader>
     </div>
     } @else {
     @if (resposta(); as pix) {
     <div class="checkout-pix">
         @if (pix.cobranca?.qrCodePix || pix.cobranca?.chavePixCopiaECola) {
-        <p>Pedido #{{ pix.pedidoId }} criado! Escaneie o QR Code ou copie o código Pix abaixo pra pagar.</p>
+        <p class="checkout-pix-pedido">Pedido #{{ pix.pedidoId }} criado! Escaneie o QR Code ou copie o código Pix abaixo pra pagar.</p>
         } @else {
-        <p>Pedido #{{ pix.pedidoId }} criado! Abrimos uma janela pra você concluir o pagamento.</p>
+        <p class="checkout-pix-pedido">Pedido #{{ pix.pedidoId }} criado! Abrimos uma janela pra você concluir o pagamento.</p>
         @if (pix.cobranca?.urlDePagamento) {
-        <a [href]="pix.cobranca!.urlDePagamento" target="_blank" rel="noopener">
+        <a class="checkout-link" [href]="pix.cobranca!.urlDePagamento" target="_blank" rel="noopener">
             Não abriu a janela? Clique aqui pra pagar
         </a>
         }
@@ -33,15 +33,18 @@
         @if (pix.cobranca?.chavePixCopiaECola) {
         <div class="checkout-pix-copia">
             <span>{{ pix.cobranca!.chavePixCopiaECola }}</span>
-            <button type="button" [cdkCopyToClipboard]="pix.cobranca!.chavePixCopiaECola!">Copiar</button>
+            <button type="button" class="pof-btn-secondary" [cdkCopyToClipboard]="pix.cobranca!.chavePixCopiaECola!"
+                (click)="marcarCodigoPixCopiado()">
+                {{ codigoPixCopiado() ? 'Código copiado' : 'Copiar código' }}
+            </button>
         </div>
         }
 
-        <p>Pagamento em andamento. Já pagou? Clique em verificar.</p>
+        <p class="checkout-hint">Pagamento em andamento. Já pagou? Clique em verificar.</p>
         @if (!verificandoPagamento()) {
-        <ui-button (clicked)="verificarPagamento()">Verificar pagamento</ui-button>
+        <button type="button" class="pof-btn-primary" (click)="verificarPagamento()">Verificar pagamento</button>
         } @else {
-        <mat-spinner diameter="32"></mat-spinner>
+        <app-pof-loader variante="inline"></app-pof-loader>
         }
         @if (pagamentoNaoConfirmado()) {
         <p class="checkout-aviso">Ainda não identificamos seu pagamento. Aguarde alguns instantes e tente novamente.</p>
@@ -52,169 +55,226 @@
     @if (lojaFechada()) {
     <p class="checkout-aviso">Loja fechada no momento. Tente novamente mais tarde.</p>
     } @else if (itens().length === 0) {
-    <p class="checkout-aviso">Sua sacola está vazia. <a routerLink="/loja">Ir para a loja</a></p>
+    <p class="checkout-aviso">Sua sacola está vazia. <a class="checkout-link" routerLink="/loja">Ir para a loja</a></p>
     } @else {
 
-    @if (!autenticado) {
-    <section class="checkout-secao">
-        <h2>Seus dados</h2>
-        <p class="checkout-hint">Já tem conta? <a routerLink="/login" [queryParams]="{returnUrl: router.url}">Entrar</a></p>
-        <form [formGroup]="clienteForm" class="checkout-form">
-            <input placeholder="Nome completo" formControlName="nome">
-            <input placeholder="CPF" mask="000.000.000-00" formControlName="documento">
-            <input placeholder="E-mail" type="email" formControlName="email">
-            <input placeholder="Telefone" mask="(00) 00000-0000" formControlName="telefone">
-        </form>
-    </section>
-    }
-
-    <section class="checkout-secao">
-        <h2>Entrega</h2>
-        <div class="checkout-opcoes">
-            <button type="button" class="opcao" [class.ativo]="modalidadeEntrega() === 'retirada'"
-                (click)="selecionarModalidade('retirada')">Retirar na loja</button>
-            <button type="button" class="opcao" [class.ativo]="modalidadeEntrega() === 'entrega'"
-                (click)="selecionarModalidade('entrega')">Receber em casa</button>
-        </div>
-
-        @if (modalidadeEntrega() === 'entrega') {
-        @if (autenticado && enderecos().length > 0 && !mostrarNovoEndereco()) {
-        <div class="checkout-enderecos">
-            @for (endereco of enderecos(); track endereco.id) {
-            <button type="button" class="opcao endereco" [class.ativo]="enderecoSelecionadoId() === endereco.id"
-                (click)="selecionarEndereco(endereco)">
-                {{ endereco.logradouro }}, {{ endereco.numero }} - {{ endereco.bairro }}, {{ endereco.municipio }}/{{ endereco.uf }}
-            </button>
+    <div class="checkout-grid">
+        <div class="checkout-secoes">
+            @if (!autenticado) {
+            <section class="checkout-secao">
+                <h2>Seus dados</h2>
+                <p class="checkout-hint">Já tem conta? <a class="checkout-link" routerLink="/login" [queryParams]="{returnUrl: router.url}">Entrar</a></p>
+                <form [formGroup]="clienteForm" class="checkout-form">
+                    <div class="pof-field">
+                        <label>Nome completo</label>
+                        <input formControlName="nome">
+                    </div>
+                    <div class="pof-field">
+                        <label>CPF</label>
+                        <input mask="000.000.000-00" formControlName="documento">
+                    </div>
+                    <div class="pof-field">
+                        <label>E-mail</label>
+                        <input type="email" formControlName="email">
+                    </div>
+                    <div class="pof-field">
+                        <label>Telefone</label>
+                        <input mask="(00) 00000-0000" formControlName="telefone">
+                    </div>
+                </form>
+            </section>
+            } @else if (emailContaAusente) {
+            <section class="checkout-secao">
+                <p class="checkout-aviso">
+                    Seu cadastro não tem um e-mail válido, e ele é necessário pra gerar o pagamento.
+                    Entre em contato com a loja para atualizar seu cadastro antes de continuar a compra.
+                </p>
+            </section>
             }
-            <button type="button" class="checkout-link" (click)="mostrarNovoEndereco.set(true)">+ Novo endereço</button>
-        </div>
-        } @else {
-        <form [formGroup]="enderecoForm" class="checkout-form">
-            <input placeholder="CEP" formControlName="cep">
-            <input placeholder="Logradouro" formControlName="logradouro">
-            <input placeholder="Número" formControlName="numero">
-            <input placeholder="Complemento" formControlName="complemento">
-            <input placeholder="Bairro" formControlName="bairro">
-            <input placeholder="Cidade" formControlName="municipio">
-            <input placeholder="UF" maxlength="2" formControlName="uf">
-        </form>
-        @if (autenticado && enderecos().length > 0) {
-        <button type="button" class="checkout-link" (click)="mostrarNovoEndereco.set(false)">Usar endereço salvo</button>
-        }
-        }
 
-        <div class="checkout-frete">
-            @if (carregandoFrete()) {
-            <p class="checkout-hint">Calculando frete...</p>
-            } @else if (erroFrete()) {
-            <p class="checkout-aviso">{{ erroFrete() }}</p>
-            } @else if (opcoesFrete().length > 0) {
-            <div class="checkout-opcoes-frete">
-                @for (opcao of opcoesFrete(); track opcao.serviceId) {
-                <button type="button" class="opcao frete" [class.ativo]="freteSelecionado()?.serviceId === opcao.serviceId"
-                    (click)="selecionarFrete(opcao)">
-                    <span>{{ opcao.carrier }} - {{ opcao.service }}</span>
-                    <span>{{ formatarPreco(opcao.customPrice ?? opcao.price) }} · {{ opcao.customDeliveryTime ?? opcao.deliveryTime }} dias úteis</span>
-                </button>
+            <section class="checkout-secao">
+                <h2>Entrega</h2>
+                <div class="checkout-opcoes">
+                    <button type="button" class="opcao" [class.ativo]="modalidadeEntrega() === 'retirada'"
+                        (click)="selecionarModalidade('retirada')">Retirar na loja</button>
+                    <button type="button" class="opcao" [class.ativo]="modalidadeEntrega() === 'entrega'"
+                        (click)="selecionarModalidade('entrega')">Receber em casa</button>
+                </div>
+
+                @if (modalidadeEntrega() === 'entrega') {
+                @if (autenticado && enderecos().length > 0 && !mostrarNovoEndereco()) {
+                <div class="checkout-enderecos">
+                    @for (endereco of enderecos(); track endereco.id) {
+                    <button type="button" class="opcao endereco" [class.ativo]="enderecoSelecionadoId() === endereco.id"
+                        (click)="selecionarEndereco(endereco)">
+                        {{ endereco.logradouro }}, {{ endereco.numero }} - {{ endereco.bairro }}, {{ endereco.municipio }}/{{ endereco.uf }}
+                    </button>
+                    }
+                    <button type="button" class="checkout-link" (click)="mostrarNovoEndereco.set(true)">+ Novo endereço</button>
+                </div>
+                } @else {
+                <form [formGroup]="enderecoForm" class="checkout-form">
+                    <div class="pof-field">
+                        <label>CEP</label>
+                        <input formControlName="cep">
+                    </div>
+                    <div class="pof-field">
+                        <label>Logradouro</label>
+                        <input formControlName="logradouro">
+                    </div>
+                    <div class="pof-field">
+                        <label>Número</label>
+                        <input formControlName="numero">
+                    </div>
+                    <div class="pof-field">
+                        <label>Complemento</label>
+                        <input formControlName="complemento">
+                    </div>
+                    <div class="pof-field">
+                        <label>Bairro</label>
+                        <input formControlName="bairro">
+                    </div>
+                    <div class="pof-field">
+                        <label>Cidade</label>
+                        <input formControlName="municipio">
+                    </div>
+                    <div class="pof-field">
+                        <label>UF</label>
+                        <input maxlength="2" formControlName="uf">
+                    </div>
+                </form>
+                @if (autenticado && enderecos().length > 0) {
+                <button type="button" class="checkout-link" (click)="mostrarNovoEndereco.set(false)">Usar endereço salvo</button>
                 }
-            </div>
-            } @else {
-            <p class="checkout-hint">Informe o CEP acima pra calcular o frete.</p>
-            }
-        </div>
-        }
-    </section>
+                }
 
-    @if (formasPagamento().length > 1) {
-    <section class="checkout-secao">
-        <h2>Forma de pagamento</h2>
-        <div class="checkout-opcoes">
-            @for (forma of formasPagamento(); track forma.formaDePagamentoId) {
-            <button type="button" class="opcao" [class.ativo]="formaPagamentoSelecionadaId() === forma.formaDePagamentoId"
-                (click)="selecionarFormaPagamento(forma.formaDePagamentoId)">{{ forma.descricao }}</button>
-            }
-        </div>
-    </section>
-    }
-
-    <section class="checkout-secao">
-        <h2>Resumo</h2>
-        <div class="checkout-resumo">
-            @for (item of itens(); track item.produtoId) {
-            <div class="checkout-resumo-item">
-                <div class="checkout-resumo-item-foto">
-                    @if (item.imagemUrl) {
-                    <img [src]="item.imagemUrl" [alt]="item.nome">
+                <div class="checkout-frete">
+                    @if (carregandoFrete()) {
+                    <p class="checkout-hint">Calculando frete...</p>
+                    } @else if (erroFrete()) {
+                    <p class="checkout-aviso">{{ erroFrete() }}</p>
+                    } @else if (opcoesFrete().length > 0) {
+                    <div class="checkout-opcoes-frete">
+                        @for (opcao of opcoesFrete(); track opcao.serviceId) {
+                        <button type="button" class="opcao frete" [class.ativo]="freteSelecionado()?.serviceId === opcao.serviceId"
+                            (click)="selecionarFrete(opcao)">
+                            <span>{{ opcao.carrier }} - {{ opcao.service }}</span>
+                            <span>{{ formatarPreco(opcao.customPrice ?? opcao.price) }} · {{ opcao.customDeliveryTime ?? opcao.deliveryTime }} dias úteis</span>
+                        </button>
+                        }
+                    </div>
                     } @else {
-                    <span>Sem foto</span>
+                    <p class="checkout-hint">Informe o CEP acima pra calcular o frete.</p>
                     }
                 </div>
-                <span class="checkout-resumo-item-info">
-                    {{ item.nome || ('Produto #' + item.produtoId) }} x{{ item.quantidade }}
-                    @if (item.corNome || item.tamanhoNome) {
-                    <span class="checkout-resumo-item-variacao">{{ item.corNome }}{{ item.corNome && item.tamanhoNome ? ' · ' : '' }}{{ item.tamanhoNome }}</span>
+                }
+            </section>
+
+            @if (formasPagamento().length > 1) {
+            <section class="checkout-secao">
+                <h2>Forma de pagamento</h2>
+                <div class="checkout-opcoes">
+                    @for (forma of formasPagamento(); track forma.formaDePagamentoId) {
+                    <button type="button" class="opcao" [class.ativo]="formaPagamentoSelecionadaId() === forma.formaDePagamentoId"
+                        (click)="selecionarFormaPagamento(forma.formaDePagamentoId)">{{ forma.descricao }}</button>
                     }
-                    @if (item.valorPromocional != null) {
-                    <span class="checkout-resumo-item-variacao">
-                        Valor original: {{ formatarPreco(item.valor) }} · Desconto: {{ formatarPreco((item.valor! - item.valorPromocional) * (item.quantidade ?? 0)) }}
-                    </span>
-                    }
-                </span>
-                <span>{{ formatarPreco((item.valorPromocional ?? item.valor ?? 0) * (item.quantidade ?? 0)) }}</span>
-            </div>
+                </div>
+            </section>
             }
+        </div>
+
+        <aside class="checkout-resumo">
+            <span class="checkout-resumo-eyebrow">Resumo</span>
+            <div class="checkout-resumo-itens">
+                @for (item of itens(); track item.produtoId) {
+                <div class="checkout-resumo-item">
+                    <div class="checkout-resumo-item-foto">
+                        @if (item.imagemUrl) {
+                        <img [src]="item.imagemUrl" [alt]="item.nome">
+                        } @else {
+                        <span>Sem foto</span>
+                        }
+                    </div>
+                    <span class="checkout-resumo-item-info">
+                        {{ item.nome || ('Produto #' + item.produtoId) }} x{{ item.quantidade }}
+                        @if (item.corNome || item.tamanhoNome || item.estampaNome) {
+                        <span class="checkout-resumo-item-variacao">{{ descricaoVariacao(item.corNome, item.tamanhoNome, item.estampaNome) }}</span>
+                        }
+                        @if (item.valorPromocional != null) {
+                        <span class="checkout-resumo-item-variacao">
+                            Valor original: {{ formatarPreco(item.valor) }} · Desconto: {{ formatarPreco((item.valor! - item.valorPromocional) * (item.quantidade ?? 0)) }}
+                        </span>
+                        }
+                    </span>
+                    <span>{{ formatarPreco((item.valorPromocional ?? item.valor ?? 0) * (item.quantidade ?? 0)) }}</span>
+                </div>
+                }
+            </div>
+
             @if (freteSelecionado(); as frete) {
-            <div class="checkout-resumo-item">
+            <div class="checkout-resumo-linha">
                 <span>Frete ({{ frete.carrier }})</span>
                 <span>{{ formatarPreco(frete.customPrice ?? frete.price) }}</span>
             </div>
             }
+
             <div class="checkout-resumo-total">
                 <span>Total</span>
                 <strong>{{ formatarPreco(total()) }}</strong>
             </div>
-        </div>
-        @if (avisosPromocao().length > 0) {
-        <div class="checkout-avisos-promocao">
-            @for (aviso of avisosPromocao(); track aviso) {
-            <p class="checkout-aviso-promocao">{{ aviso }}</p>
+
+            @if (avisosPromocao().length > 0) {
+            <div class="checkout-avisos-promocao">
+                @for (aviso of avisosPromocao(); track aviso) {
+                <p class="checkout-aviso-promocao">{{ aviso }}</p>
+                }
+            </div>
             }
-        </div>
-        }
-    </section>
 
-    @if (erro()) {
-    <p class="checkout-aviso">{{ erro() }}</p>
-    }
+            @if (erro()) {
+            <p class="checkout-aviso">{{ erro() }}</p>
+            }
 
-    @if (itemIndisponivel()?.status === 'em_pagamento') {
-    <div class="checkout-aviso-disponibilidade">
-        @if (avisoEnviado()) {
-        <p>Prontinho! Vamos te avisar por e-mail se esse produto voltar ao estoque.</p>
-        } @else {
-        <label for="aviso-email">Quer que a gente te avise por e-mail se ele voltar?</label>
-        <div class="checkout-aviso-disponibilidade-form">
-            <input id="aviso-email" type="email" placeholder="seu@email.com" [ngModel]="avisoEmail()"
-                (ngModelChange)="avisoEmail.set($event)" [ngModelOptions]="{ standalone: true }">
-            <ui-button size="sm" variant="secondary" [disabled]="!avisoEmail() || avisoEnviando()" (clicked)="avisarQuandoDisponivel()">
-                @if (avisoEnviando()) { Enviando... } @else { Avisar-me }
-            </ui-button>
-        </div>
-        }
+            @if (itemIndisponivel()?.status === 'em_pagamento') {
+            <div class="checkout-aviso-disponibilidade">
+                @if (avisoEnviado()) {
+                <p>Prontinho! Vamos te avisar por e-mail se esse produto voltar ao estoque.</p>
+                } @else {
+                <label for="aviso-email">Quer que a gente te avise por e-mail se ele voltar?</label>
+                <div class="checkout-aviso-disponibilidade-form">
+                    <input id="aviso-email" type="email" placeholder="seu@email.com" [ngModel]="avisoEmail()"
+                        (ngModelChange)="avisoEmail.set($event)" [ngModelOptions]="{ standalone: true }">
+                    <ui-button size="sm" variant="secondary" [disabled]="!avisoEmail() || avisoEnviando()" (clicked)="avisarQuandoDisponivel()">
+                        @if (avisoEnviando()) { Enviando... } @else { Avisar-me }
+                    </ui-button>
+                </div>
+                }
+            </div>
+            }
+
+            @if (!podeFinalizar() && pendencias().length > 0) {
+            <ul class="checkout-pendencias">
+                @for (pendencia of pendencias(); track pendencia) {
+                <li>{{ pendencia }}</li>
+                }
+            </ul>
+            }
+
+            <app-filled-button class="checkout-resumo-cta" [enabled]="podeFinalizar() && !finalizando()" (onTap)="finalizar()"
+                [label]="finalizando() ? 'Processando...' : (cotandoPreco() ? 'Calculando valores...' : 'Finalizar e pagar')">
+            </app-filled-button>
+        </aside>
     </div>
-    }
 
-    @if (!podeFinalizar() && pendencias().length > 0) {
-    <ul class="checkout-pendencias">
-        @for (pendencia of pendencias(); track pendencia) {
-        <li>{{ pendencia }}</li>
-        }
-    </ul>
-    }
-
-    <ui-button size="lg" [disabled]="!podeFinalizar() || finalizando()" (clicked)="finalizar()">
-        @if (finalizando()) { Processando... } @else if (cotandoPreco()) { Calculando valores... } @else { Finalizar e pagar }
-    </ui-button>
+    <div class="checkout-barra-mobile">
+        <div>
+            <span>Total</span>
+            <strong>{{ formatarPreco(total()) }}</strong>
+        </div>
+        <app-filled-button [enabled]="podeFinalizar() && !finalizando()" (onTap)="finalizar()"
+            [label]="finalizando() ? 'Processando...' : (cotandoPreco() ? 'Calculando...' : 'Finalizar e pagar')">
+        </app-filled-button>
+    </div>
     }
     }
     }

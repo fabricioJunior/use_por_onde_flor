@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
+    height: 100%;
     cursor: pointer;
 }
 
@@ -44,7 +45,7 @@
 .produto-badge-desconto {
     align-self: flex-start;
     font: var(--text-caption);
-    font-weight: 700;
+    font-weight: 500;
     color: var(--state-error);
     background: color-mix(in srgb, var(--state-error) 12%, transparent);
     border-radius: var(--radius-sm, 4px);
@@ -54,12 +55,23 @@
 .produto-nome {
     font: var(--text-body);
     color: var(--text-primary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: calc(1.65em * 2);
+}
+
+.produto-detalhe {
+    font: var(--text-caption);
+    color: var(--brand-primary-hover);
 }
 
 .produto-rodape {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+    margin-top: auto;
 }
 
 .produto-rodape ui-button {
@@ -80,7 +92,7 @@
 
 .produto-preco {
     font: var(--text-body-sm);
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
 .produto-preco-original {
@@ -91,5 +103,5 @@
 
 .produto-preco-promocional {
     color: var(--state-error);
-    font-weight: 600;
+    font-weight: 500;
 }

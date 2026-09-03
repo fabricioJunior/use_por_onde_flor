@@ -1,15 +1,22 @@
-<div class="cadastro-container">
-  <div class="container">
-    <div class="acoes-primarias">
-      <div id="logo-container">
-        <app-logo></app-logo>
-      </div>
+<div class="pof-auth-layout">
+  <aside class="pof-auth-painel">
+    <app-logo variante="negativa" [altura]="36"></app-logo>
 
-      <div>
-        <router-outlet></router-outlet>
-      </div>
+    <div class="pof-auth-painel-texto">
+      <p class="pof-auth-frase">Todo caminho começa com um passo.</p>
+      <p class="pof-auth-paragrafo">
+        Crie sua conta para acompanhar pedidos, comprar mais rápido e
+        acumular pontos no cartão fidelidade a cada compra.
+      </p>
+    </div>
 
+    <app-traco class="pof-auth-traco" [d]="tracoPath" variante="sobre-escuro"
+      [opacidade]="0.5" animacao="desenha"></app-traco>
+  </aside>
+
+  <div class="pof-auth-conteudo">
+    <div class="pof-auth-form-wrap">
+      <router-outlet></router-outlet>
     </div>
   </div>
-
 </div>

@@ -1,15 +1,16 @@
 <div class="email-group" [formGroup]="loginGroup">
-  <mat-form-field appearance="outline">
-    <mat-label>E-mail</mat-label>
-    <input matInput placeholder="E-mail" formControlName="email"
-      [value]="loginGroup.get('email')?.value">
-  </mat-form-field>
-  <mat-error class="error-message">{{errorMessage()}}</mat-error>
+  <div class="pof-field" [class.pof-field-error]="errorMessage()">
+    <label for="login-email">E-mail</label>
+    <input id="login-email" type="email" placeholder="seu@email.com"
+      formControlName="email" [value]="loginGroup.get('email')?.value">
+    @if (errorMessage()) {
+    <span class="pof-field-error-msg">{{errorMessage()}}</span>
+    }
+  </div>
+
   <div class="button-group">
-    <button (click)="abrirCadastro()" class="button text-button">Criar
-      Conta</button>
-    <app-filled-button [label]="'Avançar'" [color]="'red'"
-      [enabled]="avancaEnable()" (onTap)="onAvancarTap()"
-      class="button avanca-button"></app-filled-button>
+    <button type="button" (click)="abrirCadastro()" class="pof-btn-text">Criar conta</button>
+    <app-filled-button [label]="'Avançar'"
+      [enabled]="avancaEnable()" (onTap)="onAvancarTap()"></app-filled-button>
   </div>
 </div>

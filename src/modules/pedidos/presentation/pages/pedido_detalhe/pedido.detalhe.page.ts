@@ -10,6 +10,7 @@ import { PedidosService } from "../../../services/pedidos.service";
 import { PedidoDetalheDto } from "../../../data/dto/pedido-detalhe.dto";
 import { ToastService } from "../../../../loja/presentation/components/ui/toast/toast.service";
 import { pedidoFoiEntregue, situacaoPedidoLabel } from "../../../utils/pedido-situacao.util";
+import { descricaoVariacao } from "../../../../loja/presentation/utils/variacao-apresentacao.util";
 
 @Component({
     selector: 'pedido-detalhe-page',
@@ -19,6 +20,7 @@ import { pedidoFoiEntregue, situacaoPedidoLabel } from "../../../utils/pedido-si
     styleUrl: './pedido.detalhe.page.css',
 })
 export class PedidoDetalhePage implements OnInit {
+    descricaoVariacao = descricaoVariacao;
     loading = signal(true);
     naoEncontrado = signal(false);
     erro = signal(false);

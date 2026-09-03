@@ -1,36 +1,38 @@
+<app-cadastro-progresso [etapa]="3" [total]="4" [label]="'Contato'"></app-cadastro-progresso>
 
-<div [formGroup]="formGroup">
+<div [formGroup]="formGroup" class="pof-auth-form">
     <div id="acao-container">
-        <h2 class="title">Informações de contato</h2>
-        <p> Sua conta dá acesso ao cartão fidelidade, aos seus pedidos e
+        <h1 class="title">Informações de contato</h1>
+        <p>Sua conta dá acesso ao cartão fidelidade, aos seus pedidos e
             agiliza suas próximas compras no site. Toda vez que realizar uma
             compra solicite ao caixa ou atendente a pontuação no seu cartão
             fidelidade.</p>
     </div>
-    <mat-form-field appearance="outline">
-        <mat-label>Telefone</mat-label>
-        <input matInput placeholder="Telefone" maxlength="15"
+
+    <div class="pof-field">
+        <label for="cadastro-telefone">Telefone</label>
+        <input id="cadastro-telefone" type="tel" placeholder="Telefone" maxlength="15"
             formControlName="telefone"
             [value]="formGroup.get('telefone')?.value"
             mask="(00) 00000-0000" ngxMask>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput placeholder="Email" maxlength="40"
+    </div>
+
+    <div class="pof-field" [class.pof-field-error]="emailError()">
+        <label for="cadastro-email">E-mail</label>
+        <input id="cadastro-email" type="email" placeholder="E-mail" maxlength="40"
             formControlName="email"
             [value]="formGroup.get('email')?.value">
+        @if (emailError()) {
+        <span class="pof-field-error-msg">{{emailError()}}</span>
+        }
+    </div>
 
-    </mat-form-field>
-    <mat-error>
-        {{emailError()}}
-    </mat-error>
     @if (emailPendenteVerificacao()) {
     <button type="button" id="ir-para-login-button" (click)="irParaLogin()"
-        class="text-button text-button-text">Já tenho conta, ir para o
-        login</button>
+        class="pof-btn-text">Já tenho conta, ir para o login</button>
     }
     <div class="row">
-        <app-filled-button [label]="'Avançar'" [color]="'red'"
+        <app-filled-button [label]="'Avançar'"
             [enabled]="avancaEnable()"
             (onTap)="onAvancarTap()"></app-filled-button>
     </div>

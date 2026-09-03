@@ -28,7 +28,7 @@
                 </div>
                 <div class="pedido-item-info">
                     <strong>{{ item.referenciaNome }}</strong>
-                    <div class="pedido-item-variacao">{{ item.corNome }} · {{ item.tamanhoNome }}</div>
+                    <div class="pedido-item-variacao">{{ descricaoVariacao(item.corNome, item.tamanhoNome, item.estampaNome) }}</div>
                     <div class="pedido-item-variacao">Qtd solicitada: {{ item.solicitado }}</div>
                 </div>
                 <div class="pedido-item-precos">

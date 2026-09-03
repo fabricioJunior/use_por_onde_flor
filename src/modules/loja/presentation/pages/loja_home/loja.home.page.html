@@ -1,18 +1,46 @@
 <div class="loja-shell">
     <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
 
-    <loja-hero (verColecao)="scrollParaProdutos()"></loja-hero>
+    <loja-hero></loja-hero>
 
-    <main class="loja-content" id="produtos" #produtos>
-        <div class="loja-busca">
-            <ui-input placeholder="Buscar produtos..." [ngModel]="busca()"
+    <section class="loja-categorias" aria-label="Categorias">
+        <span class="loja-categorias-eyebrow">Categorias</span>
+        <div class="loja-categorias-grid">
+            @for (categoria of categorias; track categoria.slug) {
+            <a class="loja-categoria-card" [routerLink]="['/loja/categoria', categoria.slug]">
+                <span class="loja-categoria-icone">
+                    @if (categoria.icone) {
+                    <span class="loja-categoria-icone-img" [style.background-image]="'url(' + categoria.icone + ')'"></span>
+                    } @else {
+                    <app-traco d="M4,50 Q25,20 50,50 T96,50" variante="clara" [opacidade]="1"
+                        animacao="nenhuma" class="pof-anim-flutua"></app-traco>
+                    }
+                </span>
+                <span class="loja-categoria-nome">{{ categoria.nome }}</span>
+            </a>
+            }
+        </div>
+    </section>
+
+    <div class="loja-vitrine-full">
+        <app-traco class="loja-vitrine-traco" d="M72,0 Q45,25 55,50 Q65,72 30,82 Q16,88 14,100" variante="clara"
+            [opacidade]="0.5"></app-traco>
+        <main class="loja-content" id="produtos">
+        <div class="loja-busca-linha">
+            <ui-input class="loja-busca" placeholder="Buscar produtos..." [ngModel]="busca()"
                 (ngModelChange)="onBuscaChange($event)"></ui-input>
+            <span class="loja-busca-contagem">{{ referencias().length }} produtos</span>
         </div>
 
         @if (loading()) {
-        <div class="loja-estado">
-            <mat-spinner diameter="42"></mat-spinner>
-            <p>Carregando produtos...</p>
+        <div class="loja-grid">
+            @for (item of skeletonItems; track item) {
+            <div class="loja-card-skeleton" aria-hidden="true">
+                <div class="loja-card-skeleton-foto pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha curta pof-skeleton"></div>
+            </div>
+            }
         </div>
         } @else if (erro()) {
         <div class="loja-estado">
@@ -32,6 +60,15 @@
             <produto-card [referencia]="referencia" (abrir)="abrirReferencia(referencia)"
                 (adicionar)="adicionarAoCarrinho(referencia)"></produto-card>
             }
+            @if (carregandoMais()) {
+            @for (item of skeletonItems; track item) {
+            <div class="loja-card-skeleton" aria-hidden="true">
+                <div class="loja-card-skeleton-foto pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha curta pof-skeleton"></div>
+            </div>
+            }
+            }
         </div>
 
         @if (temMaisPaginas()) {
@@ -42,7 +79,8 @@
         </div>
         }
         }
-    </main>
+        </main>
+    </div>
 
     <loja-footer></loja-footer>
 </div>
