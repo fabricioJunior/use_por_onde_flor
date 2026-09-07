@@ -34,14 +34,20 @@
     }
 
     <div class="categoria-chips">
-        @for (item of categorias; track item.slug) {
-        <a class="categoria-chip" [class.ativo]="item.slug === categoria()?.slug"
-            [routerLink]="['/loja/categoria', item.slug]">{{ item.nome }}</a>
+        @for (item of categorias(); track item.id) {
+        <a class="categoria-chip" [class.ativo]="item.id === categoria()?.id"
+            [routerLink]="['/loja/categoria', item.id]">{{ item.nome }}</a>
         }
     </div>
 
     <main class="categoria-content">
-        @if (loading()) {
+        @if (lojaFechada()) {
+        <div class="categoria-vazio">
+            <app-traco class="categoria-vazio-traco" d="M10,50 Q50,10 90,50 Q50,90 10,50" variante="clara"
+                [opacidade]="0.6"></app-traco>
+            <p>A loja está fechada no momento. Volte mais tarde para conferir as novidades.</p>
+        </div>
+        } @else if (loading()) {
         <div class="loja-grid">
             @for (item of [1,2,3,4]; track item) {
             <div class="loja-card-skeleton" aria-hidden="true">

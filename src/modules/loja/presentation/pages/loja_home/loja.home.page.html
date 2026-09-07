@@ -3,11 +3,12 @@
 
     <loja-hero></loja-hero>
 
+    @if (categorias().length) {
     <section class="loja-categorias" aria-label="Categorias">
         <span class="loja-categorias-eyebrow">Categorias</span>
         <div class="loja-categorias-grid">
-            @for (categoria of categorias; track categoria.slug) {
-            <a class="loja-categoria-card" [routerLink]="['/loja/categoria', categoria.slug]">
+            @for (categoria of categorias(); track categoria.id) {
+            <a class="loja-categoria-card" [routerLink]="['/loja/categoria', categoria.id]">
                 <span class="loja-categoria-icone">
                     @if (categoria.icone) {
                     <span class="loja-categoria-icone-img" [style.background-image]="'url(' + categoria.icone + ')'"></span>
@@ -21,11 +22,17 @@
             }
         </div>
     </section>
+    }
 
     <div class="loja-vitrine-full">
         <app-traco class="loja-vitrine-traco" d="M72,0 Q45,25 55,50 Q65,72 30,82 Q16,88 14,100" variante="clara"
             [opacidade]="0.5"></app-traco>
         <main class="loja-content" id="produtos">
+        @if (lojaFechada()) {
+        <div class="loja-estado">
+            <p>A loja está fechada no momento. Volte mais tarde para conferir as novidades.</p>
+        </div>
+        } @else {
         <div class="loja-busca-linha">
             <ui-input class="loja-busca" placeholder="Buscar produtos..." [ngModel]="busca()"
                 (ngModelChange)="onBuscaChange($event)"></ui-input>
@@ -77,6 +84,7 @@
                 @if (carregandoMais()) { Carregando... } @else { Ver mais produtos }
             </ui-button>
         </div>
+        }
         }
         }
         </main>
