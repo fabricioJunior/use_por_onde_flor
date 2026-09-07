@@ -8,5 +8,6 @@ export interface ListaPersonalizadaItemDto {
 
 export interface ListaPersonalizadaPublicaDto {
     dataExpiracao: string;
+    titulo: string | null;
     itens: ListaPersonalizadaItemDto[];
 }

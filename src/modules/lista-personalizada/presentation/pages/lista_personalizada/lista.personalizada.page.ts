@@ -24,6 +24,7 @@ export class ListaPersonalizadaPage implements OnInit {
     loading = signal(true);
     naoEncontrada = signal(false);
     referencias = signal<EcommerceReferenciaDto[]>([]);
+    titulo = signal<string | null>(null);
     itensNoCarrinho = signal(0);
 
     constructor(
@@ -45,6 +46,7 @@ export class ListaPersonalizadaPage implements OnInit {
 
         try {
             const lista = await firstValueFrom(this.listaDataSource.buscarPublico(hash));
+            this.titulo.set(lista.titulo || null);
             await this.carregarProdutos(lista.itens.map((item) => item.referenciaId).filter((id): id is number => !!id));
         } catch (error) {
             if (error instanceof HttpErrorResponse && error.status === 404) {

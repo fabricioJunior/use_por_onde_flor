@@ -2,7 +2,7 @@
     <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
 
     <header class="lista-header">
-        <h1>Lista selecionada pra você</h1>
+        <h1>{{ titulo() || 'Lista selecionada pra você' }}</h1>
     </header>
 
     <main class="lista-content">
