@@ -21,7 +21,7 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
     }
 
     listarReferencias(
-        page: number, limit: number, search?: string, categoriaIds?: number[],
+        page: number, limit: number, search?: string, categoriaIds?: number[], referenciaIds?: number[],
     ): Observable<PaginationDto<EcommerceReferenciaDto>> {
         const queryParameters: Record<string, string | number> = { page, limit };
         if (search) {
@@ -29,6 +29,9 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
         }
         if (categoriaIds?.length) {
             queryParameters['categoriaIds'] = categoriaIds.join(',');
+        }
+        if (referenciaIds?.length) {
+            queryParameters['referenciaIds'] = referenciaIds.join(',');
         }
         return this.get({
             pathArguments: this.ecommerceArgs(),

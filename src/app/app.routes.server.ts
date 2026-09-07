@@ -26,6 +26,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
+    path: 'lista/:hash',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'pedidos/:id',
     renderMode: RenderMode.Client,
   },
