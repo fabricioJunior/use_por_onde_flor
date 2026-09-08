@@ -62,11 +62,6 @@
     height: calc(1.65em * 2);
 }
 
-.produto-detalhe {
-    font: var(--text-caption);
-    color: var(--brand-primary-hover);
-}
-
 .produto-rodape {
     display: flex;
     flex-direction: column;
