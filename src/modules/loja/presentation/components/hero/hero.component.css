@@ -152,8 +152,7 @@
     }
 
     #pof-sub {
-        font-size: clamp(13px, 3.6vw, 17px);
-        max-width: 100%;
+        display: none;
     }
 
     /* troca de caminhos: some o traco de desktop, entra o caminho dedicado do mobile */
