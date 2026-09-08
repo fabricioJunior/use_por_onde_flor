@@ -5,6 +5,7 @@ import { RemoteDataSourceBase } from "../../core/http/remote.data.source.base";
 import { environment } from "../../../environments/environment";
 import { EcommerceReferenciaDto, EcommerceReferenciaProdutoDto, PaginationDto } from "./dtos/ecommerce-referencia.dto";
 import { PromocaoDto } from "./dtos/promocao.dto";
+import { CategoriaDto } from "./dtos/categoria.dto";
 
 // Base fixa 'e-commerce/{ecommerceId}' -- cada método completa com o sufixo do endpoint via
 // `options.path` (RemoteDataSourceBase concatena path + pathArguments + suffix).
@@ -18,6 +19,16 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
 
     private ecommerceArgs(): Record<string, string> {
         return { ecommerceId: environment.ecommerceId.toString() };
+    }
+
+    // Só categorias com referência publicada e saldo disponível -- ver
+    // EcommerceCatalogoService.findCategorias (apollo-api). Diferente de CategoriaDataSource.listar(),
+    // que traz todas as categorias cadastradas (usado só pra telas administrativas).
+    listarCategorias(): Observable<CategoriaDto[]> {
+        return this.getList({
+            pathArguments: this.ecommerceArgs(),
+            path: '/catalogos/categorias',
+        });
     }
 
     listarReferencias(

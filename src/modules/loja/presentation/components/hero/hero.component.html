@@ -1,6 +1,39 @@
 <section class="loja-hero">
-    <div class="loja-hero-imagem">
-        <app-traco class="loja-hero-traco" d="M87,0 Q70,35 78,65 Q82,90 72,100" variante="sobre-escuro"
-            [opacidade]="0.5"></app-traco>
+    <div class="loja-hero-fundo"></div>
+    <div class="loja-hero-painel" aria-hidden="true"></div>
+
+    <app-traco class="loja-hero-traco-salvia" d="M -2 88 C 10 84 16 72 30 68 C 42 64.5 50 70 58 66"
+        variante="clara" [opacidade]="0.75" animacao="desenha" [delayMs]="800"></app-traco>
+
+    <div class="loja-hero-logo">
+        <a routerLink="/loja" aria-label="Por Onde Flor">
+            <app-logo variante="negativa" [altura]="58"></app-logo>
+        </a>
+    </div>
+
+    <div class="loja-hero-conteudo">
+        <h1 class="loja-hero-titulo pof-anim-entra" style="animation-delay: .38s">Básicos que acompanham todos os seus caminhos.</h1>
+        <p class="loja-hero-texto pof-anim-entra" style="animation-delay: .5s">Curadoria de peças versáteis, de qualidade de verdade, para montar um guarda-roupa inteligente.</p>
     </div>
 </section>
+
+<div class="loja-hero-beneficios">
+    <div class="loja-hero-beneficio">
+        <svg class="loja-hero-beneficio-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <path d="M8 2h8l1 6-2 13h-2l-1-11-1 11H9L7 8z" />
+        </svg>
+        <span>Jeans com caimento pensado</span>
+    </div>
+    <div class="loja-hero-beneficio">
+        <svg class="loja-hero-beneficio-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <path d="M6 5 L10 3 L12 5 L14 3 L18 5 L16 9 L14 8 L14 20 L10 20 L10 8 L8 9 Z" />
+        </svg>
+        <span>Básicos que combinam entre si</span>
+    </div>
+    <div class="loja-hero-beneficio">
+        <svg class="loja-hero-beneficio-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <path d="M4 8 C8 4 16 4 20 8 C16 10 16 14 20 16 C16 20 8 20 4 16 C8 14 8 10 4 8 Z" />
+        </svg>
+        <span>Acessórios para finalizar o look</span>
+    </div>
+</div>
