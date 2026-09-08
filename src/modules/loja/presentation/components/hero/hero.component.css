@@ -165,20 +165,7 @@
         display: block;
     }
 
-    /* beneficios empilhados */
     #pof-beneficios {
-        flex-direction: column;
-    }
-
-    #pof-beneficios .loja-hero-beneficio {
-        /* flex-basis 220px do desktop é largura (linha); em coluna vira altura -- reseta */
-        flex-basis: auto;
-        padding: 14px 20px;
-        border-left: none;
-        border-bottom: 1px solid var(--border-subtle);
-    }
-
-    #pof-beneficios .loja-hero-beneficio:last-child {
-        border-bottom: none;
+        display: none;
     }
 }
