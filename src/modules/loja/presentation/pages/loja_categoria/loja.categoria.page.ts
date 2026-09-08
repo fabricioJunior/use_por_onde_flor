@@ -77,7 +77,7 @@ export class LojaCategoriaPage implements OnInit {
 
     private async carregarCategorias(): Promise<void> {
         try {
-            this.categorias.set(await firstValueFrom(this.categoriaDataSource.listar()));
+            this.categorias.set(await firstValueFrom(this.lojaDataSource.listarCategorias()));
         } catch (error) {
             console.error('Erro ao carregar categorias', error);
         }

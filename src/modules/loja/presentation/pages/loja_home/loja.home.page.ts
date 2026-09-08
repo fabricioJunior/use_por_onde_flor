@@ -16,7 +16,6 @@ import { FooterComponent } from "../../components/footer/footer.component";
 import { ButtonComponent } from "../../components/ui/button/button.component";
 import { InputComponent } from "../../components/ui/input/input.component";
 import { TracoComponent } from "../../../../core/common_components/traco/traco.component";
-import { CategoriaDataSource } from "../../../data/categoria.data.source";
 import { CategoriaDto } from "../../../data/dtos/categoria.dto";
 
 const LIMITE_POR_PAGINA = 24;
@@ -52,7 +51,6 @@ export class LojaHomePage implements OnInit {
 
     constructor(
         private lojaDataSource: LojaDataSource,
-        private categoriaDataSource: CategoriaDataSource,
         private carrinhoFacadeService: CarrinhoFacadeService,
         private promocaoPrecoService: PromocaoPrecoService,
         private router: Router,
@@ -77,7 +75,7 @@ export class LojaHomePage implements OnInit {
 
     private async carregarCategorias(): Promise<void> {
         try {
-            this.categorias.set(await firstValueFrom(this.categoriaDataSource.listar()));
+            this.categorias.set(await firstValueFrom(this.lojaDataSource.listarCategorias()));
         } catch (error) {
             console.error('Erro ao carregar categorias', error);
         }
