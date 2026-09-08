@@ -82,6 +82,11 @@
     }
 }
 
+/* só existe no mobile, dentro do painel escuro do hero (ver media query) */
+.loja-hero-beneficios-mobile {
+    display: none;
+}
+
 .loja-hero-beneficios {
     display: flex;
     flex-wrap: wrap;
@@ -139,12 +144,14 @@
     }
 
     /* texto alinhado ao topo, largura total -- padding-top folgado pra nao colar na logo
-    (top:4% + altura visual ~26px depois do scale) */
+    (top:4% + altura visual ~26px depois do scale). bottom limita o bloco pra ficar todo
+    na faixa verde clara, sem invadir o painel escuro (diagonal sobe até 56% no lado direito). */
     #pof-texto {
         justify-content: flex-start;
         max-width: 100%;
         padding: clamp(64px, 20vw, 96px) clamp(22px, 6vw, 40px) 0;
         gap: 18px;
+        bottom: 46%;
     }
 
     #pof-titulo {
@@ -154,6 +161,25 @@
     #pof-sub {
         font-size: clamp(13px, 3.6vw, 17px);
         max-width: 100%;
+    }
+
+    /* frases que eram a faixa de benefícios abaixo do hero, agora dentro do painel escuro */
+    #pof-beneficios-mobile {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        position: absolute;
+        left: clamp(22px, 6vw, 40px);
+        right: clamp(22px, 6vw, 40px);
+        bottom: 5%;
+    }
+
+    #pof-beneficios-mobile span {
+        font-size: 11px;
+        letter-spacing: 0.07em;
+        font-weight: 300;
+        color: var(--color-cream);
+        opacity: .9;
     }
 
     /* troca de caminhos: some o traco de desktop, entra o caminho dedicado do mobile */
