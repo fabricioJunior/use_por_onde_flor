@@ -138,11 +138,12 @@
         clip-path: polygon(0 68%, 100% 56%, 100% 100%, 0 100%);
     }
 
-    /* texto alinhado ao topo, largura total */
+    /* texto alinhado ao topo, largura total -- padding-top folgado pra nao colar na logo
+    (top:4% + altura visual ~26px depois do scale) */
     #pof-texto {
         justify-content: flex-start;
         max-width: 100%;
-        padding: clamp(26px, 7vw, 44px) clamp(22px, 6vw, 40px) 0;
+        padding: clamp(64px, 20vw, 96px) clamp(22px, 6vw, 40px) 0;
         gap: 18px;
     }
 
