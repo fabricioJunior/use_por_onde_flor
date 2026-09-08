@@ -22,15 +22,6 @@
     clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%);
 }
 
-.loja-hero-traco-creme {
-    top: -6%;
-    right: 26%;
-    height: 112%;
-    left: auto;
-    bottom: auto;
-    width: 40%;
-}
-
 .loja-hero-traco-salvia {
     bottom: 8%;
     right: 3.5%;
@@ -38,10 +29,6 @@
     left: auto;
     height: 30%;
     width: 40%;
-}
-
-.loja-hero-traco-creme,
-.loja-hero-traco-salvia {
     position: absolute;
     pointer-events: none;
 }
@@ -139,7 +126,6 @@
         max-width: 100%;
     }
 
-    .loja-hero-traco-creme,
     .loja-hero-traco-salvia {
         height: 70%;
     }
