@@ -1,30 +1,159 @@
 .loja-hero {
     position: relative;
-}
-
-.loja-hero-imagem {
-    position: relative;
-    overflow: hidden;
-    background: url('/imagens/imagem-principal-mobile.jpg') center / cover no-repeat;
     width: 100%;
-    aspect-ratio: 1406 / 825;
+    aspect-ratio: 20 / 7;
+    min-height: 360px;
+    overflow: hidden;
 }
 
-.loja-hero-traco {
+.loja-hero-fundo {
     position: absolute;
     inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: .3;
+    background: var(--color-green-600);
 }
 
-@media (min-width: 900px) {
-    .loja-hero-imagem {
-        background-image: url('/imagens/imagem-principal.jpg');
-        aspect-ratio: 2400 / 840;
+.loja-hero-painel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 46%;
+    background: var(--color-green-800);
+    clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.loja-hero-traco-creme {
+    top: -6%;
+    right: 26%;
+    height: 112%;
+    left: auto;
+    bottom: auto;
+    width: 40%;
+}
+
+.loja-hero-traco-salvia {
+    bottom: 8%;
+    right: 3.5%;
+    top: auto;
+    left: auto;
+    height: 30%;
+    width: 40%;
+}
+
+.loja-hero-traco-creme,
+.loja-hero-traco-salvia {
+    position: absolute;
+    pointer-events: none;
+}
+
+.loja-hero-logo {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+}
+
+.loja-hero-logo a {
+    display: block;
+}
+
+.loja-hero-conteudo {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 26px;
+    max-width: min(60%, 720px);
+    padding: 0 clamp(28px, 4vw, 72px);
+}
+
+.loja-hero-titulo {
+    font: 300 clamp(28px, 3.6vw, 60px) / 1.14 var(--font-sans);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-cream);
+    text-wrap: pretty;
+    margin: 0;
+}
+
+.loja-hero-texto {
+    max-width: 520px;
+    font: 300 clamp(13px, 1.15vw, 19px) / 1.6 var(--font-sans);
+    color: rgba(248, 241, 235, .92);
+    margin: 0;
+}
+
+.pof-anim-entra {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: pof-hero-entra .6s cubic-bezier(.2, .7, .3, 1) forwards;
+}
+
+@keyframes pof-hero-entra {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.loja-hero-beneficios {
+    display: flex;
+    flex-wrap: wrap;
+    background: var(--color-cream);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.loja-hero-beneficio {
+    flex: 1 1 220px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 28px;
+    border-left: 1px solid var(--border-subtle);
+}
+
+.loja-hero-beneficio:first-child {
+    border-left: none;
+}
+
+.loja-hero-beneficio-icone {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    color: var(--color-green-400);
+    opacity: .85;
+}
+
+.loja-hero-beneficio span {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    font-weight: 300;
+    color: var(--color-wine-500);
+}
+
+@media (max-width: 768px) {
+    .loja-hero {
+        aspect-ratio: 4 / 3;
     }
 
-    .loja-hero-traco {
-        opacity: 1;
+    .loja-hero-conteudo {
+        max-width: 100%;
+    }
+
+    .loja-hero-traco-creme,
+    .loja-hero-traco-salvia {
+        height: 70%;
+    }
+
+    .loja-hero-beneficios {
+        flex-direction: column;
+    }
+
+    .loja-hero-beneficio {
+        border-left: none;
+        border-top: 1px solid var(--border-subtle);
+    }
+
+    .loja-hero-beneficio:first-child {
+        border-top: none;
     }
 }
