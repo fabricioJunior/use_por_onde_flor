@@ -1,9 +1,15 @@
-<section class="loja-hero">
+<section class="loja-hero" id="pof-hero">
     <div class="loja-hero-fundo"></div>
-    <div class="loja-hero-painel" aria-hidden="true"></div>
+    <div class="loja-hero-painel" id="pof-panel" aria-hidden="true"></div>
 
-    <app-traco class="loja-hero-traco-salvia" d="M -2 88 C 10 84 16 72 30 68 C 42 64.5 50 70 58 66"
+    <app-traco id="pof-caminhos" class="loja-hero-traco-salvia" d="M -2 88 C 10 84 16 72 30 68 C 42 64.5 50 70 58 66"
         variante="clara" [opacidade]="0.75" animacao="desenha" [delayMs]="800"></app-traco>
+    <svg id="pof-caminho-mobile" viewBox="0 0 100 100" preserveAspectRatio="none"
+         style="display:none;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" aria-hidden="true">
+      <path d="M -1 97 C 24 92 36 74 60 70 C 82 66.5 94 68 102 60"
+            fill="none" stroke="#A0B08B" stroke-width="3" stroke-linecap="round"
+            vector-effect="non-scaling-stroke" opacity=".45"></path>
+    </svg>
 
     <div class="loja-hero-logo">
         <a routerLink="/loja" aria-label="Por Onde Flor">
@@ -11,13 +17,13 @@
         </a>
     </div>
 
-    <div class="loja-hero-conteudo">
-        <h1 class="loja-hero-titulo pof-anim-entra" style="animation-delay: .38s">Básicos que acompanham todos os seus caminhos.</h1>
-        <p class="loja-hero-texto pof-anim-entra" style="animation-delay: .5s">Curadoria de peças versáteis, de qualidade de verdade, para montar um guarda-roupa inteligente.</p>
+    <div class="loja-hero-conteudo" id="pof-texto">
+        <h1 class="loja-hero-titulo pof-anim-entra" id="pof-titulo" style="animation-delay: .38s">Básicos que acompanham todos os seus caminhos.</h1>
+        <p class="loja-hero-texto pof-anim-entra" id="pof-sub" style="animation-delay: .5s">Curadoria de peças versáteis, de qualidade de verdade, para montar um guarda-roupa inteligente.</p>
     </div>
 </section>
 
-<div class="loja-hero-beneficios">
+<div class="loja-hero-beneficios" id="pof-beneficios">
     <div class="loja-hero-beneficio">
         <svg class="loja-hero-beneficio-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
             <path d="M8 2h8l1 6-2 13h-2l-1-11-1 11H9L7 8z" />

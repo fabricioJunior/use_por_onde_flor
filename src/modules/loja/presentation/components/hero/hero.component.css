@@ -111,35 +111,61 @@
 }
 
 .loja-hero-beneficio span {
-    font-size: 12px;
+    font-size: 8px;
     letter-spacing: 0.08em;
     font-weight: 300;
     color: var(--color-wine-500);
 }
 
-@media (max-width: 768px) {
-    .loja-hero {
-        aspect-ratio: 4 / 3;
+@media (max-width: 760px) {
+    #pof-hero {
+        aspect-ratio: 3 / 2;
+        min-height: 0;
     }
 
-    .loja-hero-conteudo {
+    /* logo tem largura fixa proporcional (aspect-ratio ~9.4/1) -- em altura=58 ela passa de
+    500px de largura e o overflow:hidden do hero corta o nome. Reduz e ancora pra nao cortar. */
+    .loja-hero-logo {
+        top: 4%;
+        right: 6%;
+        transform: scale(.45);
+        transform-origin: top right;
+    }
+
+    /* painel escuro deixa de ser lateral e vira faixa inferior com diagonal */
+    #pof-panel {
+        width: 100%;
+        clip-path: polygon(0 68%, 100% 56%, 100% 100%, 0 100%);
+    }
+
+    /* texto alinhado ao topo, largura total -- padding-top folgado pra nao colar na logo
+    (top:4% + altura visual ~26px depois do scale) */
+    #pof-texto {
+        justify-content: flex-start;
+        max-width: 100%;
+        padding: clamp(48px, 14vw, 72px) clamp(22px, 6vw, 40px) 0;
+        gap: 18px;
+    }
+
+    #pof-titulo {
+        font-size: clamp(28px, 7.6vw, 44px);
+    }
+
+    #pof-sub {
+        font-size: clamp(13px, 3.6vw, 17px);
         max-width: 100%;
     }
 
-    .loja-hero-traco-salvia {
-        height: 70%;
+    /* troca de caminhos: some o traco de desktop, entra o caminho dedicado do mobile */
+    #pof-caminhos {
+        display: none;
     }
 
-    .loja-hero-beneficios {
-        flex-direction: column;
+    #pof-caminho-mobile {
+        display: block;
     }
 
-    .loja-hero-beneficio {
-        border-left: none;
-        border-top: 1px solid var(--border-subtle);
-    }
-
-    .loja-hero-beneficio:first-child {
-        border-top: none;
+    #pof-beneficios {
+        display: none;
     }
 }
