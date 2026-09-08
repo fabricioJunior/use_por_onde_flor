@@ -119,7 +119,7 @@ export const routes: Routes = [
         path: 'loja/referencia/:id', component: LojaReferenciaPage,
     },
     {
-        path: 'loja/categoria/:slug', component: LojaCategoriaPage,
+        path: 'loja/categoria/:id', component: LojaCategoriaPage,
     },
     {
         path: 'carrinho', component: CarrinhoPage,
@@ -176,6 +176,12 @@ export const routes: Routes = [
         path: 'verificar-email',
         loadComponent: () => import('../modules/autenticacao/verificar_email/verificar.email.component').then(m => m.VerificarEmailComponent),
         canMatch: [autenticacaoGuard]
+    },
+    {
+        // Curadoria de produtos que um funcionário monta e compartilha por link (WhatsApp etc) --
+        // público, sem login, hash opaco em vez de ID sequencial (defesa contra enumeração).
+        path: 'lista/:hash',
+        loadComponent: () => import('../modules/lista-personalizada/presentation/pages/lista_personalizada/lista.personalizada.page').then(m => m.ListaPersonalizadaPage),
     },
 
 
