@@ -118,6 +118,72 @@ html, body {
   }
 }
 
+// Trilho de rolagem horizontal (categorias, chips) — sempre com botões de seta,
+// nunca só o gesto de arrastar. Ver `.pof-rail` no design de referência.
+.pof-rail {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(160, 176, 139, .5) transparent;
+}
+
+.pof-rail::-webkit-scrollbar {
+  height: 3px;
+}
+
+.pof-rail::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pof-rail::-webkit-scrollbar-thumb {
+  background: rgba(160, 176, 139, .5);
+  border-radius: 999px;
+}
+
+.pof-rail-wrap {
+  position: relative;
+}
+
+.pof-rail-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(160, 176, 139, .6);
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(43, 25, 25, .1);
+  z-index: 2;
+}
+
+.pof-rail-btn.esquerda {
+  left: -18px;
+}
+
+.pof-rail-btn.direita {
+  right: -18px;
+}
+
+@media (max-width: 640px) {
+  .pof-rail-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .pof-rail-btn.esquerda {
+    left: 2px;
+  }
+
+  .pof-rail-btn.direita {
+    right: 2px;
+  }
+}
+
 // Campos de formulário — rótulo fora, sem caixa, borda inferior sálvia
 .pof-field {
   display: flex;

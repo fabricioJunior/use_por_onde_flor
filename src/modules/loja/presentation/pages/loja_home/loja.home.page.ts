@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, signal } from "@angular/core";
+import { Component, ElementRef, OnInit, signal, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { LojaDataSource } from "../../../data/loja.data.source";
@@ -32,6 +32,8 @@ const DEBOUNCE_BUSCA_MS = 400;
     styleUrl: './loja.home.page.css',
 })
 export class LojaHomePage implements OnInit {
+    @ViewChild('categoriasRail') categoriasRail?: ElementRef<HTMLElement>;
+
     categorias = signal<CategoriaDto[]>([]);
     skeletonItems = Array.from({ length: 8 });
 
@@ -145,6 +147,10 @@ export class LojaHomePage implements OnInit {
             this.loading.set(true);
             this.carregarPagina(1);
         }, DEBOUNCE_BUSCA_MS);
+    }
+
+    rolarCategorias(direcao: 1 | -1): void {
+        this.categoriasRail?.nativeElement.scrollBy({ left: direcao * 180, behavior: 'smooth' });
     }
 
     async atualizarContagemCarrinho(): Promise<void> {

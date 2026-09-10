@@ -67,17 +67,18 @@
     color: var(--brand-primary-hover);
 }
 
+.categoria-chips-wrap {
+    max-width: var(--container-max);
+    padding: 0 var(--container-padding);
+}
+
 .categoria-chips {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
+    scroll-behavior: smooth;
     gap: var(--space-2);
-    padding: var(--space-4) var(--container-padding);
-    scrollbar-width: none;
-}
-
-.categoria-chips::-webkit-scrollbar {
-    display: none;
+    padding: var(--space-4) 0;
 }
 
 .categoria-chip {

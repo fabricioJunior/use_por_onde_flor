@@ -1,5 +1,24 @@
 <section class="loja-hero" id="pof-hero">
-    <div class="loja-hero-fundo"></div>
+    <div class="loja-hero-fundo">
+        @for (banner of banners; track banner.id; let i = $index) {
+        <div class="loja-hero-banner" [style.opacity]="i === bannerIndex() ? 1 : 0"
+            [style.z-index]="i === bannerIndex() ? 1 : 0">
+            @if (banner.type === 'Vídeo') {
+            <video [src]="banner.url" autoplay muted loop playsinline></video>
+            } @else {
+            <img [src]="banner.url" alt="">
+            }
+        </div>
+        }
+    </div>
+    @if (banners.length > 1) {
+    <div class="loja-hero-dots" aria-hidden="true">
+        @for (banner of banners; track banner.id; let i = $index) {
+        <button type="button" class="loja-hero-dot" [class.ativo]="i === bannerIndex()"
+            (click)="selecionarBanner(i)" [attr.aria-label]="'Ver banner ' + (i + 1)"></button>
+        }
+    </div>
+    }
     <div class="loja-hero-painel" id="pof-panel" aria-hidden="true"></div>
 
     <app-traco id="pof-caminhos" class="loja-hero-traco-salvia" d="M -2 88 C 10 84 16 72 30 68 C 42 64.5 50 70 58 66"

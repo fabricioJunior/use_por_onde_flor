@@ -19,23 +19,6 @@
     box-sizing: border-box;
 }
 
-/* Máscara só do traço — não pode ser o header inteiro, senão o dropdown
-   de conta (que renderiza abaixo do header) fica cortado junto. */
-.loja-header-traco-mask {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    z-index: 0;
-    pointer-events: none;
-}
-
-.loja-header-traco {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-}
-
 .loja-logo-wrap {
     position: relative;
     z-index: 1;
