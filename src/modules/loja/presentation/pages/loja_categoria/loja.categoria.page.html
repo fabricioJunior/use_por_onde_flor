@@ -33,11 +33,17 @@
     </header>
     }
 
-    <div class="categoria-chips">
-        @for (item of categorias(); track item.id) {
-        <a class="categoria-chip" [class.ativo]="item.id === categoria()?.id"
-            [routerLink]="['/loja/categoria', item.id]">{{ item.nome }}</a>
-        }
+    <div class="pof-rail-wrap categoria-chips-wrap">
+        <div class="categoria-chips pof-rail" #chipsRail>
+            @for (item of categorias(); track item.id) {
+            <a class="categoria-chip" [class.ativo]="item.id === categoria()?.id"
+                [routerLink]="['/loja/categoria', item.id]">{{ item.nome }}</a>
+            }
+        </div>
+        <button type="button" class="pof-rail-btn esquerda" aria-label="Categorias anteriores"
+            (click)="rolarChips(-1)">‹</button>
+        <button type="button" class="pof-rail-btn direita" aria-label="Próximas categorias"
+            (click)="rolarChips(1)">›</button>
     </div>
 
     <main class="categoria-content">

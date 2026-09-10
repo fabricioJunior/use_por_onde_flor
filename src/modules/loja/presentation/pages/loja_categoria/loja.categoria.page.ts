@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, signal } from "@angular/core";
+import { Component, ElementRef, OnInit, signal, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 import { LojaDataSource } from "../../../data/loja.data.source";
@@ -28,6 +28,8 @@ const LIMITE_POR_PAGINA = 24;
     styleUrl: './loja.categoria.page.css',
 })
 export class LojaCategoriaPage implements OnInit {
+    @ViewChild('chipsRail') chipsRail?: ElementRef<HTMLElement>;
+
     categoria = signal<CategoriaDto | undefined>(undefined);
     categorias = signal<CategoriaDto[]>([]);
     lojaFechada = signal(false);
@@ -117,6 +119,10 @@ export class LojaCategoriaPage implements OnInit {
         } finally {
             this.loading.set(false);
         }
+    }
+
+    rolarChips(direcao: 1 | -1): void {
+        this.chipsRail?.nativeElement.scrollBy({ left: direcao * 180, behavior: 'smooth' });
     }
 
     async atualizarContagemCarrinho(): Promise<void> {
