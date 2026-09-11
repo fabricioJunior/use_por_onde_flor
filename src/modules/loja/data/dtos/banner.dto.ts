@@ -7,4 +7,5 @@ export interface BannerDto {
     url: string;
     ordem: number;
     ativo: boolean;
+    dispositivo: 'desktop' | 'mobile';
 }

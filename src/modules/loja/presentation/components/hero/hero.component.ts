@@ -19,7 +19,12 @@ const BANNER_PADRAO: BannerDto = {
     url: '/imagens/imagem-em-branco.jpg',
     ordem: 0,
     ativo: true,
+    dispositivo: 'desktop',
 };
+
+// Mesmo breakpoint do CSS (media max-width: 760px) -- abaixo disso o hero troca
+// pro layout mobile, então os banners também precisam trocar.
+const BREAKPOINT_MOBILE = '(max-width: 760px)';
 
 // Porta Angular de `desing system/ui_kits/site/Hero.jsx`.
 @Component({
@@ -38,18 +43,33 @@ export class HeroComponent implements OnInit, OnDestroy {
 
     constructor(private bannerDataSource: BannerDataSource) {}
 
+    private todosBanners: BannerDto[] = [];
+
     ngOnInit(): void {
         this.bannerDataSource.listar().subscribe({
             next: (banners) => {
                 if (banners.length > 0) {
-                    this.banners = banners;
-                    this.bannerIndex.set(0);
+                    this.todosBanners = banners;
+                    this.aplicarBannersPorDispositivo();
                 }
                 this.reiniciarAutoplay();
             },
             // Falha de rede não pode derrubar o hero -- mantém o fallback estático.
             error: () => this.reiniciarAutoplay(),
         });
+    }
+
+    // Loja pode não ter cadastrado banner mobile ainda -- cai pro desktop nesse
+    // caso, em vez de mostrar hero vazio.
+    private aplicarBannersPorDispositivo(): void {
+        const mobile = window.matchMedia(BREAKPOINT_MOBILE).matches;
+        const doDispositivo = this.todosBanners.filter(
+            (b) => b.dispositivo === (mobile ? 'mobile' : 'desktop'),
+        );
+        this.banners = doDispositivo.length > 0
+            ? doDispositivo
+            : this.todosBanners.filter((b) => b.dispositivo === 'desktop');
+        this.bannerIndex.set(0);
     }
 
     ngOnDestroy(): void {
