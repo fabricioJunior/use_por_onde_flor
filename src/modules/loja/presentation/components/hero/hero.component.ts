@@ -45,30 +45,62 @@ export class HeroComponent implements OnInit, OnDestroy {
 
     private todosBanners: BannerDto[] = [];
 
+    // Índice que estava ativo antes da troca atual. Ele só começa a sumir
+    // (opacity 1->0) DEPOIS que o novo banner já terminou de aparecer (ver
+    // `transition-delay` no template) -- se os dois animassem opacity ao mesmo
+    // tempo, no meio da transição ambos ficam semitransparentes e o fundo verde
+    // de `.loja-hero-fundo` vaza como uma faixa atrás dos dois.
+    bannerIndexAnterior = signal<number | null>(null);
+
     ngOnInit(): void {
         this.bannerDataSource.listar().subscribe({
             next: (banners) => {
-                if (banners.length > 0) {
-                    this.todosBanners = banners;
-                    this.aplicarBannersPorDispositivo();
+                if (banners.length === 0) {
+                    this.reiniciarAutoplay();
+                    return;
                 }
-                this.reiniciarAutoplay();
+                this.todosBanners = banners;
+                const primeiro = this.bannersDoDispositivoAtual()[0];
+                // Só troca o array (e derruba o placeholder atual) depois que a
+                // imagem real já baixou -- senão o placeholder some e o fundo
+                // verde fica exposto até o banner real terminar de carregar.
+                const aguardarPrimeiro = primeiro && primeiro.type !== 'Vídeo'
+                    ? this.precarregarImagem(primeiro.url)
+                    : Promise.resolve();
+                aguardarPrimeiro.finally(() => {
+                    this.aplicarBannersPorDispositivo();
+                    this.reiniciarAutoplay();
+                });
             },
             // Falha de rede não pode derrubar o hero -- mantém o fallback estático.
             error: () => this.reiniciarAutoplay(),
         });
     }
 
+    private precarregarImagem(url: string): Promise<void> {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+            img.src = url;
+        });
+    }
+
     // Loja pode não ter cadastrado banner mobile ainda -- cai pro desktop nesse
     // caso, em vez de mostrar hero vazio.
-    private aplicarBannersPorDispositivo(): void {
+    private bannersDoDispositivoAtual(): BannerDto[] {
         const mobile = window.matchMedia(BREAKPOINT_MOBILE).matches;
         const doDispositivo = this.todosBanners.filter(
             (b) => b.dispositivo === (mobile ? 'mobile' : 'desktop'),
         );
-        this.banners = doDispositivo.length > 0
+        return doDispositivo.length > 0
             ? doDispositivo
             : this.todosBanners.filter((b) => b.dispositivo === 'desktop');
+    }
+
+    private aplicarBannersPorDispositivo(): void {
+        this.banners = this.bannersDoDispositivoAtual();
+        this.bannerIndexAnterior.set(null);
         this.bannerIndex.set(0);
     }
 
@@ -77,6 +109,8 @@ export class HeroComponent implements OnInit, OnDestroy {
     }
 
     selecionarBanner(indice: number): void {
+        if (indice === this.bannerIndex()) return;
+        this.bannerIndexAnterior.set(this.bannerIndex());
         this.bannerIndex.set(indice);
     }
 
@@ -84,7 +118,10 @@ export class HeroComponent implements OnInit, OnDestroy {
         clearInterval(this.timer);
         if (this.banners.length < 2) return;
         this.timer = setInterval(() => {
-            this.bannerIndex.update((i) => (i + 1) % this.banners.length);
+            this.bannerIndex.update((i) => {
+                this.bannerIndexAnterior.set(i);
+                return (i + 1) % this.banners.length;
+            });
         }, TROCA_AUTOMATICA_MS);
     }
 }

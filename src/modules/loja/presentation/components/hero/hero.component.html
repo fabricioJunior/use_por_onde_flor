@@ -2,6 +2,7 @@
     <div class="loja-hero-fundo">
         @for (banner of banners; track banner.id; let i = $index) {
         <div class="loja-hero-banner" [style.opacity]="i === bannerIndex() ? 1 : 0"
+            [style.transition-delay]="i === bannerIndexAnterior() ? '.6s' : '0s'"
             [style.z-index]="i === bannerIndex() ? 1 : 0">
             @if (banner.type === 'Vídeo') {
             <video [src]="banner.url" autoplay muted loop playsinline></video>
