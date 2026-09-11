@@ -9,12 +9,14 @@ import { BannerDto } from "../../../data/dtos/banner.dto";
 const TROCA_AUTOMATICA_MS = 5500;
 
 // Fallback estático -- exibido só se a API não retornar nenhum banner ativo pro
-// e-commerce (ex: loja recém-criada, nenhum banner cadastrado ainda).
+// e-commerce (ex: loja recém-criada, nenhum banner cadastrado ainda). Imagem em
+// branco de propósito: imagem-principal.jpg era uma campanha específica, não faz
+// sentido reaparecer como "padrão" genérico pra lojas sem banner configurado.
 const BANNER_PADRAO: BannerDto = {
     id: 0,
     ecommerceId: 0,
     type: 'Imagem',
-    url: '/imagens/imagem-principal.jpg',
+    url: '/imagens/imagem-em-branco.jpg',
     ordem: 0,
     ativo: true,
 };
