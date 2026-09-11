@@ -9,7 +9,7 @@
     "pretest": "npm run generate:env",
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration $( [ \"$VERCEL_ENV\" = \"preview\" -o \"$VERCEL_ENV\" = \"development\" ] && echo development || echo production )",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:use_por_onde_flor": "node dist/use_por_onde_flor/server/server.mjs"
