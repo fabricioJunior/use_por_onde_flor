@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, OnInit, signal, ViewChild } from "@angular/core";
+import { Component, DestroyRef, ElementRef, OnInit, inject, signal, ViewChild } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 import { LojaDataSource } from "../../../data/loja.data.source";
@@ -41,6 +42,7 @@ export class LojaCategoriaPage implements OnInit {
     private mapaPromocoesPorReferencia = new Map<number, PromocaoDto>();
     private promocoesGerais: PromocaoDto[] = [];
     private nomesFormaPagamento = new Map<number, string>();
+    private destroyRef = inject(DestroyRef);
 
     constructor(
         private route: ActivatedRoute,
@@ -52,9 +54,26 @@ export class LojaCategoriaPage implements OnInit {
         private toastService: ToastService,
     ) { }
 
-    async ngOnInit(): Promise<void> {
-        this.categoriaId = Number(this.route.snapshot.paramMap.get('id'));
-        await Promise.all([this.carregarCategoria(), this.carregarCategorias()]);
+    ngOnInit(): void {
+        this.categorias.set([]);
+        this.carregarCategorias();
+
+        // Clicar num chip da própria tela navega pra `/loja/categoria/:id` com
+        // outro id -- o Angular reaproveita esta mesma instância (só o param
+        // muda), então `ngOnInit` não roda de novo. Sem isso, o :id ficava
+        // travado no primeiro valor e os chips pareciam não fazer nada.
+        this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+            this.categoriaId = Number(params.get('id'));
+            this.carregarDadosDaCategoria();
+        });
+    }
+
+    private async carregarDadosDaCategoria(): Promise<void> {
+        this.loading.set(true);
+        this.lojaFechada.set(false);
+        this.referencias.set([]);
+
+        await this.carregarCategoria();
         await this.atualizarContagemCarrinho();
 
         // Falha ao consultar o status não pode travar a loja -- segue como se estivesse aberta.
