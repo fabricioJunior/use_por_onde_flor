@@ -49,6 +49,11 @@
     font-weight: 500;
 }
 
+.pedido-item-entrega {
+    color: var(--text-support);
+    font-weight: 500;
+}
+
 .pedido-item-data {
     font: var(--text-body-sm);
     color: var(--text-support);
