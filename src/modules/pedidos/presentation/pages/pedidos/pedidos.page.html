@@ -19,6 +19,8 @@
                     {{ situacaoLabel(pedido.situacao) }}
                     @if (foiEntregue(pedido)) {
                     <span class="pedido-item-entregue">· Entregue</span>
+                    } @else if (situacaoEntregaLabel(pedido)) {
+                    <span class="pedido-item-entrega">· {{ situacaoEntregaLabel(pedido) }}</span>
                     }
                 </span>
                 <span class="pedido-item-data">{{ pedido.data | date:'dd/MM/yyyy HH:mm' }}</span>
