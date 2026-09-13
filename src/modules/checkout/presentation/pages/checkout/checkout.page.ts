@@ -125,6 +125,10 @@ export class CheckoutPage implements OnInit, OnDestroy {
     clienteForm: ReturnType<FormBuilder['group']>;
     enderecoForm: ReturnType<FormBuilder['group']>;
 
+    // Integração de frete fora do ar (2026-09-13) -- desativa "Receber em casa" até voltar.
+    // Reverter pra true assim que a integração normalizar.
+    entregaDisponivel = false;
+
     modalidadeEntrega = signal<ModalidadeEntregaPedido>('retirada');
 
     formasPagamento = signal<{ formaDePagamentoId: number; descricao: string; provider?: string }[]>([]);
