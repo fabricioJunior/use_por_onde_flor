@@ -130,6 +130,18 @@ export class CheckoutPage implements OnInit, OnDestroy {
     entregaDisponivel = false;
 
     modalidadeEntrega = signal<ModalidadeEntregaPedido>('retirada');
+    // Exibido abaixo do seletor de modalidade quando "Retirar na loja" está selecionado (ver
+    // apollo-api EcommerceService.findBrandingPublico).
+    enderecoLoja = signal<{ logradouro?: string; numero?: string; bairro?: string; municipio?: string; uf?: string; cep?: string } | null>(null);
+    enderecoLojaFormatado = computed(() => {
+        const e = this.enderecoLoja();
+        if (!e) {
+            return '';
+        }
+        const linha1 = [e.logradouro, e.numero].filter(Boolean).join(', ');
+        const linha2 = [e.bairro, e.municipio && e.uf ? `${e.municipio}/${e.uf}` : e.municipio].filter(Boolean).join(' - ');
+        return [linha1, linha2].filter(Boolean).join(' - ');
+    });
 
     formasPagamento = signal<{ formaDePagamentoId: number; descricao: string; provider?: string }[]>([]);
     formaPagamentoSelecionadaId = signal<number | null>(null);
@@ -266,6 +278,14 @@ export class CheckoutPage implements OnInit, OnDestroy {
             } catch (formaPagamentoError) {
                 console.error('Erro ao consultar formas de pagamento', formaPagamentoError);
                 this.formasPagamento.set([]);
+            }
+
+            try {
+                const branding = await firstValueFrom(this.lojaDataSource.branding());
+                this.enderecoLoja.set(branding.endereco ?? null);
+            } catch (brandingError) {
+                console.error('Erro ao consultar endereço da loja', brandingError);
+                this.enderecoLoja.set(null);
             }
 
             if (this.autenticado) {

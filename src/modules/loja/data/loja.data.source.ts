@@ -108,6 +108,29 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
         });
     }
 
+    // Título/logo/banner e endereço da loja -- endereço é usado no checkout quando o cliente
+    // escolhe "retirar na loja" (ver apollo-api EcommerceService.findBrandingPublico).
+    branding(): Observable<{
+        titulo?: string;
+        subtitulo?: string;
+        descricao?: string;
+        icone?: string;
+        bannerImagem?: string;
+        endereco: {
+            logradouro?: string;
+            numero?: string;
+            bairro?: string;
+            municipio?: string;
+            uf?: string;
+            cep?: string;
+        };
+    }> {
+        return this.get({
+            pathArguments: this.ecommerceArgs(),
+            path: '/branding',
+        });
+    }
+
     // "Avise-me quando voltar ao estoque" (produto esgotado/em pagamento no checkout).
     avisarDisponibilidade(dto: { produtoId: number; ecommerceReferenciaId?: number; email: string }): Observable<void> {
         return this.post({
