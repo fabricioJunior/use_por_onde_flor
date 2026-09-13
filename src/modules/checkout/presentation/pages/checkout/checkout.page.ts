@@ -524,6 +524,18 @@ export class CheckoutPage implements OnInit, OnDestroy {
         const popupReservado = typeof window !== 'undefined' && !ehPix
             ? window.open('', 'pagamento', 'width=480,height=760')
             : null;
+        // about:blank fica em branco até navegarmos pra urlDePagamento (InfinityPay demora pra
+        // responder) -- escreve uma tela de loading na popup enquanto isso, em vez de deixar o
+        // cliente vendo branco achando que travou.
+        popupReservado?.document.write(
+            '<!doctype html><html><head><meta charset="utf-8"><title>Processando pagamento</title>' +
+            '<style>body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;' +
+            'font-family:system-ui,-apple-system,sans-serif;background:#fafafa;color:#333}' +
+            '.spinner{width:32px;height:32px;border:3px solid #ddd;border-top-color:#333;border-radius:50%;' +
+            'animation:spin 0.8s linear infinite;margin-right:12px}' +
+            '@keyframes spin{to{transform:rotate(360deg)}}</style></head>' +
+            '<body><div class="spinner"></div><p>Processando seu pagamento…</p></body></html>',
+        );
 
         try {
             let enderecoEntregaId: number | undefined;
