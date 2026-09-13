@@ -106,6 +106,10 @@
                 <p class="checkout-aviso">Entrega temporariamente indisponível. Só retirada na loja no momento.</p>
                 }
 
+                @if (modalidadeEntrega() === 'retirada' && enderecoLojaFormatado()) {
+                <p class="checkout-aviso">Endereço para retirada: {{ enderecoLojaFormatado() }}</p>
+                }
+
                 @if (modalidadeEntrega() === 'entrega') {
                 @if (autenticado && enderecos().length > 0 && !mostrarNovoEndereco()) {
                 <div class="checkout-enderecos">
