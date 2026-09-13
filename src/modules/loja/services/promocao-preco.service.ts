@@ -127,6 +127,48 @@ export class PromocaoPrecoService {
         return promocoes.reduce((melhor, atual) => (this.calcular(atual, valorBase) < this.calcular(melhor, valorBase) ? atual : melhor));
     }
 
+    // faixa_quantidade: desconto depende da soma de quantidade por referenciaId no carrinho INTEIRO
+    // (mesma regra do backend, ver DescontoElegibilidadeService/EcommerceCheckoutService) -- só faz
+    // sentido calcular aqui, onde a quantidade é conhecida (nunca no catálogo, ver PromocaoDto).
+    // Acha a MAIOR faixa que a soma do grupo atinge e aplica o mesmo preço/desconto em TODAS as
+    // unidades do grupo, sem escalonar.
+    calcularFaixaParaCarrinho(
+        itens: { referenciaId: number; valor: number; quantidade: number }[],
+        promocoesFaixa: PromocaoDto[],
+    ): Map<number, { promocao: PromocaoDto; valorFinal: number }> {
+        const resultado = new Map<number, { promocao: PromocaoDto; valorFinal: number }>();
+
+        for (const promocao of promocoesFaixa) {
+            const escopo = promocao.referenciaIds?.length ? new Set(promocao.referenciaIds) : null;
+            const grupo = escopo ? itens.filter((i) => escopo.has(i.referenciaId)) : itens;
+            const somaQuantidade = grupo.reduce((acc, i) => acc + i.quantidade, 0);
+
+            const faixaAplicavel = [...(promocao.faixas ?? [])]
+                .sort((a, b) => b.quantidadeMinima - a.quantidadeMinima)
+                .find((f) => somaQuantidade >= f.quantidadeMinima);
+
+            if (!faixaAplicavel) {
+                continue;
+            }
+
+            for (const item of grupo) {
+                const promocaoComFaixa: PromocaoDto = {
+                    ...promocao,
+                    valorPercentual: promocao.tipoDesconto === 'percentual' ? faixaAplicavel.valorDesconto : undefined,
+                    valorFixo: promocao.tipoDesconto === 'valor_fixo' ? faixaAplicavel.valorDesconto : undefined,
+                    precoFixo: promocao.tipoDesconto === 'preco_fixo' ? faixaAplicavel.valorDesconto : undefined,
+                };
+                const valorFinal = this.calcular(promocaoComFaixa, item.valor);
+                const atual = resultado.get(item.referenciaId);
+                if (!atual || valorFinal < atual.valorFinal) {
+                    resultado.set(item.referenciaId, { promocao, valorFinal });
+                }
+            }
+        }
+
+        return resultado;
+    }
+
     private calcular(promocao: PromocaoDto, valorBase: number): number {
         if (promocao.tipoDesconto === 'percentual') {
             const bruto = (valorBase * (promocao.valorPercentual ?? 0)) / 100;

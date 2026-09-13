@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { AutenticacaoService } from "../../autenticacao/services/autenticacao.service";
 import { LojaDataSource } from "../../loja/data/loja.data.source";
+import { PromocaoDto } from "../../loja/data/dtos/promocao.dto";
 import { PromocaoPrecoService } from "../../loja/services/promocao-preco.service";
 import { CarrinhoDataSource } from "../data/carrinho.data.source";
 import { CarrinhoStorageService } from "../data/carrinho.storage.service";
@@ -43,14 +44,36 @@ export class CarrinhoFacadeService {
             const resposta = await firstValueFrom(this.lojaDataSource.promocoesAtivas());
             const mapa = this.promocaoPrecoService.montarMapa(resposta.items);
             const gerais = this.promocaoPrecoService.promocoesGerais(resposta.items);
+
+            // faixa_quantidade ("leve N por preço fixo") só é calculável aqui -- carrinho é o único
+            // lugar client-side que conhece a quantidade por referenciaId (catálogo não, ver
+            // PromocaoDto). Soma por referenciaId ANTES de calcular, não por linha (2 linhas da
+            // mesma referência em cores/tamanhos diferentes contam juntas).
+            const promocoesFaixa = resposta.items.filter((p) => p.tipoEscopo === 'faixa_quantidade');
+            const itensParaFaixa = itens
+                .filter((item): item is CarrinhoItemViewDto & { referenciaId: number; valor: number; quantidade: number } =>
+                    item.referenciaId != null && item.valor != null && item.quantidade != null,
+                )
+                .map((item) => ({ referenciaId: item.referenciaId, valor: item.valor, quantidade: item.quantidade }));
+            const mapaFaixa = this.promocaoPrecoService.calcularFaixaParaCarrinho(itensParaFaixa, promocoesFaixa);
+
             return itens.map((item) => {
                 const aplicada = item.referenciaId != null && item.valor != null
                     ? this.promocaoPrecoService.promocaoAplicadaParaReferencia(item.referenciaId, item.valor, mapa, gerais)
                     : null;
+                const daFaixa = item.referenciaId != null ? mapaFaixa.get(item.referenciaId) : undefined;
+
+                // Melhor desconto vence entre geral/referências e faixa_quantidade -- mesmo critério
+                // do backend (EcommerceCheckoutService.montarItensComDesconto).
+                const candidatos = [aplicada, daFaixa].filter((c): c is { promocao: PromocaoDto; valorFinal: number } => c != null);
+                const melhor = candidatos.length
+                    ? candidatos.reduce((a, b) => (b.valorFinal < a.valorFinal ? b : a))
+                    : null;
+
                 return {
                     ...item,
-                    valorPromocional: aplicada?.valorFinal,
-                    promocaoRegras: aplicada?.promocao.regras || undefined,
+                    valorPromocional: melhor?.valorFinal,
+                    promocaoRegras: melhor?.promocao.regras || undefined,
                 };
             });
         } catch (error) {
