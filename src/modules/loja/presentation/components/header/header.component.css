@@ -19,6 +19,29 @@
     box-sizing: border-box;
 }
 
+.loja-menu-categorias {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    flex: 0 0 auto;
+}
+
+.loja-menu-categorias span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 1px;
+}
+
 .loja-logo-wrap {
     position: relative;
     z-index: 1;

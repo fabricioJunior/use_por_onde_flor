@@ -1,5 +1,10 @@
 <header class="loja-header">
     <div class="loja-header-inner">
+        <button type="button" class="loja-menu-categorias" aria-label="Categorias" (click)="abrirCategorias()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
         <div class="loja-logo-wrap">
             <a routerLink="/loja" class="loja-logo-link" aria-label="Por Onde Flor">
                 <app-logo variante="clara" [altura]="36"></app-logo>
@@ -28,4 +33,5 @@
             }
         </div>
     </div>
+    <categorias-drawer [aberto]="categoriasAberto()" (fechar)="fecharCategorias()"></categorias-drawer>
 </header>
