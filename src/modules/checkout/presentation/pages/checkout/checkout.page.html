@@ -97,9 +97,14 @@
                 <div class="checkout-opcoes">
                     <button type="button" class="opcao" [class.ativo]="modalidadeEntrega() === 'retirada'"
                         (click)="selecionarModalidade('retirada')">Retirar na loja</button>
-                    <button type="button" class="opcao" [class.ativo]="modalidadeEntrega() === 'entrega'"
+                    <button type="button" class="opcao" [disabled]="!entregaDisponivel"
+                        [class.ativo]="modalidadeEntrega() === 'entrega'"
+                        [title]="entregaDisponivel ? '' : 'Entrega temporariamente indisponível'"
                         (click)="selecionarModalidade('entrega')">Receber em casa</button>
                 </div>
+                @if (!entregaDisponivel) {
+                <p class="checkout-aviso">Entrega temporariamente indisponível. Só retirada na loja no momento.</p>
+                }
 
                 @if (modalidadeEntrega() === 'entrega') {
                 @if (autenticado && enderecos().length > 0 && !mostrarNovoEndereco()) {
