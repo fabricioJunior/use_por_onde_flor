@@ -11,9 +11,7 @@ export class ReferenciaService {
             this.referenciaDataSource.getMidias(referencia),
         ]);
 
-        const midias = [...midiasDto]
-            .filter((midia) => midia?.url)
-            .sort((a, b) => Number(b.isDefault ?? false) - Number(a.isDefault ?? false));
+        const midias = midiasDto.filter((midia) => midia?.url);
 
         const midiasPublicas = midias.filter((midia) => midia.isPublic !== false);
 
