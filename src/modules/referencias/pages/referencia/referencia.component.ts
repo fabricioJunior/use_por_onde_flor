@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { CommonModule, ViewportScroller } from "@angular/common";
 import { ChangeDetectionStrategy, Component, OnInit, signal } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { MatIconModule } from "@angular/material/icon";
@@ -25,9 +25,12 @@ export class ReferenciaComponent implements OnInit {
     private touchStartX: number | null = null;
     private readonly swipeThreshold = 40;
 
+    private static readonly MOBILE_BREAKPOINT = 900;
+
     constructor(
         private route: ActivatedRoute,
         private referenciaService: ReferenciaService,
+        private viewportScroller: ViewportScroller,
     ) { }
 
     ngOnInit(): void {
@@ -64,7 +67,16 @@ export class ReferenciaComponent implements OnInit {
             this.errorMessage.set('Não foi possível carregar esta referência no momento.');
         } finally {
             this.loading.set(false);
+            this.scrollParaTopoNoMobile();
         }
+    }
+
+    private scrollParaTopoNoMobile() {
+        if (typeof window === 'undefined' || window.innerWidth >= ReferenciaComponent.MOBILE_BREAKPOINT) {
+            return;
+        }
+
+        this.viewportScroller.scrollToPosition([0, 0]);
     }
 
     selecionarMidia(midia: ReferenciaMidiaDto) {
