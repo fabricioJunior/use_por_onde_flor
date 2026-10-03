@@ -11,6 +11,7 @@ import { PedidoDetalheDto } from "../../../data/dto/pedido-detalhe.dto";
 import { ToastService } from "../../../../loja/presentation/components/ui/toast/toast.service";
 import { pedidoFoiEntregue, situacaoPedidoLabel } from "../../../utils/pedido-situacao.util";
 import { descricaoVariacao } from "../../../../loja/presentation/utils/variacao-apresentacao.util";
+import { MetaPixelService } from "../../../../core/meta-pixel/meta-pixel.service";
 
 @Component({
     selector: 'pedido-detalhe-page',
@@ -36,6 +37,7 @@ export class PedidoDetalhePage implements OnInit {
         private pedidosService: PedidosService,
         private autenticacaoService: AutenticacaoService,
         private toastService: ToastService,
+        private metaPixel: MetaPixelService,
     ) { }
 
     async ngOnInit(): Promise<void> {
@@ -53,6 +55,12 @@ export class PedidoDetalhePage implements OnInit {
                     ? await this.pedidosService.buscarPublico(id, token)
                     : await this.pedidosService.buscar(id),
             );
+
+            // Purchase do Pixel só no retorno do pagamento (?pago=1) E se o backend confirmar o pagamento: o
+            // evento usa o mesmo event_id do envio server-side (deduplicação). A URL sozinha não prova venda.
+            if (this.pagamentoConcluido() && token) {
+                void this.metaPixel.purchaseDoPedido(id, token);
+            }
         } catch (error) {
             if (error instanceof HttpErrorResponse && error.status === 404) {
                 this.naoEncontrado.set(true);

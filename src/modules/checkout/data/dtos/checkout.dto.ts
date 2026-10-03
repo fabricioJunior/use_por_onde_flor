@@ -38,6 +38,8 @@ export interface CheckoutRequestDto {
     enderecoEntrega?: CheckoutEnderecoInlineDto;
     freteEscolhido?: OpcaoFreteDto;
     formaDePagamentoId?: number;
+    // Cookies do Pixel da Meta (_fbp/_fbc), só se o Pixel está ativo -- ver MetaPixelService.dadosDeRastreio().
+    rastreio?: { fbp?: string; fbc?: string };
 }
 
 export interface CheckoutCobrancaDto {

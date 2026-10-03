@@ -25,6 +25,7 @@ import { PedidosService } from "../../../../pedidos/services/pedidos.service";
 import { descricaoVariacao } from "../../../../loja/presentation/utils/variacao-apresentacao.util";
 import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
 import { PofLoaderComponent } from "../../../../core/common_components/pof_loader/pof.loader.component";
+import { MetaPixelService } from "../../../../core/meta-pixel/meta-pixel.service";
 
 const CEP_VALIDO = /^\d{5}-?\d{3}$/;
 const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -146,6 +147,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
         private pedidosService: PedidosService,
         private http: HttpClient,
         public router: Router,
+        private metaPixel: MetaPixelService,
     ) {
         this.autenticado = this.autenticacaoService.estaAutenticado();
         if (this.autenticado) {
@@ -247,6 +249,12 @@ export class CheckoutPage implements OnInit, OnDestroy {
             }
 
             this.itens.set(itens);
+
+            // InitiateCheckout: o cliente chegou ao checkout com itens. (Não é compra: Purchase só sai depois
+            // que o backend confirma o pagamento.)
+            void this.metaPixel.initiateCheckout(
+                itens.map((item) => ({ produtoId: item.produtoId!, quantidade: item.quantidade ?? 0, valor: item.valorPromocional ?? item.valor ?? 0 })),
+            );
 
             try {
                 const status = await firstValueFrom(this.lojaDataSource.status());
@@ -547,6 +555,8 @@ export class CheckoutPage implements OnInit, OnDestroy {
                 enderecoEntrega,
                 freteEscolhido: this.freteSelecionado() ?? undefined,
                 formaDePagamentoId: this.formaPagamentoSelecionadaId() ?? undefined,
+                // cookies do Pixel (_fbp/_fbc): ajudam a Meta a casar o Purchase do servidor com o do navegador
+                rastreio: this.metaPixel.dadosDeRastreio(),
             }));
 
             this.carrinhoFacadeService.limparLocal();

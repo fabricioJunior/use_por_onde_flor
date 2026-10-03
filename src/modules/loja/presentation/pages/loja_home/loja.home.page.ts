@@ -17,6 +17,7 @@ import { ButtonComponent } from "../../components/ui/button/button.component";
 import { InputComponent } from "../../components/ui/input/input.component";
 import { TracoComponent } from "../../../../core/common_components/traco/traco.component";
 import { CategoriaDto } from "../../../data/dtos/categoria.dto";
+import { MetaPixelService } from "../../../../core/meta-pixel/meta-pixel.service";
 
 const LIMITE_POR_PAGINA = 24;
 const DEBOUNCE_BUSCA_MS = 400;
@@ -57,6 +58,7 @@ export class LojaHomePage implements OnInit {
         private promocaoPrecoService: PromocaoPrecoService,
         private router: Router,
         private toastService: ToastService,
+        private metaPixel: MetaPixelService,
     ) { }
 
     async ngOnInit(): Promise<void> {
@@ -171,6 +173,7 @@ export class LojaHomePage implements OnInit {
         }
 
         await this.carrinhoFacadeService.adicionar(idsDisponiveis, 1);
+        void this.metaPixel.addToCart([{ produtoId: idsDisponiveis, quantidade: 1, valor: referencia.valor }]);
         await this.atualizarContagemCarrinho();
         this.toastService.show('Produto adicionado à sacola', 'success');
     }
