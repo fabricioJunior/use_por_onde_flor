@@ -8,6 +8,7 @@ import { ReferenciaMidiaPublicaDataSource } from "../../../data/referencia.midia
 import { EcommerceReferenciaDto, EcommerceReferenciaProdutoDto } from "../../../data/dtos/ecommerce-referencia.dto";
 import { ReferenciaMidiaDto } from "../../../../referencias/data/referencia.data.source";
 import { CarrinhoFacadeService } from "../../../../carrinho/services/carrinho.facade.service";
+import { MetaPixelService } from "../../../../core/meta-pixel/meta-pixel.service";
 import { ButtonComponent } from "../../components/ui/button/button.component";
 import { ToastService } from "../../components/ui/toast/toast.service";
 import { corEhClara, corParaHex, normalizarNomeCor } from "../../utils/cor-apresentacao.util";
@@ -181,6 +182,7 @@ export class LojaReferenciaPage implements OnInit {
         private carrinhoFacadeService: CarrinhoFacadeService,
         private toastService: ToastService,
         private promocaoPrecoService: PromocaoPrecoService,
+        private metaPixel: MetaPixelService,
     ) { }
 
     ngOnInit(): void {
@@ -230,6 +232,14 @@ export class LojaReferenciaPage implements OnInit {
             this.rolarThumbParaAtiva();
 
             this.itensNoCarrinho.set(await this.carrinhoFacadeService.contarItens());
+
+            // Variações (cor/tamanho) ainda não escolhidas: product_group = item_group_id da referência no
+            // catálogo Meta (idExterno da referência, senão o id dela -- mesma regra do mapper do backend).
+            this.metaPixel.viewContent({
+                contentIds: [(referencia.idExterno ?? '').trim() || String(referencia.referenciaId)],
+                contentType: 'product_group',
+                value: this.valorPromocional() ?? referencia.valor,
+            });
 
             this.quantidade.set(1);
             const disponiveis = produtos.filter((produto) => this.temEstoque(produto));
@@ -514,6 +524,14 @@ export class LojaReferenciaPage implements OnInit {
         this.adicionando.set(true);
         try {
             await this.carrinhoFacadeService.adicionar(produto.produtoId, this.quantidade());
+            void this.metaPixel.addToCart([
+                {
+                    produtoId: produto.produtoId,
+                    idExterno: produto.idExterno,
+                    quantidade: this.quantidade(),
+                    valor: this.valorPromocional() ?? this.referencia()?.valor ?? 0,
+                },
+            ]);
             this.adicionado.set(true);
             this.itensNoCarrinho.set(await this.carrinhoFacadeService.contarItens());
             this.toastService.show('Produto adicionado à sacola', 'success');

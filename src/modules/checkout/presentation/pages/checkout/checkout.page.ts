@@ -25,6 +25,7 @@ import { PedidosService } from "../../../../pedidos/services/pedidos.service";
 import { descricaoVariacao } from "../../../../loja/presentation/utils/variacao-apresentacao.util";
 import { FilledButtonComponent } from "../../../../core/common_components/filled.button.component";
 import { PofLoaderComponent } from "../../../../core/common_components/pof_loader/pof.loader.component";
+import { MetaPixelService } from "../../../../core/meta-pixel/meta-pixel.service";
 
 const CEP_VALIDO = /^\d{5}-?\d{3}$/;
 const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -130,6 +131,18 @@ export class CheckoutPage implements OnInit, OnDestroy {
     entregaDisponivel = false;
 
     modalidadeEntrega = signal<ModalidadeEntregaPedido>('retirada');
+    // Exibido abaixo do seletor de modalidade quando "Retirar na loja" está selecionado (ver
+    // apollo-api EcommerceService.findBrandingPublico).
+    enderecoLoja = signal<{ logradouro?: string; numero?: string; bairro?: string; municipio?: string; uf?: string; cep?: string } | null>(null);
+    enderecoLojaFormatado = computed(() => {
+        const e = this.enderecoLoja();
+        if (!e) {
+            return '';
+        }
+        const linha1 = [e.logradouro, e.numero].filter(Boolean).join(', ');
+        const linha2 = [e.bairro, e.municipio && e.uf ? `${e.municipio}/${e.uf}` : e.municipio].filter(Boolean).join(' - ');
+        return [linha1, linha2].filter(Boolean).join(' - ');
+    });
 
     formasPagamento = signal<{ formaDePagamentoId: number; descricao: string; provider?: string }[]>([]);
     formaPagamentoSelecionadaId = signal<number | null>(null);
@@ -146,6 +159,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
         private pedidosService: PedidosService,
         private http: HttpClient,
         public router: Router,
+        private metaPixel: MetaPixelService,
     ) {
         this.autenticado = this.autenticacaoService.estaAutenticado();
         if (this.autenticado) {
@@ -248,6 +262,12 @@ export class CheckoutPage implements OnInit, OnDestroy {
 
             this.itens.set(itens);
 
+            // InitiateCheckout: o cliente chegou ao checkout com itens. (Não é compra: Purchase só sai depois
+            // que o backend confirma o pagamento.)
+            void this.metaPixel.initiateCheckout(
+                itens.map((item) => ({ produtoId: item.produtoId!, quantidade: item.quantidade ?? 0, valor: item.valorPromocional ?? item.valor ?? 0 })),
+            );
+
             try {
                 const status = await firstValueFrom(this.lojaDataSource.status());
                 this.lojaFechada.set(!status.aberto);
@@ -266,6 +286,14 @@ export class CheckoutPage implements OnInit, OnDestroy {
             } catch (formaPagamentoError) {
                 console.error('Erro ao consultar formas de pagamento', formaPagamentoError);
                 this.formasPagamento.set([]);
+            }
+
+            try {
+                const branding = await firstValueFrom(this.lojaDataSource.branding());
+                this.enderecoLoja.set(branding.endereco ?? null);
+            } catch (brandingError) {
+                console.error('Erro ao consultar endereço da loja', brandingError);
+                this.enderecoLoja.set(null);
             }
 
             if (this.autenticado) {
@@ -504,6 +532,18 @@ export class CheckoutPage implements OnInit, OnDestroy {
         const popupReservado = typeof window !== 'undefined' && !ehPix
             ? window.open('', 'pagamento', 'width=480,height=760')
             : null;
+        // about:blank fica em branco até navegarmos pra urlDePagamento (InfinityPay demora pra
+        // responder) -- escreve uma tela de loading na popup enquanto isso, em vez de deixar o
+        // cliente vendo branco achando que travou.
+        popupReservado?.document.write(
+            '<!doctype html><html><head><meta charset="utf-8"><title>Processando pagamento</title>' +
+            '<style>body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;' +
+            'font-family:system-ui,-apple-system,sans-serif;background:#fafafa;color:#333}' +
+            '.spinner{width:32px;height:32px;border:3px solid #ddd;border-top-color:#333;border-radius:50%;' +
+            'animation:spin 0.8s linear infinite;margin-right:12px}' +
+            '@keyframes spin{to{transform:rotate(360deg)}}</style></head>' +
+            '<body><div class="spinner"></div><p>Processando seu pagamento…</p></body></html>',
+        );
 
         try {
             let enderecoEntregaId: number | undefined;
@@ -547,6 +587,8 @@ export class CheckoutPage implements OnInit, OnDestroy {
                 enderecoEntrega,
                 freteEscolhido: this.freteSelecionado() ?? undefined,
                 formaDePagamentoId: this.formaPagamentoSelecionadaId() ?? undefined,
+                // cookies do Pixel (_fbp/_fbc): ajudam a Meta a casar o Purchase do servidor com o do navegador
+                rastreio: this.metaPixel.dadosDeRastreio(),
             }));
 
             this.carrinhoFacadeService.limparLocal();

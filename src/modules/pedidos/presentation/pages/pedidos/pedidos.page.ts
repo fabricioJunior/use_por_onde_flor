@@ -6,7 +6,7 @@ import { FooterComponent } from "../../../../loja/presentation/components/footer
 import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
 import { PedidosService } from "../../../services/pedidos.service";
 import { PedidoListaItemDto } from "../../../data/dto/pedidos-lista.dto";
-import { pedidoFoiEntregue, situacaoPedidoLabel } from "../../../utils/pedido-situacao.util";
+import { pedidoFoiEntregue, situacaoEntregaLabel as situacaoEntregaLabelUtil, situacaoPedidoLabel } from "../../../utils/pedido-situacao.util";
 
 const ITENS_POR_PAGINA = 10;
 
@@ -65,5 +65,11 @@ export class PedidosPage implements OnInit {
 
     foiEntregue(pedido: PedidoListaItemDto): boolean {
         return pedidoFoiEntregue(pedido.situacaoEntrega, pedido.retiradoEm);
+    }
+
+    // "Embalado"/"Chamado" -- estados intermediários da entrega, exibidos só até o pedido ser
+    // entregue (depois disso o "· Entregue" do foiEntregue() já cobre).
+    situacaoEntregaLabel(pedido: PedidoListaItemDto): string {
+        return situacaoEntregaLabelUtil(pedido.situacaoEntrega);
     }
 }

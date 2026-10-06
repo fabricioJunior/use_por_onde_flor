@@ -1,0 +1,28 @@
+@if (aberto) {
+<div class="categorias-drawer-backdrop" (click)="fecharDrawer()"></div>
+<aside class="categorias-drawer" role="dialog" aria-label="Categorias">
+    <div class="categorias-drawer-topo">
+        <span>Categorias</span>
+        <button type="button" class="categorias-drawer-fechar" aria-label="Fechar" (click)="fecharDrawer()">✕</button>
+    </div>
+
+    @if (carregando()) {
+    <p class="categorias-drawer-estado">Carregando...</p>
+    } @else if (erro()) {
+    <p class="categorias-drawer-estado">Não foi possível carregar as categorias.</p>
+    } @else if (categorias().length === 0) {
+    <p class="categorias-drawer-estado">Nenhuma categoria disponível.</p>
+    } @else {
+    <nav class="categorias-drawer-lista">
+        @for (categoria of categorias(); track categoria.id) {
+        <a [routerLink]="['/loja/categoria', categoria.id]" (click)="fecharDrawer()">
+            @if (categoria.icone) {
+            <span class="categorias-drawer-icone" [style.background-image]="'url(' + categoria.icone + ')'"></span>
+            }
+            {{ categoria.nome }}
+        </a>
+        }
+    </nav>
+    }
+</aside>
+}
