@@ -1,0 +1,88 @@
+<div class="loja-shell">
+    <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
+
+    @if (naoEncontrada()) {
+    <main class="lista-content">
+        <div class="lista-estado lista-nao-encontrada">
+            <h1>Lista não encontrada</h1>
+            <p>Esta lista não está disponível no momento.</p>
+            <a routerLink="/loja">Voltar para a loja</a>
+        </div>
+    </main>
+    } @else {
+    <header class="lista-header">
+        <nav class="lista-breadcrumb" aria-label="Trilha">
+            <a routerLink="/loja">Loja</a>
+            @if (lista(); as l) {
+            <span aria-hidden="true">/</span>
+            <span>{{ l.nome }}</span>
+            }
+        </nav>
+        @if (lista(); as l) {
+        <div class="lista-header-conteudo">
+            @if (l.icone) {
+            <span class="lista-icone" [style.background-image]="'url(' + l.icone + ')'"></span>
+            }
+            <div>
+                <h1>{{ l.nome }}</h1>
+                @if (l.descricao) {
+                <p>{{ l.descricao }}</p>
+                }
+            </div>
+        </div>
+        }
+    </header>
+
+    <main class="lista-content">
+        @if (lojaFechada()) {
+        <div class="lista-estado">
+            <p>A loja está fechada no momento. Volte mais tarde para conferir as novidades.</p>
+        </div>
+        } @else if (loading()) {
+        <div class="loja-grid">
+            @for (item of skeletonItems; track $index) {
+            <div class="loja-card-skeleton" aria-hidden="true">
+                <div class="loja-card-skeleton-foto pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha curta pof-skeleton"></div>
+            </div>
+            }
+        </div>
+        } @else if (erro()) {
+        <div class="lista-estado">
+            <p>{{ erro() }}</p>
+        </div>
+        } @else if (referencias().length === 0) {
+        <div class="lista-estado">
+            <p>Ainda não há peças nesta lista.</p>
+        </div>
+        } @else {
+        <div class="loja-grid">
+            @for (referencia of referencias(); track referencia.id) {
+            <produto-card [referencia]="referencia" (abrir)="abrirReferencia(referencia)"
+                (adicionar)="adicionarAoCarrinho(referencia)"></produto-card>
+            }
+            @if (carregandoMais()) {
+            @for (item of skeletonItems; track $index) {
+            <div class="loja-card-skeleton" aria-hidden="true">
+                <div class="loja-card-skeleton-foto pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha pof-skeleton"></div>
+                <div class="loja-card-skeleton-linha curta pof-skeleton"></div>
+            </div>
+            }
+            }
+        </div>
+
+        @if (temMaisPaginas()) {
+        <div class="lista-carregar-mais">
+            <ui-button variant="secondary" [disabled]="carregandoMais()" (clicked)="carregarMais()">
+                @if (carregandoMais()) { Carregando... } @else { Ver mais produtos }
+            </ui-button>
+        </div>
+        }
+        }
+    </main>
+    }
+
+    <loja-footer></loja-footer>
+</div>

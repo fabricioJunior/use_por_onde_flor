@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, OnInit, signal, ViewChild } from "@angular/core";
+import { Component, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { LojaDataSource } from "../../../data/loja.data.source";
@@ -15,27 +15,25 @@ import { HeroComponent } from "../../components/hero/hero.component";
 import { FooterComponent } from "../../components/footer/footer.component";
 import { ButtonComponent } from "../../components/ui/button/button.component";
 import { InputComponent } from "../../components/ui/input/input.component";
-import { TracoComponent } from "../../../../core/common_components/traco/traco.component";
-import { CategoriaDto } from "../../../data/dtos/categoria.dto";
+import { VitrineHomeListaDto } from "../../../data/dtos/lista-catalogo.dto";
 import { MetaPixelService } from "../../../../core/meta-pixel/meta-pixel.service";
 
 const LIMITE_POR_PAGINA = 24;
 const DEBOUNCE_BUSCA_MS = 400;
+const LIMITE_VITRINE = 12;
 
 @Component({
     selector: 'loja-home-page',
     standalone: true,
     imports: [
-        CommonModule, FormsModule, RouterLink, ProdutoCardComponent, TracoComponent,
+        CommonModule, FormsModule, RouterLink, ProdutoCardComponent,
         HeaderComponent, HeroComponent, FooterComponent, ButtonComponent, InputComponent,
     ],
     templateUrl: './loja.home.page.html',
     styleUrl: './loja.home.page.css',
 })
 export class LojaHomePage implements OnInit {
-    @ViewChild('categoriasRail') categoriasRail?: ElementRef<HTMLElement>;
-
-    categorias = signal<CategoriaDto[]>([]);
+    listasVitrine = signal<VitrineHomeListaDto[]>([]);
     skeletonItems = Array.from({ length: 8 });
 
     lojaFechada = signal(false);
@@ -62,7 +60,6 @@ export class LojaHomePage implements OnInit {
     ) { }
 
     async ngOnInit(): Promise<void> {
-        await this.carregarCategorias();
         await this.atualizarContagemCarrinho();
 
         // Falha ao consultar o status não pode travar a loja -- segue como se estivesse aberta.
@@ -74,14 +71,21 @@ export class LojaHomePage implements OnInit {
         }
 
         await this.carregarPromocoes();
+        void this.carregarVitrine();
         await this.carregarPagina(1);
     }
 
-    private async carregarCategorias(): Promise<void> {
+    // Falha/vazio não pode derrubar a home -- sem listas, só não renderiza a seção.
+    private async carregarVitrine(): Promise<void> {
         try {
-            this.categorias.set(await firstValueFrom(this.lojaDataSource.listarCategorias()));
+            const listas = await firstValueFrom(this.lojaDataSource.vitrineHome(LIMITE_VITRINE));
+            this.listasVitrine.set(
+                listas
+                    .filter((lista) => lista.referencias?.length)
+                    .map((lista) => ({ ...lista, referencias: this.aplicarPrecosPromocionais(lista.referencias) })),
+            );
         } catch (error) {
-            console.error('Erro ao carregar categorias', error);
+            console.error('Erro ao carregar listas da vitrine', error);
         }
     }
 
@@ -151,8 +155,8 @@ export class LojaHomePage implements OnInit {
         }, DEBOUNCE_BUSCA_MS);
     }
 
-    rolarCategorias(direcao: 1 | -1): void {
-        this.categoriasRail?.nativeElement.scrollBy({ left: direcao * 180, behavior: 'smooth' });
+    rolarLista(fileira: HTMLElement, direcao: 1 | -1): void {
+        fileira.scrollBy({ left: direcao * 240, behavior: 'smooth' });
     }
 
     async atualizarContagemCarrinho(): Promise<void> {

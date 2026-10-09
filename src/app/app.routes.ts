@@ -122,6 +122,10 @@ export const routes: Routes = [
         path: 'loja/categoria/:id', component: LojaCategoriaPage,
     },
     {
+        path: 'loja/lista/:id',
+        loadComponent: () => import('../modules/loja/presentation/pages/loja_lista/loja.lista.page').then(m => m.LojaListaPage),
+    },
+    {
         path: 'carrinho', component: CarrinhoPage,
     },
     {
