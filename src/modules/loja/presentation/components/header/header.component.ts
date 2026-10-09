@@ -5,13 +5,13 @@ import { AutenticacaoService } from "../../../../autenticacao/services/autentica
 import { LocalStorageService } from "../../../../core/local_storage/local-storage.service";
 import { UsuarioDto } from "../../../../autenticacao/data/dto/usuario.dto";
 import { LogoComponent } from "../../../../core/common_components/logo.component";
-import { CategoriasDrawerComponent } from "../categorias_drawer/categorias.drawer.component";
+import { ListasDrawerComponent } from "../listas_drawer/listas.drawer.component";
 
 // Porta Angular de `desing system/ui_kits/site/Header.jsx`.
 @Component({
     selector: 'loja-header',
     standalone: true,
-    imports: [CommonModule, RouterLink, LogoComponent, CategoriasDrawerComponent],
+    imports: [CommonModule, RouterLink, LogoComponent, ListasDrawerComponent],
     templateUrl: './header.component.html',
     styleUrl: './header.component.css',
 })

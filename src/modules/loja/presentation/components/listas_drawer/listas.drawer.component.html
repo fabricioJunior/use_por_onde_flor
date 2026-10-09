@@ -1,0 +1,51 @@
+@if (aberto) {
+<div class="listas-drawer-backdrop" (click)="fecharDrawer()"></div>
+<aside class="listas-drawer" role="dialog" aria-label="Menu">
+    <div class="listas-drawer-topo">
+        <span>Menu</span>
+        <button type="button" class="listas-drawer-fechar" aria-label="Fechar" (click)="fecharDrawer()">✕</button>
+    </div>
+
+    @if (carregando()) {
+    <p class="listas-drawer-estado">Carregando...</p>
+    } @else if (erro()) {
+    <p class="listas-drawer-estado">Não foi possível carregar o menu.</p>
+    } @else if (itens().length === 0) {
+    <p class="listas-drawer-estado">Nenhuma lista disponível.</p>
+    } @else {
+    <nav class="listas-drawer-lista">
+        @for (item of itens(); track item.tipo + item.id) {
+        @if (item.tipo === 'grupo') {
+        <button type="button" class="listas-drawer-item listas-drawer-grupo" [attr.aria-expanded]="gruposAbertos().has(item.id)"
+            [attr.aria-controls]="'grupo-' + item.id" (click)="alternarGrupo(item.id)">
+            @if (item.icone) {
+            <span class="listas-drawer-icone" [style.background-image]="'url(' + item.icone + ')'"></span>
+            }
+            <span class="listas-drawer-nome">{{ item.nome }}</span>
+            <span class="listas-drawer-seta" [class.aberta]="gruposAbertos().has(item.id)" aria-hidden="true">›</span>
+        </button>
+        @if (gruposAbertos().has(item.id)) {
+        <div class="listas-drawer-sub" [id]="'grupo-' + item.id">
+            @for (lista of item.listas; track lista.id) {
+            <a class="listas-drawer-item" [routerLink]="['/loja/lista', lista.id]" (click)="fecharDrawer()">
+                @if (lista.icone) {
+                <span class="listas-drawer-icone" [style.background-image]="'url(' + lista.icone + ')'"></span>
+                }
+                {{ lista.nome }}
+            </a>
+            }
+        </div>
+        }
+        } @else {
+        <a class="listas-drawer-item" [routerLink]="['/loja/lista', item.id]" (click)="fecharDrawer()">
+            @if (item.icone) {
+            <span class="listas-drawer-icone" [style.background-image]="'url(' + item.icone + ')'"></span>
+            }
+            {{ item.nome }}
+        </a>
+        }
+        }
+    </nav>
+    }
+</aside>
+}
