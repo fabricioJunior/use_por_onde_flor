@@ -1,42 +1,42 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Router, RouterLink } from "@angular/router";
+import { Component, DestroyRef, OnInit, inject, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { HttpErrorResponse } from "@angular/common/http";
+import { firstValueFrom } from "rxjs";
 import { LojaDataSource } from "../../../data/loja.data.source";
 import { EcommerceReferenciaDto } from "../../../data/dtos/ecommerce-referencia.dto";
+import { ListaCatalogoDetalheDto } from "../../../data/dtos/lista-catalogo.dto";
 import { PromocaoDto } from "../../../data/dtos/promocao.dto";
 import { PromocaoPrecoService } from "../../../services/promocao-preco.service";
 import { ProdutoCardComponent } from "../../components/produto_card/produto.card.component";
 import { CarrinhoFacadeService } from "../../../../carrinho/services/carrinho.facade.service";
-import { firstValueFrom } from "rxjs";
 import { ToastService } from "../../components/ui/toast/toast.service";
 import { HeaderComponent } from "../../components/header/header.component";
-import { HeroComponent } from "../../components/hero/hero.component";
 import { FooterComponent } from "../../components/footer/footer.component";
 import { ButtonComponent } from "../../components/ui/button/button.component";
 import { InputComponent } from "../../components/ui/input/input.component";
-import { VitrineHomeListaDto } from "../../../data/dtos/lista-catalogo.dto";
 import { MetaPixelService } from "../../../../core/meta-pixel/meta-pixel.service";
 
 const LIMITE_POR_PAGINA = 24;
 const DEBOUNCE_BUSCA_MS = 400;
-const LIMITE_VITRINE = 12;
 
+// Página de uma lista do catálogo (/loja/lista/:id). Cabeçalho vem do detalhe público da lista;
+// se o detalhe falhar (≠404), mostra só os produtos.
 @Component({
-    selector: 'loja-home-page',
+    selector: 'loja-lista-page',
     standalone: true,
-    imports: [
-        CommonModule, FormsModule, RouterLink, ProdutoCardComponent,
-        HeaderComponent, HeroComponent, FooterComponent, ButtonComponent, InputComponent,
-    ],
-    templateUrl: './loja.home.page.html',
-    styleUrl: './loja.home.page.css',
+    imports: [CommonModule, FormsModule, RouterLink, ProdutoCardComponent, InputComponent, HeaderComponent, FooterComponent, ButtonComponent],
+    templateUrl: './loja.lista.page.html',
+    styleUrl: './loja.lista.page.css',
 })
-export class LojaHomePage implements OnInit {
-    listasVitrine = signal<VitrineHomeListaDto[]>([]);
+export class LojaListaPage implements OnInit {
     skeletonItems = Array.from({ length: 8 });
 
+    lista = signal<ListaCatalogoDetalheDto | undefined>(undefined);
     lojaFechada = signal(false);
+    naoEncontrada = signal(false);
     loading = signal(true);
     carregandoMais = signal(false);
     erro = signal('');
@@ -44,23 +44,43 @@ export class LojaHomePage implements OnInit {
     temMaisPaginas = signal(false);
     itensNoCarrinho = signal(0);
     busca = signal('');
-    private paginaAtual = 1;
     private buscaDebounce?: ReturnType<typeof setTimeout>;
+
+    private listaId = '';
+    private paginaAtual = 1;
     private mapaPromocoesPorReferencia = new Map<number, PromocaoDto>();
     private promocoesGerais: PromocaoDto[] = [];
     private nomesFormaPagamento = new Map<number, string>();
+    private destroyRef = inject(DestroyRef);
 
     constructor(
+        private route: ActivatedRoute,
+        private router: Router,
         private lojaDataSource: LojaDataSource,
         private carrinhoFacadeService: CarrinhoFacadeService,
         private promocaoPrecoService: PromocaoPrecoService,
-        private router: Router,
         private toastService: ToastService,
         private metaPixel: MetaPixelService,
     ) { }
 
-    async ngOnInit(): Promise<void> {
-        await this.atualizarContagemCarrinho();
+    ngOnInit(): void {
+        // Navegar entre listas pelo drawer reaproveita esta instância (só o param muda).
+        this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+            this.listaId = params.get('id') ?? '';
+            void this.carregarTudo();
+        });
+    }
+
+    private async carregarTudo(): Promise<void> {
+        this.loading.set(true);
+        this.lojaFechada.set(false);
+        this.naoEncontrada.set(false);
+        this.erro.set('');
+        this.referencias.set([]);
+        this.lista.set(undefined);
+        this.busca.set('');
+
+        this.itensNoCarrinho.set(await this.carrinhoFacadeService.contarItens());
 
         // Falha ao consultar o status não pode travar a loja -- segue como se estivesse aberta.
         const status = await firstValueFrom(this.lojaDataSource.status()).catch(() => ({ aberto: true }));
@@ -70,22 +90,19 @@ export class LojaHomePage implements OnInit {
             return;
         }
 
-        await this.carregarPromocoes();
-        void this.carregarVitrine();
+        await Promise.all([this.carregarCabecalho(), this.carregarPromocoes()]);
         await this.carregarPagina(1);
     }
 
-    // Falha/vazio não pode derrubar a home -- sem listas, só não renderiza a seção.
-    private async carregarVitrine(): Promise<void> {
+    private async carregarCabecalho(): Promise<void> {
         try {
-            const listas = await firstValueFrom(this.lojaDataSource.vitrineHome(LIMITE_VITRINE));
-            this.listasVitrine.set(
-                listas
-                    .filter((lista) => lista.referencias?.length)
-                    .map((lista) => ({ ...lista, referencias: this.aplicarPrecosPromocionais(lista.referencias) })),
-            );
+            this.lista.set(await firstValueFrom(this.lojaDataSource.detalheLista(this.listaId)));
         } catch (error) {
-            console.error('Erro ao carregar listas da vitrine', error);
+            if (error instanceof HttpErrorResponse && error.status === 404) {
+                this.naoEncontrada.set(true);
+            } else {
+                console.error('Erro ao carregar cabeçalho da lista', error);
+            }
         }
     }
 
@@ -104,46 +121,35 @@ export class LojaHomePage implements OnInit {
         }
     }
 
-    private aplicarPrecosPromocionais(referencias: EcommerceReferenciaDto[]): EcommerceReferenciaDto[] {
-        return referencias.map((referencia) => ({
-            ...referencia,
-            valorPromocional: this.promocaoPrecoService.calcularParaReferencia(
-                referencia.referenciaId,
-                referencia.valor,
-                this.mapaPromocoesPorReferencia,
-                this.promocoesGerais,
-            ) ?? undefined,
-            melhorDesconto: this.promocaoPrecoService.melhorOpcaoParaReferencia(
-                referencia.referenciaId,
-                referencia.valor,
-                this.mapaPromocoesPorReferencia,
-                this.promocoesGerais,
-                this.nomesFormaPagamento,
-            ) ?? undefined,
-        }));
-    }
-
     private async carregarPagina(pagina: number): Promise<void> {
         try {
             const resposta = await firstValueFrom(
-                this.lojaDataSource.listarReferencias(pagina, LIMITE_POR_PAGINA, this.busca().trim() || undefined),
+                this.lojaDataSource.listarReferenciasDaLista(this.listaId, pagina, LIMITE_POR_PAGINA, this.busca().trim() || undefined),
             );
             this.paginaAtual = pagina;
-            const itens = this.aplicarPrecosPromocionais(resposta.items);
+            const itens = resposta.items.map((referencia) => ({
+                ...referencia,
+                valorPromocional: this.promocaoPrecoService.calcularParaReferencia(
+                    referencia.referenciaId, referencia.valor, this.mapaPromocoesPorReferencia, this.promocoesGerais,
+                ) ?? undefined,
+                melhorDesconto: this.promocaoPrecoService.melhorOpcaoParaReferencia(
+                    referencia.referenciaId, referencia.valor, this.mapaPromocoesPorReferencia,
+                    this.promocoesGerais, this.nomesFormaPagamento,
+                ) ?? undefined,
+            }));
             this.referencias.update((atual) => (pagina === 1 ? itens : [...atual, ...itens]));
             this.temMaisPaginas.set(resposta.meta?.has_next_page ?? false);
         } catch (error) {
-            console.error('Erro ao carregar catálogo da loja', error);
-            this.erro.set('Não foi possível carregar os produtos no momento.');
+            if (error instanceof HttpErrorResponse && error.status === 404) {
+                this.naoEncontrada.set(true);
+            } else {
+                console.error('Erro ao carregar produtos da lista', error);
+                this.erro.set('Não foi possível carregar os produtos no momento.');
+            }
         } finally {
             this.loading.set(false);
             this.carregandoMais.set(false);
         }
-    }
-
-    async carregarMais(): Promise<void> {
-        this.carregandoMais.set(true);
-        await this.carregarPagina(this.paginaAtual + 1);
     }
 
     onBuscaChange(valor: string): void {
@@ -151,16 +157,13 @@ export class LojaHomePage implements OnInit {
         clearTimeout(this.buscaDebounce);
         this.buscaDebounce = setTimeout(() => {
             this.loading.set(true);
-            this.carregarPagina(1);
+            void this.carregarPagina(1);
         }, DEBOUNCE_BUSCA_MS);
     }
 
-    rolarLista(fileira: HTMLElement, direcao: 1 | -1): void {
-        fileira.scrollBy({ left: direcao * 240, behavior: 'smooth' });
-    }
-
-    async atualizarContagemCarrinho(): Promise<void> {
-        this.itensNoCarrinho.set(await this.carrinhoFacadeService.contarItens());
+    async carregarMais(): Promise<void> {
+        this.carregandoMais.set(true);
+        await this.carregarPagina(this.paginaAtual + 1);
     }
 
     abrirReferencia(referencia: EcommerceReferenciaDto): void {
@@ -168,25 +171,14 @@ export class LojaHomePage implements OnInit {
     }
 
     async adicionarAoCarrinho(referencia: EcommerceReferenciaDto): Promise<void> {
-        // ponytail: referência com mais de um SKU (cor/tamanho) exige escolha na página de detalhe --
-        // aqui só adiciona direto quando há exatamente um produto disponível.
-        const idsDisponiveis = this.produtoIdUnicoDisponivel(referencia);
-        if (idsDisponiveis == null) {
+        const ids = (referencia.produtosDisponiveisIds ?? '').split(',').map((id) => id.trim()).filter(Boolean);
+        if (!referencia.saldo || referencia.saldo <= 0 || ids.length !== 1) {
             this.router.navigate(['/loja/referencia', referencia.id]);
             return;
         }
-
-        await this.carrinhoFacadeService.adicionar(idsDisponiveis, 1);
-        void this.metaPixel.addToCart([{ produtoId: idsDisponiveis, quantidade: 1, valor: referencia.valor }]);
-        await this.atualizarContagemCarrinho();
+        await this.carrinhoFacadeService.adicionar(Number(ids[0]), 1);
+        void this.metaPixel.addToCart([{ produtoId: Number(ids[0]), quantidade: 1, valor: referencia.valor }]);
+        this.itensNoCarrinho.set(await this.carrinhoFacadeService.contarItens());
         this.toastService.show('Produto adicionado à sacola', 'success');
-    }
-
-    private produtoIdUnicoDisponivel(referencia: EcommerceReferenciaDto): number | null {
-        if (!referencia.saldo || referencia.saldo <= 0) {
-            return null;
-        }
-        const ids = (referencia.produtosDisponiveisIds ?? '').split(',').map((id) => id.trim()).filter(Boolean);
-        return ids.length === 1 ? Number(ids[0]) : null;
     }
 }

@@ -3,31 +3,32 @@
 
     <loja-hero></loja-hero>
 
-    @if (categorias().length) {
-    <section class="loja-categorias" aria-label="Categorias">
-        <span class="loja-categorias-eyebrow">Categorias</span>
-        <div class="pof-rail-wrap">
-            <div class="loja-categorias-grid pof-rail" #categoriasRail>
-                @for (categoria of categorias(); track categoria.id) {
-                <a class="loja-categoria-card" [routerLink]="['/loja/categoria', categoria.id]">
-                    <span class="loja-categoria-icone">
-                        @if (categoria.icone) {
-                        <span class="loja-categoria-icone-img" [style.background-image]="'url(' + categoria.icone + ')'"></span>
-                        } @else {
-                        <app-traco d="M4,50 Q25,20 50,50 T96,50" variante="clara" [opacidade]="1"
-                            animacao="nenhuma" class="pof-anim-flutua"></app-traco>
-                        }
-                    </span>
-                    <span class="loja-categoria-nome">{{ categoria.nome }}</span>
-                </a>
+    @if (!lojaFechada()) {
+    @for (lista of listasVitrine(); track lista.id) {
+    <section class="loja-lista" [attr.aria-label]="lista.nome">
+        <div class="loja-lista-topo">
+            <div>
+                <h2>{{ lista.nome }}</h2>
+                @if (lista.descricao) {
+                <p>{{ lista.descricao }}</p>
                 }
             </div>
-            <button type="button" class="pof-rail-btn esquerda" aria-label="Categorias anteriores"
-                (click)="rolarCategorias(-1)">‹</button>
-            <button type="button" class="pof-rail-btn direita" aria-label="Próximas categorias"
-                (click)="rolarCategorias(1)">›</button>
+            <a class="loja-lista-ver-tudo" [routerLink]="['/loja/lista', lista.id]">Ver tudo</a>
+        </div>
+        <div class="pof-rail-wrap">
+            <div class="loja-lista-fileira pof-rail" #fileira>
+                @for (referencia of lista.referencias; track referencia.id) {
+                <produto-card class="loja-lista-card" [referencia]="referencia" (abrir)="abrirReferencia(referencia)"
+                    (adicionar)="adicionarAoCarrinho(referencia)"></produto-card>
+                }
+            </div>
+            <button type="button" class="pof-rail-btn esquerda" aria-label="Anteriores"
+                (click)="rolarLista(fileira, -1)">‹</button>
+            <button type="button" class="pof-rail-btn direita" aria-label="Próximos"
+                (click)="rolarLista(fileira, 1)">›</button>
         </div>
     </section>
+    }
     }
 
     <div class="loja-vitrine-full">

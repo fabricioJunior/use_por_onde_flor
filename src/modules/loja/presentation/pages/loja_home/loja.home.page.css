@@ -4,25 +4,42 @@
     background: var(--surface-page);
 }
 
-.loja-categorias {
+.loja-lista {
+    max-width: var(--container-max);
+    margin: 0 auto;
     padding: var(--space-6) var(--container-padding) 0;
 }
 
-.loja-categorias-eyebrow {
-    display: block;
-    font: var(--text-eyebrow);
-    letter-spacing: var(--tracking-eyebrow);
+.loja-lista-topo {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.loja-lista-topo h2 {
+    font: var(--text-h2, var(--text-body));
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.loja-lista-topo p {
+    font: var(--text-body-sm);
+    color: var(--text-support);
+    margin: var(--space-1) 0 0;
+}
+
+.loja-lista-ver-tudo {
+    flex-shrink: 0;
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
     color: var(--brand-primary-hover);
-    text-align: center;
-    margin-bottom: var(--space-5);
+    text-decoration: none;
 }
 
-.pof-rail-wrap {
-    max-width: var(--container-max);
-    margin: 0 auto;
-}
-
-.loja-categorias-grid {
+.loja-lista-fileira {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -31,46 +48,14 @@
     padding-bottom: var(--space-2);
 }
 
-.loja-categoria-card {
-    flex: 0 0 150px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-5) var(--space-3);
-    background: var(--surface-secondary);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    color: var(--text-primary);
+.loja-lista-card {
+    flex: 0 0 160px;
 }
 
-.loja-categoria-icone {
-    position: relative;
-    width: 40px;
-    height: 40px;
-}
-
-.loja-categoria-icone .pof-anim-flutua {
-    display: block;
-    width: 100%;
-    height: 100%;
-    animation: pof-flutua 3.4s ease-in-out infinite;
-}
-
-.loja-categoria-icone-img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-}
-
-.loja-categoria-nome {
-    font: var(--text-label);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    text-align: center;
+@media (min-width: 640px) {
+    .loja-lista-card {
+        flex-basis: 200px;
+    }
 }
 
 .loja-vitrine-full {
