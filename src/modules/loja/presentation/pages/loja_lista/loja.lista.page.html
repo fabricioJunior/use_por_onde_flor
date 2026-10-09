@@ -34,6 +34,13 @@
     </header>
 
     <main class="lista-content">
+        @if (!lojaFechada()) {
+        <div class="lista-busca-linha">
+            <ui-input class="lista-busca" placeholder="Buscar nesta lista..." [ngModel]="busca()"
+                (ngModelChange)="onBuscaChange($event)"></ui-input>
+        </div>
+        }
+
         @if (lojaFechada()) {
         <div class="lista-estado">
             <p>A loja está fechada no momento. Volte mais tarde para conferir as novidades.</p>
@@ -54,7 +61,11 @@
         </div>
         } @else if (referencias().length === 0) {
         <div class="lista-estado">
+            @if (busca()) {
+            <p>Nenhum produto encontrado para "{{ busca() }}".</p>
+            } @else {
             <p>Ainda não há peças nesta lista.</p>
+            }
         </div>
         } @else {
         <div class="loja-grid">

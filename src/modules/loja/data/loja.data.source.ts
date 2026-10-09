@@ -6,7 +6,7 @@ import { environment } from "../../../environments/environment";
 import { EcommerceReferenciaDto, EcommerceReferenciaProdutoDto, PaginationDto } from "./dtos/ecommerce-referencia.dto";
 import { PromocaoDto } from "./dtos/promocao.dto";
 import { CategoriaDto } from "./dtos/categoria.dto";
-import { VitrineHomeListaDto, VitrineMenuItemDto } from "./dtos/lista-catalogo.dto";
+import { ListaCatalogoDetalheDto, VitrineHomeListaDto, VitrineMenuItemDto } from "./dtos/lista-catalogo.dto";
 
 // Base fixa 'e-commerce/{ecommerceId}' -- cada método completa com o sufixo do endpoint via
 // `options.path` (RemoteDataSourceBase concatena path + pathArguments + suffix).
@@ -64,6 +64,14 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
             pathArguments: this.ecommerceArgs(),
             path: '/catalogos/vitrine/home',
             queryParameters: { limite },
+        });
+    }
+
+    // 404 = lista inexistente/inativa/fora do período (não exige estar na vitrine).
+    detalheLista(listaId: string): Observable<ListaCatalogoDetalheDto> {
+        return this.get({
+            pathArguments: this.ecommerceArgs(),
+            path: `/catalogos/listas/${listaId}`,
         });
     }
 

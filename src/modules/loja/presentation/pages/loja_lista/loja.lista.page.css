@@ -130,3 +130,12 @@
     background-size: 220% 100%;
     animation: pof-brilho 1.6s linear infinite;
 }
+
+.lista-busca-linha {
+    margin-bottom: var(--space-5);
+}
+
+.lista-busca {
+    display: block;
+    max-width: 360px;
+}

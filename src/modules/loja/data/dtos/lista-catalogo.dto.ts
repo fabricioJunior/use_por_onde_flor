@@ -23,3 +23,12 @@ export type VitrineMenuItemDto = VitrineMenuListaDto | VitrineMenuGrupoDto;
 export interface VitrineHomeListaDto extends ListaResumoDto {
     referencias: EcommerceReferenciaDto[];
 }
+
+export interface ListaCatalogoDetalheDto {
+    id: number;
+    nome: string;
+    descricao?: string | null;
+    icone?: string | null;
+    tipo: 'catalogo';
+    modo: 'manual' | 'filtro';
+}

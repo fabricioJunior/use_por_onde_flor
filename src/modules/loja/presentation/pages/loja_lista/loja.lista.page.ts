@@ -1,4 +1,5 @@
 import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import { Component, DestroyRef, OnInit, inject, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
@@ -6,7 +7,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
 import { LojaDataSource } from "../../../data/loja.data.source";
 import { EcommerceReferenciaDto } from "../../../data/dtos/ecommerce-referencia.dto";
-import { ListaResumoDto } from "../../../data/dtos/lista-catalogo.dto";
+import { ListaCatalogoDetalheDto } from "../../../data/dtos/lista-catalogo.dto";
 import { PromocaoDto } from "../../../data/dtos/promocao.dto";
 import { PromocaoPrecoService } from "../../../services/promocao-preco.service";
 import { ProdutoCardComponent } from "../../components/produto_card/produto.card.component";
@@ -15,24 +16,25 @@ import { ToastService } from "../../components/ui/toast/toast.service";
 import { HeaderComponent } from "../../components/header/header.component";
 import { FooterComponent } from "../../components/footer/footer.component";
 import { ButtonComponent } from "../../components/ui/button/button.component";
+import { InputComponent } from "../../components/ui/input/input.component";
 import { MetaPixelService } from "../../../../core/meta-pixel/meta-pixel.service";
 
 const LIMITE_POR_PAGINA = 24;
+const DEBOUNCE_BUSCA_MS = 400;
 
-// Página de uma lista do catálogo (/loja/lista/:id). A API não tem endpoint de detalhe da lista:
-// título/descrição/ícone vêm do menu da vitrine (quando a lista está lá); sem isso, a página
-// mostra só os produtos.
+// Página de uma lista do catálogo (/loja/lista/:id). Cabeçalho vem do detalhe público da lista;
+// se o detalhe falhar (≠404), mostra só os produtos.
 @Component({
     selector: 'loja-lista-page',
     standalone: true,
-    imports: [CommonModule, RouterLink, ProdutoCardComponent, HeaderComponent, FooterComponent, ButtonComponent],
+    imports: [CommonModule, FormsModule, RouterLink, ProdutoCardComponent, InputComponent, HeaderComponent, FooterComponent, ButtonComponent],
     templateUrl: './loja.lista.page.html',
     styleUrl: './loja.lista.page.css',
 })
 export class LojaListaPage implements OnInit {
     skeletonItems = Array.from({ length: 8 });
 
-    lista = signal<ListaResumoDto | undefined>(undefined);
+    lista = signal<ListaCatalogoDetalheDto | undefined>(undefined);
     lojaFechada = signal(false);
     naoEncontrada = signal(false);
     loading = signal(true);
@@ -41,6 +43,8 @@ export class LojaListaPage implements OnInit {
     referencias = signal<EcommerceReferenciaDto[]>([]);
     temMaisPaginas = signal(false);
     itensNoCarrinho = signal(0);
+    busca = signal('');
+    private buscaDebounce?: ReturnType<typeof setTimeout>;
 
     private listaId = '';
     private paginaAtual = 1;
@@ -74,6 +78,7 @@ export class LojaListaPage implements OnInit {
         this.erro.set('');
         this.referencias.set([]);
         this.lista.set(undefined);
+        this.busca.set('');
 
         this.itensNoCarrinho.set(await this.carrinhoFacadeService.contarItens());
 
@@ -91,17 +96,13 @@ export class LojaListaPage implements OnInit {
 
     private async carregarCabecalho(): Promise<void> {
         try {
-            const itens = await firstValueFrom(this.lojaDataSource.vitrineMenu());
-            const id = Number(this.listaId);
-            for (const item of itens) {
-                const achada = item.tipo === 'lista' ? (item.id === id ? item : undefined) : item.listas.find((l) => l.id === id);
-                if (achada) {
-                    this.lista.set(achada);
-                    return;
-                }
-            }
+            this.lista.set(await firstValueFrom(this.lojaDataSource.detalheLista(this.listaId)));
         } catch (error) {
-            console.error('Erro ao carregar cabeçalho da lista', error);
+            if (error instanceof HttpErrorResponse && error.status === 404) {
+                this.naoEncontrada.set(true);
+            } else {
+                console.error('Erro ao carregar cabeçalho da lista', error);
+            }
         }
     }
 
@@ -123,7 +124,7 @@ export class LojaListaPage implements OnInit {
     private async carregarPagina(pagina: number): Promise<void> {
         try {
             const resposta = await firstValueFrom(
-                this.lojaDataSource.listarReferenciasDaLista(this.listaId, pagina, LIMITE_POR_PAGINA),
+                this.lojaDataSource.listarReferenciasDaLista(this.listaId, pagina, LIMITE_POR_PAGINA, this.busca().trim() || undefined),
             );
             this.paginaAtual = pagina;
             const itens = resposta.items.map((referencia) => ({
@@ -149,6 +150,15 @@ export class LojaListaPage implements OnInit {
             this.loading.set(false);
             this.carregandoMais.set(false);
         }
+    }
+
+    onBuscaChange(valor: string): void {
+        this.busca.set(valor);
+        clearTimeout(this.buscaDebounce);
+        this.buscaDebounce = setTimeout(() => {
+            this.loading.set(true);
+            void this.carregarPagina(1);
+        }, DEBOUNCE_BUSCA_MS);
     }
 
     async carregarMais(): Promise<void> {
