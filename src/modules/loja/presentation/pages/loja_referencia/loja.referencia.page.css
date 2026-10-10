@@ -57,6 +57,8 @@
     grid-template-columns: 72px minmax(0, 1fr);
     gap: 12px;
     min-width: 0;
+    /* sem isto a coluna mais alta estica a outra e os indicadores descem pra baixo da foto */
+    align-items: start;
 }
 
 .galeria-thumbs {
@@ -81,6 +83,21 @@
     border-color: var(--pof-tinta);
 }
 
+.galeria-thumb-mais {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-color: rgba(160, 176, 139, .7);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--pof-tinta);
+}
+
+.galeria-thumb-mais:hover {
+    background: var(--pof-nevoa);
+    border-color: var(--pof-tinta);
+}
+
 .galeria-thumb img {
     position: absolute;
     inset: 0;
@@ -96,6 +113,11 @@
 
 .galeria-trilho {
     background: var(--pof-nevoa);
+    cursor: grab;
+}
+
+.galeria-trilho:active {
+    cursor: grabbing;
 }
 
 .galeria-foto {
@@ -112,6 +134,9 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* senão o navegador arrasta a própria imagem e o gesto morre no meio */
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .galeria-selo {

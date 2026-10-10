@@ -47,6 +47,14 @@ export class LojaReferenciaPage implements OnInit {
     valorPromocional = signal<number | undefined>(undefined);
 
     fotoAtual = signal(0);
+    /// Com muitas fotos a coluna lateral fica mais alta que a imagem: mostra 5 e esconde o resto.
+    static readonly MAX_THUMBS = 5;
+    todasAsThumbs = signal(false);
+    thumbsVisiveis = computed(() =>
+        this.todasAsThumbs() ? this.midias() : this.midias().slice(0, LojaReferenciaPage.MAX_THUMBS),
+    );
+    thumbsOcultas = computed(() => this.midias().length - LojaReferenciaPage.MAX_THUMBS);
+
     corSelecionada = signal<string | null>(null);
     tamanhoSelecionado = signal<string | null>(null);
     estampaSelecionada = signal<string | null>(null);
@@ -283,6 +291,37 @@ export class LojaReferenciaPage implements OnInit {
         if (el && el.clientWidth > 0) {
             this.fotoAtual.set(Math.round(el.scrollLeft / el.clientWidth));
         }
+    }
+
+    // No toque o próprio scroll do trilho já passa a foto; no mouse não existe arrasto nativo,
+    // então o ponteiro vira scroll manual e o scroll-snap encaixa sozinho ao soltar.
+    private arrastoX: number | null = null;
+    private arrastoScroll = 0;
+
+    onGaleriaPointerDown(event: PointerEvent): void {
+        if (event.pointerType === 'touch') return;
+        const el = this.galeriaRef?.nativeElement;
+        if (!el) return;
+        this.arrastoX = event.clientX;
+        this.arrastoScroll = el.scrollLeft;
+        el.style.scrollBehavior = 'auto';
+        el.setPointerCapture(event.pointerId);
+    }
+
+    onGaleriaPointerMove(event: PointerEvent): void {
+        const el = this.galeriaRef?.nativeElement;
+        if (this.arrastoX === null || !el) return;
+        event.preventDefault();
+        el.scrollLeft = this.arrastoScroll - (event.clientX - this.arrastoX);
+    }
+
+    onGaleriaPointerUp(event: PointerEvent): void {
+        const el = this.galeriaRef?.nativeElement;
+        if (this.arrastoX === null || !el) return;
+        this.arrastoX = null;
+        el.style.scrollBehavior = '';
+        if (el.hasPointerCapture(event.pointerId)) el.releasePointerCapture(event.pointerId);
+        if (el.clientWidth > 0) this.selecionarFoto(Math.round(el.scrollLeft / el.clientWidth));
     }
 
     // --- Seleção ---

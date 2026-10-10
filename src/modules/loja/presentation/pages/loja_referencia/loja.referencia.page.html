@@ -24,17 +24,26 @@
         <div class="galeria">
             @if (midias().length > 1) {
             <div class="galeria-thumbs">
-                @for (midia of midias(); track midia.id; let i = $index) {
+                @for (midia of thumbsVisiveis(); track midia.id; let i = $index) {
                 <button type="button" class="galeria-thumb" [class.ativa]="fotoAtual() === i"
                     [attr.aria-label]="'Ver foto ' + (i + 1)" (click)="selecionarFoto(i)">
                     <img [src]="midia.url" alt="">
+                </button>
+                }
+                @if (thumbsOcultas() > 0) {
+                <button type="button" class="galeria-thumb galeria-thumb-mais"
+                    [attr.aria-label]="todasAsThumbs() ? 'Ver menos fotos' : 'Ver mais ' + thumbsOcultas() + ' fotos'"
+                    (click)="todasAsThumbs.set(!todasAsThumbs())">
+                    {{ todasAsThumbs() ? '−' : '+' + thumbsOcultas() }}
                 </button>
                 }
             </div>
             }
 
             <div class="galeria-principal">
-                <div class="pof-rail galeria-trilho" #galeria (scroll)="onGaleriaScroll()">
+                <div class="pof-rail galeria-trilho" #galeria (scroll)="onGaleriaScroll()"
+                    (pointerdown)="onGaleriaPointerDown($event)" (pointermove)="onGaleriaPointerMove($event)"
+                    (pointerup)="onGaleriaPointerUp($event)" (pointercancel)="onGaleriaPointerUp($event)">
                     @if (midias().length === 0) {
                     <div class="galeria-foto pof-foto-fundo"></div>
                     }
