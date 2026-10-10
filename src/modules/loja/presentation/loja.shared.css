@@ -31,10 +31,16 @@
     -ms-overflow-style: none;
 }
 
-/* a barra suja a foto do produto; o trilho anda por arrasto, miniaturas e indicadores */
-.pof-rail::-webkit-scrollbar,
-.pof-rail::-webkit-scrollbar-thumb,
-.pof-rail::-webkit-scrollbar-track {
+/* `styles.scss` dá uma barra de 3px a todo `.pof-rail` e carrega depois deste arquivo -- na foto
+   do produto ela só suja a imagem, e o trilho anda por arrasto, miniaturas e indicadores.
+   Dois seletores de classe para ganhar da regra de lá; os outros trilhos seguem com a barra. */
+.pof-rail.galeria-trilho {
+    scrollbar-width: none;
+}
+
+.pof-rail.galeria-trilho::-webkit-scrollbar,
+.pof-rail.galeria-trilho::-webkit-scrollbar-thumb,
+.pof-rail.galeria-trilho::-webkit-scrollbar-track {
     width: 0;
     height: 0;
     display: none;
