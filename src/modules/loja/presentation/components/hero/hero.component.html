@@ -7,11 +7,24 @@
         @if (slide.video) {
         <video [src]="slide.desktop" autoplay muted loop playsinline></video>
         } @else {
+        <!-- Com link o slide vira <a> de verdade (abre em nova aba, teclado, SEO); sem link,
+             continua uma imagem. O clique é cancelado quando o gesto foi um arrasto. -->
+        @if (destinoDoSlide(slide); as href) {
+        <a class="hero-link" [href]="href" (click)="aoClicar($event, slide)"
+            [attr.tabindex]="i === indice() ? null : -1">
+            <picture>
+                <source media="(max-width: 819px)" [srcset]="slide.mobile">
+                <img [src]="slide.desktop" alt="" [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+                    [attr.fetchpriority]="i === 0 ? 'high' : null">
+            </picture>
+        </a>
+        } @else {
         <picture>
             <source media="(max-width: 819px)" [srcset]="slide.mobile">
             <img [src]="slide.desktop" alt="" [attr.loading]="i === 0 ? 'eager' : 'lazy'"
                 [attr.fetchpriority]="i === 0 ? 'high' : null">
         </picture>
+        }
         }
     </div>
     }

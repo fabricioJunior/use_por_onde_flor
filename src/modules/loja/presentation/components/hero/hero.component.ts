@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnDestroy, OnInit, signal } from "@angular/core";
+import { Router } from "@angular/router";
 import { BannerDataSource } from "../../../data/banner.data.source";
 import { BannerDto } from "../../../data/dtos/banner.dto";
 
@@ -13,6 +14,10 @@ interface HeroSlide {
     desktop: string;
     mobile: string;
     video: boolean;
+    /// Destino ao tocar no banner; `null` = sem link. Cada foto tem o seu: no celular
+    /// vale o link do banner vertical, no desktop o do horizontal.
+    href: string | null;
+    hrefMobile: string | null;
 }
 
 // Banner de foto em tela cheia (handoff "Banner da home com fotos de celular"): ocupa o que sobra
@@ -34,13 +39,23 @@ export class HeroComponent implements OnInit, OnDestroy {
     slides = signal<HeroSlide[]>([]);
     indice = signal(0);
 
+    telaMobile = signal(false);
+    private consulta?: MediaQueryList;
+    private aoTrocarLargura = (e: MediaQueryListEvent) => this.telaMobile.set(e.matches);
+
     private timer?: ReturnType<typeof setInterval>;
     private pausado = false;
     private arrastoX: number | null = null;
+    private arrastou = false;
 
-    constructor(private bannerDataSource: BannerDataSource) { }
+    constructor(private bannerDataSource: BannerDataSource, private router: Router) { }
 
     ngOnInit(): void {
+        if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+            this.consulta = window.matchMedia('(max-width: 819px)');
+            this.telaMobile.set(this.consulta.matches);
+            this.consulta.addEventListener('change', this.aoTrocarLargura);
+        }
         this.bannerDataSource.listar().subscribe({
             next: (banners) => {
                 const ativos = banners.filter((b) => b.ativo).sort((a, b) => a.ordem - b.ordem);
@@ -58,6 +73,7 @@ export class HeroComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         clearInterval(this.timer);
+        this.consulta?.removeEventListener('change', this.aoTrocarLargura);
     }
 
     private slide(desktop: BannerDto, mobile: BannerDto): HeroSlide {
@@ -66,7 +82,39 @@ export class HeroComponent implements OnInit, OnDestroy {
             desktop: desktop.url,
             mobile: mobile.url,
             video: desktop.type === 'Vídeo',
+            href: this.destino(desktop),
+            hrefMobile: this.destino(mobile),
         };
+    }
+
+    // O link é do banner desktop: é ele que define o slide (o mobile é só a outra foto).
+    private destino(banner: BannerDto): string | null {
+        if (banner.linkTipo === 'lista' && banner.listaId) {
+            return `/loja/lista/${banner.listaId}`;
+        }
+        if (banner.linkTipo === 'url' && banner.linkUrl?.trim()) {
+            return banner.linkUrl.trim();
+        }
+        return null;
+    }
+
+    /// O href muda com a largura, então não dá para resolver só no CSS. No SSR vale o
+    /// desktop; o navegador corrige na hidratação e a cada mudança de tamanho.
+    destinoDoSlide(slide: HeroSlide): string | null {
+        return (this.telaMobile() ? slide.hrefMobile : slide.href) ?? null;
+    }
+
+    // Arrastar para passar a foto não pode virar clique no link.
+    aoClicar(evento: MouseEvent, slide: HeroSlide): void {
+        if (this.arrastou) {
+            evento.preventDefault();
+            return;
+        }
+        const href = this.destinoDoSlide(slide);
+        if (href?.startsWith('/')) {
+            evento.preventDefault();
+            void this.router.navigateByUrl(href);
+        }
     }
 
     get total(): number {
@@ -103,6 +151,7 @@ export class HeroComponent implements OnInit, OnDestroy {
 
     onPointerDown(event: PointerEvent): void {
         this.arrastoX = event.clientX;
+        this.arrastou = false;
         this.pausar();
     }
 
@@ -111,7 +160,8 @@ export class HeroComponent implements OnInit, OnDestroy {
         this.arrastoX = null;
         if (inicio !== null) {
             const deltaX = event.clientX - inicio;
-            if (Math.abs(deltaX) > LIMIAR_SWIPE_PX) {
+            this.arrastou = Math.abs(deltaX) > LIMIAR_SWIPE_PX;
+            if (this.arrastou) {
                 this.passar(deltaX < 0 ? 1 : -1);
             }
         }

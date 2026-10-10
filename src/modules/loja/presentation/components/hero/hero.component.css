@@ -18,6 +18,12 @@
     transition: opacity .7s ease;
 }
 
+.hero-link {
+    position: absolute;
+    inset: 0;
+    display: block;
+}
+
 .hero-slide img,
 .hero-slide video,
 .hero-slide picture {
