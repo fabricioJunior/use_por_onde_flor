@@ -28,10 +28,17 @@
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
-.pof-rail::-webkit-scrollbar {
+/* a barra suja a foto do produto; o trilho anda por arrasto, miniaturas e indicadores */
+.pof-rail::-webkit-scrollbar,
+.pof-rail::-webkit-scrollbar-thumb,
+.pof-rail::-webkit-scrollbar-track {
+    width: 0;
+    height: 0;
     display: none;
+    background: transparent;
 }
 
 .pof-kicker {
@@ -326,4 +333,23 @@ input:focus-visible {
         min-width: 40px;
         height: 40px;
     }
+}
+
+/* Formas de pagamento da PDP: linha de etiquetas + a nota de parcelamento. */
+.compra-formas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.compra-formas-nota {
+    font-size: 13px;
+    color: var(--pof-oliva);
+}
+
+/* etiqueta estática (forma de pagamento): o chip sem a parte clicável */
+.compra-forma-chip {
+    display: inline-flex;
+    align-items: center;
+    cursor: default;
 }

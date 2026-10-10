@@ -164,17 +164,19 @@
     pointer-events: none;
 }
 
+/* Em cima da foto o escuro do mock some: pílula branca, com sombra pra foto clara. */
 .galeria-pilula {
     width: 6px;
     height: 6px;
     border-radius: 999px;
-    background: rgba(43, 25, 25, .25);
+    background: rgba(248, 241, 235, .55);
+    box-shadow: 0 1px 3px rgba(43, 25, 25, .35);
     transition: width .3s ease, background .3s ease;
 }
 
 .galeria-pilula.ativa {
     width: 22px;
-    background: var(--pof-tinta);
+    background: var(--pof-creme);
 }
 
 /* 2.4 Caixa de compra */
@@ -291,24 +293,6 @@
 .compra-rotulo strong {
     font-weight: 600;
     color: var(--pof-tinta);
-}
-
-.compra-formas {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.compra-forma {
-    padding: 7px 12px;
-    border: 1px solid rgba(160, 176, 139, .55);
-    font-size: 12px;
-    color: var(--pof-tinta);
-}
-
-.compra-formas-nota {
-    font-size: 13px;
-    color: var(--pof-oliva);
 }
 
 .compra-link {

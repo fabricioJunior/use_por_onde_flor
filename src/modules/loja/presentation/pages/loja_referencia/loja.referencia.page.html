@@ -180,7 +180,7 @@
                 <span class="compra-rotulo"><span>Formas de pagamento</span></span>
                 <div class="compra-formas">
                     @for (forma of formasPagamento(); track forma.formaDePagamentoId) {
-                    <span class="compra-forma">{{ forma.descricao }}</span>
+                    <span class="pof-chip compra-forma-chip">{{ forma.descricao }}</span>
                     }
                 </div>
                 @if (parcelamento(); as texto) {
