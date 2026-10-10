@@ -30,6 +30,11 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
+    // "Ver tudo" da vitrine -- depende do catálogo, mesmo motivo de 'loja'.
+    path: 'loja/lista/:id',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'pedidos/:id',
     renderMode: RenderMode.Client,
   },
