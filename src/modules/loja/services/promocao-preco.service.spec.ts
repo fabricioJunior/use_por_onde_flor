@@ -103,3 +103,25 @@ describe('precoParaParcelamento', () => {
         expect(servico.precoParaParcelamento(7, 100, new Map(), [geral], nomes)).toBe(90);
     });
 });
+
+describe('porQuantidadeParaReferencia', () => {
+    const servico = new PromocaoPrecoService();
+    const faixa = (id: number, referenciaIds?: number[]) => ({
+        id, tipoDesconto: 'percentual', tipoEscopo: 'faixa_quantidade', referenciaIds,
+        faixas: [{ quantidadeMinima: 2, valorDesconto: 30 }],
+    } as any);
+
+    it('pega a promoção por quantidade que lista a referência', () => {
+        const r = servico.porQuantidadeParaReferencia(7, [faixa(1, [7, 8]), faixa(2, [9])]);
+        expect(r.map((p) => p.id)).toEqual([1]);
+    });
+
+    it('sem referenciaIds vale para o carrinho inteiro, então vale para a referência', () => {
+        expect(servico.porQuantidadeParaReferencia(7, [faixa(1)]).map((p) => p.id)).toEqual([1]);
+    });
+
+    it('ignora promoção que não é por quantidade', () => {
+        const comum = { id: 3, tipoDesconto: 'percentual', tipoEscopo: 'referencias', referenciaIds: [7] } as any;
+        expect(servico.porQuantidadeParaReferencia(7, [comum])).toEqual([]);
+    });
+});

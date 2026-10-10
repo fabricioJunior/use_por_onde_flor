@@ -32,6 +32,7 @@ export interface PromocaoDto {
     // PromocaoPrecoService.calcularFaixaParaCarrinho) -- carrinho conhece a quantidade por
     // referenciaId, catálogo não (ver comentário de PromocaoTipoEscopo acima).
     faixas?: PromocaoFaixaDto[];
+    nome?: string;
     regras?: string;
     restringirFormasPagamento?: boolean;
     formasPagamento?: PromocaoFormaPagamentoDto[];
