@@ -319,6 +319,48 @@ describe('MetaPixelService', () => {
         });
     });
 
+    describe('Advanced Matching (usuário logado)', () => {
+        const usuario = {
+            id: 7,
+            nome: 'Maria',
+            sobrenome: 'da Silva',
+            email: ' Maria@Exemplo.COM ',
+            telefone: '(86) 99999-1234',
+            dataNascimento: '1990-03-05',
+        };
+
+        it('anônimo: init só com o pixelId', async () => {
+            criar();
+            await service.iniciar();
+            expect(fbq).toHaveBeenCalledWith('init', '555');
+        });
+
+        it('logado: init leva em, ph, fn, ln, db e external_id normalizados', async () => {
+            localStorage.setItem('usuario_da_sessao', JSON.stringify(usuario));
+            criar();
+            await service.iniciar();
+
+            expect(fbq).toHaveBeenCalledWith('init', '555', {
+                em: 'maria@exemplo.com',
+                ph: '5586999991234',
+                fn: 'maria',
+                ln: 'silva',
+                db: '19900305',
+                external_id: '7',
+            });
+        });
+
+        it('login depois do init: atualizarUsuario reenvia o init com os dados', async () => {
+            criar();
+            await service.iniciar();
+            localStorage.setItem('usuario_da_sessao', JSON.stringify(usuario));
+            service.atualizarUsuario();
+
+            expect(fbq.calls.allArgs().filter((a) => a[0] === 'init').length).toBe(2);
+            expect(fbq.calls.mostRecent().args[2].em).toBe('maria@exemplo.com');
+        });
+    });
+
     describe('dados de rastreio (_fbp/_fbc) enviados ao checkout', () => {
         afterEach(() => {
             document.cookie = '_fbp=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';

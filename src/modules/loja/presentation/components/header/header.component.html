@@ -1,37 +1,212 @@
-<header class="loja-header">
-    <div class="loja-header-inner">
-        <button type="button" class="loja-menu-categorias" aria-label="Categorias" (click)="abrirCategorias()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <div class="loja-logo-wrap">
-            <a routerLink="/loja" class="loja-logo-link" aria-label="Por Onde Flor">
-                <app-logo variante="clara" [altura]="36"></app-logo>
-            </a>
-        </div>
-        <div class="loja-header-acoes">
-            <a routerLink="/carrinho" class="loja-sacola" aria-label="Sacola">
-                <span class="loja-sacola-texto">Sacola</span>
-                @if (itensNoCarrinho > 0) {
-                <span class="loja-sacola-badge">{{ itensNoCarrinho }}</span>
-                }
-            </a>
+@if (campanhaAtiva()) {
+<div class="campanha">
+    <span class="campanha-texto">{{ config.campanha.texto }}</span>
+    <div class="campanha-contador">
+        @for (c of contador(); track c.l) {
+        <span class="campanha-caixa"><strong>{{ c.v }}</strong><span>{{ c.l }}</span></span>
+        }
+    </div>
+</div>
+}
+
+<!-- Desktop (>= 820px) -->
+<header class="header-desktop" (mouseleave)="fecharMega()">
+    <div class="pof-container header-linha1">
+        <label class="header-busca">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+            </svg>
+            <input type="search" placeholder="O que você procura?" [ngModel]="busca()"
+                (ngModelChange)="busca.set($event)" (keyup.enter)="buscar()" aria-label="Buscar produtos">
+        </label>
+
+        <a routerLink="/loja" class="header-logo" aria-label="Por Onde Flor">
+            <app-logo variante="clara" [altura]="34"></app-logo>
+        </a>
+
+        <div class="header-acoes">
             @if (estaAutenticado()) {
-            <details class="loja-conta">
-                <summary class="loja-conta-resumo">
-                    {{ nomeDoUsuario() }}
+            <details class="header-conta">
+                <summary>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                        <circle cx="12" cy="8" r="5" />
+                        <path d="M20 21a8 8 0 0 0-16 0" />
+                    </svg>
+                    {{ nomeDoUsuario() || 'Minha conta' }}
                 </summary>
-                <div class="loja-conta-menu">
+                <div class="header-conta-menu">
                     <a routerLink="/home">Cartão fidelidade</a>
                     <a routerLink="/pedidos">Meus pedidos</a>
-                    <button type="button" class="loja-conta-sair" (click)="logout()">Sair</button>
+                    <button type="button" (click)="logout()">Sair</button>
                 </div>
             </details>
             } @else {
-            <a routerLink="/login" [queryParams]="{returnUrl: router.url}" class="loja-login-link">Entrar</a>
+            <a routerLink="/login" [queryParams]="{ returnUrl: router.url }" class="header-entrar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                    stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="8" r="5" />
+                    <path d="M20 21a8 8 0 0 0-16 0" />
+                </svg>
+                Entrar
+            </a>
+            }
+            <button type="button" class="header-sacola" (click)="sacola.abrir()">
+                <img src="/assets/icones/sacola.svg" alt="" aria-hidden="true">
+                Sacola
+                <span class="header-badge">{{ sacola.contagem() }}</span>
+            </button>
+        </div>
+    </div>
+
+    @if (menu().length) {
+    <nav class="pof-container header-nav" aria-label="Menu da loja">
+        @for (item of menu(); track item.id) {
+        <a [routerLink]="item.rota" class="header-nav-item" [class.destaque]="item.destaque"
+            [class.ativo]="megaAberto() === item.id" (mouseenter)="abrirMega(item)" (focus)="abrirMega(item)">
+            {{ item.label }}
+            @if (item.filhos.length) {
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+            }
+        </a>
+        }
+    </nav>
+    }
+
+    @if (itemMegaAberto(); as aberto) {
+    <div class="mega">
+        <div class="pof-container mega-grid">
+            @for (filho of aberto.filhos; track filho.id) {
+            <div class="mega-coluna">
+                <a [routerLink]="filho.rota" class="mega-titulo" (click)="fecharMega()">{{ filho.label }}</a>
+            </div>
+            }
+            @if (aberto.imagem) {
+            <a [routerLink]="aberto.rota" class="mega-destaque" (click)="fecharMega()">
+                <img [src]="aberto.imagem" [alt]="aberto.label">
+                <span>Ver tudo em {{ aberto.label }}</span>
+            </a>
             }
         </div>
     </div>
-    <categorias-drawer [aberto]="categoriasAberto()" (fechar)="fecharCategorias()"></categorias-drawer>
+    }
 </header>
+
+<!-- Mobile (< 820px) -->
+<header class="header-mobile">
+    <button type="button" class="header-icone" aria-label="Abrir menu" (click)="abrirDrawer()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+            stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+    </button>
+    <a routerLink="/loja" class="header-logo" aria-label="Por Onde Flor">
+        <app-logo variante="clara" [altura]="26"></app-logo>
+    </a>
+    <button type="button" class="header-icone header-icone-sacola" aria-label="Sacola" (click)="sacola.abrir()">
+        <img src="/assets/icones/sacola.svg" alt="" aria-hidden="true">
+        <span class="header-badge header-badge-flutuante">{{ sacola.contagem() }}</span>
+    </button>
+</header>
+
+<!-- Drawer mobile em níveis (README 1.3) -->
+<button type="button" class="pof-overlay drawer-overlay" aria-label="Fechar menu"
+    [style.opacity]="drawerAberto() ? 1 : 0" [style.pointerEvents]="drawerAberto() ? 'auto' : 'none'"
+    (click)="fecharDrawer()"></button>
+
+<aside class="drawer" [class.aberto]="drawerAberto()" [attr.aria-hidden]="drawerAberto() ? null : 'true'">
+    <div class="drawer-topo">
+        <app-logo variante="clara" [altura]="22"></app-logo>
+        <button type="button" class="header-icone" aria-label="Fechar menu" (click)="fecharDrawer()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <label class="drawer-busca">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+        </svg>
+        <input type="search" placeholder="O que você procura?" [ngModel]="busca()" (ngModelChange)="busca.set($event)"
+            (keyup.enter)="buscar()" aria-label="Buscar produtos">
+    </label>
+
+    @if (nivel(); as atual) {
+    <div class="drawer-subnivel">
+        <button type="button" class="drawer-voltar" (click)="voltarNivel()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m15 18-6-6 6-6" />
+            </svg>
+            Voltar
+        </button>
+        <span class="drawer-nivel-titulo">{{ atual.label }}</span>
+        <a [routerLink]="atual.rota" class="drawer-ver-tudo" (click)="fecharDrawer()">Ver tudo em {{ atual.label }}</a>
+    </div>
+    }
+
+    <nav class="drawer-nav" aria-label="Menu da loja">
+        @if (nivel()) {
+        @for (filho of nivel()!.filhos; track filho.id) {
+        <a [routerLink]="filho.rota" class="drawer-item folha" (click)="fecharDrawer()">{{ filho.label }}</a>
+        }
+        } @else {
+        @for (item of menu(); track item.id) {
+        @if (item.filhos.length) {
+        <button type="button" class="drawer-item" [class.destaque]="item.destaque" (click)="entrarNoNivel(item)">
+            {{ item.label }}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m9 18 6-6-6-6" />
+            </svg>
+        </button>
+        } @else {
+        <a [routerLink]="item.rota" class="drawer-item" [class.destaque]="item.destaque"
+            (click)="fecharDrawer()">{{ item.label }}</a>
+        }
+        }
+        }
+    </nav>
+
+    <div class="drawer-rodape">
+        @if (estaAutenticado()) {
+        <a routerLink="/home" (click)="fecharDrawer()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" aria-hidden="true">
+                <circle cx="12" cy="8" r="5" />
+                <path d="M20 21a8 8 0 0 0-16 0" />
+            </svg>
+            Minha conta
+        </a>
+        } @else {
+        <a routerLink="/login" [queryParams]="{ returnUrl: router.url }" (click)="fecharDrawer()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" aria-hidden="true">
+                <circle cx="12" cy="8" r="5" />
+                <path d="M20 21a8 8 0 0 0-16 0" />
+            </svg>
+            Entrar ou criar conta
+        </a>
+        }
+        @if (whatsappUrl(); as url) {
+        <a [href]="url" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+            </svg>
+            Atendimento pelo WhatsApp
+        </a>
+        }
+    </div>
+</aside>
+
+<sacola-drawer></sacola-drawer>

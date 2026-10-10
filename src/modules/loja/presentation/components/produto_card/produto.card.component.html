@@ -1,34 +1,41 @@
-<article class="produto-card" [class.produto-card-sem-estoque]="semEstoque()" (click)="abrir.emit()">
-    <div class="produto-foto">
-        @if (novo) {
-        <ui-badge tone="brand" class="produto-badge-novo">Novo</ui-badge>
-        }
+<article class="card" [class.sem-estoque]="semEstoque()" (mouseenter)="garantirProdutos()">
+    <button type="button" class="card-foto pof-foto-fundo" [attr.aria-label]="referencia.nome" (click)="abrir()">
         @if (referencia.media_url) {
         <img [src]="referencia.media_url" [alt]="referencia.nome">
-        } @else {
-        <span class="produto-foto-placeholder">Sem foto</span>
+        }
+        @if (percentualOff; as off) {
+        <span class="card-selo desconto">-{{ off }}%</span>
+        }
+    </button>
+
+    <h3 class="card-nome"><a [routerLink]="['/loja/referencia', referencia.id]">{{ referencia.nome }}</a></h3>
+
+    <div class="card-precos">
+        @if (precoDe; as de) {
+        <span class="card-preco-de">{{ formatarPreco(de) }}</span>
+        }
+        <span class="card-preco">{{ formatarPreco(preco) }}</span>
+    </div>
+
+    @if (parcelamento(); as texto) {
+    <span class="card-parcelamento">{{ texto }}</span>
+    }
+
+    @if (tamanhos().length > 1) {
+    <div class="card-tamanhos">
+        @for (tamanho of tamanhos(); track tamanho) {
+        <button type="button" class="pof-chip" [class.selecionado]="tamanhoSelecionado() === tamanho"
+            (click)="escolherTamanho(tamanho, $event)">{{ tamanho }}</button>
         }
     </div>
-    <div class="produto-info">
-        @if (referencia.melhorDesconto) {
-        <span class="produto-badge-desconto">
-            -{{ referencia.melhorDesconto.percentualOff }}% OFF
-            @if (referencia.melhorDesconto.formaPagamentoNome) {
-            no {{ referencia.melhorDesconto.formaPagamentoNome }}
-            }
-        </span>
-        }
-        <span class="produto-nome">{{ referencia.nome }}</span>
-        <div class="produto-precos">
-            @if (referencia.valorPromocional != null) {
-            <span class="produto-preco-original">{{ formatarPreco(referencia.valor) }}</span>
-            <span class="produto-preco produto-preco-promocional">{{ formatarPreco(referencia.valorPromocional) }}</span>
-            } @else {
-            <span class="produto-preco">{{ formatarPreco(referencia.valor) }}</span>
-            }
-        </div>
-        <div class="produto-rodape">
-            <ui-button size="sm" variant="secondary" (clicked)="onAdicionarClick($event)">Adicionar</ui-button>
-        </div>
-    </div>
+    }
+
+    @if (avisoTamanho()) {
+    <span class="card-aviso">Escolha um tamanho</span>
+    }
+
+    <button type="button" class="pof-btn-escuro card-comprar" [disabled]="semEstoque() || ocupado()"
+        (click)="comprar($event)">
+        @if (semEstoque()) { Indisponível } @else { Comprar }
+    </button>
 </article>

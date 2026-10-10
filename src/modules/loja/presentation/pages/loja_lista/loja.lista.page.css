@@ -1,0 +1,78 @@
+:host {
+    display: block;
+    background: var(--pof-creme);
+    color: var(--pof-tinta);
+    min-height: 100vh;
+}
+
+.lista {
+    padding-top: 28px;
+    padding-bottom: 48px;
+}
+
+.lista-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pof-oliva);
+    margin-bottom: 20px;
+}
+
+.lista-breadcrumb a {
+    color: var(--pof-oliva);
+    text-decoration: none;
+}
+
+.lista-breadcrumb .atual {
+    color: var(--pof-bordo);
+}
+
+.lista-cabecalho {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+.lista-descricao {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+    font-weight: 300;
+    color: var(--pof-oliva-escura);
+    max-width: 640px;
+}
+
+.lista-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 32px 20px;
+}
+
+.lista-estado {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--pof-bordo);
+    padding: 32px 0;
+}
+
+.lista-mais {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.lista-mais button {
+    padding: 0 28px;
+}
+
+@media (max-width: 819px) {
+    .lista-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px 12px;
+    }
+}

@@ -13,6 +13,8 @@ declare global {
 export const META_MOEDA = 'BRL';
 const META_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js';
 const CHAVE_PURCHASE_ENVIADO = 'meta_purchase_enviado_';
+const CHAVE_USUARIO_DA_SESSAO = 'usuario_da_sessao'; // gravada por AutenticacaoService.fazerLogin
+const NOVENTA_DIAS_S = 90 * 24 * 60 * 60;
 
 // Item de evento do Pixel. `idExterno` (se o DTO já tiver) evita ida ao backend; sem ele, o content_id vem de
 // POST /meta-pixel/content-ids -- a regra (idExterno do SKU, senão o id do produto) fica só no backend, igual à
@@ -32,6 +34,7 @@ export interface MetaItemPixel {
 @Injectable({ providedIn: 'root' })
 export class MetaPixelService {
     private readonly navegador: boolean;
+    private pixelId?: string;
     private estado: 'parado' | 'iniciando' | 'pronto' | 'desabilitado' = 'parado';
     private fila: Array<() => void> = [];
     private readonly cacheContentIds = new Map<number, string>();
@@ -49,6 +52,7 @@ export class MetaPixelService {
             return;
         }
         this.estado = 'iniciando';
+        this.guardarFbcDoClique(); // antes de qualquer await: o roteador pode apagar o ?fbclid da URL
         try {
             const config = await firstValueFrom(this.dataSource.config());
             if (!config?.habilitado || !config.pixelId) {
@@ -56,13 +60,22 @@ export class MetaPixelService {
                 return;
             }
             this.carregarScript();
-            window.fbq('init', config.pixelId);
+            this.pixelId = config.pixelId;
+            this.init();
             this.estado = 'pronto';
             console.info(JSON.stringify({ evento: 'META_PIXEL_INITIALIZED', pixelId: config.pixelId }));
             this.descarregarFila();
         } catch {
             // Meta/backend indisponível: segue sem Pixel, sem afetar a página.
             this.desabilitar();
+        }
+    }
+
+    // Advanced Matching: chamar depois do login (o `init` roda antes, com o usuário ainda anônimo). Reenviar o
+    // `init` com os dados é o método documentado pela Meta; o Pixel faz o hash no navegador.
+    atualizarUsuario(): void {
+        if (this.estado === 'pronto') {
+            this.init();
         }
     }
 
@@ -180,6 +193,58 @@ export class MetaPixelService {
     }
 
     // ---- internos ----
+
+    private init(): void {
+        const usuario = this.dadosDoUsuario();
+        if (usuario) {
+            window.fbq('init', this.pixelId, usuario);
+        } else {
+            window.fbq('init', this.pixelId);
+        }
+    }
+
+    // Só o que o cadastro já tem; endereço e gênero o site não conhece (o Purchase do servidor leva o endereço).
+    private dadosDoUsuario(): Record<string, string> | undefined {
+        let usuario: any;
+        try {
+            usuario = JSON.parse(localStorage.getItem(CHAVE_USUARIO_DA_SESSAO) ?? 'null');
+        } catch {
+            return undefined;
+        }
+        if (!usuario) {
+            return undefined;
+        }
+        const dados: Record<string, string> = {};
+        const email = String(usuario.email ?? '').trim().toLowerCase();
+        if (email.includes('@')) dados['em'] = email;
+        const telefone = String(usuario.telefone ?? '').replace(/\D/g, '').replace(/^0+/, '');
+        if (telefone.length === 10 || telefone.length === 11) dados['ph'] = '55' + telefone;
+        else if ((telefone.length === 12 || telefone.length === 13) && telefone.startsWith('55')) dados['ph'] = telefone;
+        const nome = String(usuario.nome ?? '').trim().toLowerCase().split(/\s+/)[0];
+        if (nome) dados['fn'] = nome;
+        const sobrenome = String(usuario.sobrenome ?? '').trim().toLowerCase().split(/\s+/).pop();
+        if (sobrenome) dados['ln'] = sobrenome;
+        const nascimento = String(usuario.dataNascimento ?? '').slice(0, 10).replace(/-/g, '');
+        if (/^\d{8}$/.test(nascimento)) dados['db'] = nascimento;
+        if (usuario.id) dados['external_id'] = String(usuario.id);
+        return Object.keys(dados).length ? dados : undefined;
+    }
+
+    // Quem chega por anúncio traz ?fbclid. O Pixel grava o cookie _fbc sozinho, mas só depois de baixar o script;
+    // se o usuário já navegou, o fbclid se perdeu. Formato oficial: fb.1.<timestamp ms>.<fbclid>.
+    private guardarFbcDoClique(): void {
+        try {
+            if (this.cookie('_fbc')) {
+                return;
+            }
+            const fbclid = new URLSearchParams(window.location.search).get('fbclid');
+            if (fbclid) {
+                document.cookie = `_fbc=fb.1.${Date.now()}.${encodeURIComponent(fbclid)}; path=/; max-age=${NOVENTA_DIAS_S}; SameSite=Lax`;
+            }
+        } catch {
+            // cookie bloqueado: o Pixel ainda tenta por conta própria
+        }
+    }
 
     private enviar(evento: string, parametros?: object, opcoes?: { eventID: string }): void {
         if (!this.navegador || this.estado === 'desabilitado') {

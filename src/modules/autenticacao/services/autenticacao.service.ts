@@ -10,6 +10,7 @@ import { AutenticacaoDataSource } from "../data/autenticacao.data.source";
 import { TokensDto } from "../data/dto/tokens.dto";
 import { RecuperarSenhaDataSource } from "../data/recuperar.senha.data.source";
 import { RecuperarSenhaDto } from "../data/dto/recuperar.senha.dto";
+import { MetaPixelService } from "../../core/meta-pixel/meta-pixel.service";
 
 @Injectable()
 export class AutenticacaoService {
@@ -19,7 +20,8 @@ export class AutenticacaoService {
         private usuarioDataSource: UsuarioDataSource,
         private autenticacaoDataSource: AutenticacaoDataSource,
         private recuperarSenhaDataSource: RecuperarSenhaDataSource,
-        private localStorageService: LocalStorageService
+        private localStorageService: LocalStorageService,
+        private metaPixel: MetaPixelService
     ) {
 
     }
@@ -77,7 +79,8 @@ export class AutenticacaoService {
             console.log(tokens.tokenDeAcesso);
             var usuarioDaSessao = await firstValueFrom(this.usuarioDataSource.recuperarUsuario(tokens.tokenDeAcesso));
 
-            this.localStorageService.set('usuario_da_sessao', usuarioDaSessao);
+            await this.localStorageService.set('usuario_da_sessao', usuarioDaSessao);
+            this.metaPixel.atualizarUsuario();
 
             return true;
         } catch (error) {

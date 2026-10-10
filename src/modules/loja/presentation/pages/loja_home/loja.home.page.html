@@ -1,98 +1,79 @@
-<div class="loja-shell">
-    <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
+<loja-header></loja-header>
 
-    <loja-hero></loja-hero>
-
-    @if (categorias().length) {
-    <section class="loja-categorias" aria-label="Categorias">
-        <span class="loja-categorias-eyebrow">Categorias</span>
-        <div class="pof-rail-wrap">
-            <div class="loja-categorias-grid pof-rail" #categoriasRail>
-                @for (categoria of categorias(); track categoria.id) {
-                <a class="loja-categoria-card" [routerLink]="['/loja/categoria', categoria.id]">
-                    <span class="loja-categoria-icone">
-                        @if (categoria.icone) {
-                        <span class="loja-categoria-icone-img" [style.background-image]="'url(' + categoria.icone + ')'"></span>
-                        } @else {
-                        <app-traco d="M4,50 Q25,20 50,50 T96,50" variante="clara" [opacidade]="1"
-                            animacao="nenhuma" class="pof-anim-flutua"></app-traco>
-                        }
-                    </span>
-                    <span class="loja-categoria-nome">{{ categoria.nome }}</span>
-                </a>
-                }
-            </div>
-            <button type="button" class="pof-rail-btn esquerda" aria-label="Categorias anteriores"
-                (click)="rolarCategorias(-1)">‹</button>
-            <button type="button" class="pof-rail-btn direita" aria-label="Próximas categorias"
-                (click)="rolarCategorias(1)">›</button>
-        </div>
-    </section>
-    }
-
-    <div class="loja-vitrine-full">
-        <main class="loja-content" id="produtos">
-        @if (lojaFechada()) {
-        <div class="loja-estado">
-            <p>A loja está fechada no momento. Volte mais tarde para conferir as novidades.</p>
-        </div>
-        } @else {
-        <div class="loja-busca-linha">
-            <ui-input class="loja-busca" placeholder="Buscar produtos..." [ngModel]="busca()"
-                (ngModelChange)="onBuscaChange($event)"></ui-input>
-            <span class="loja-busca-contagem">{{ referencias().length }} produtos</span>
-        </div>
-
-        @if (loading()) {
-        <div class="loja-grid">
-            @for (item of skeletonItems; track item) {
-            <div class="loja-card-skeleton" aria-hidden="true">
-                <div class="loja-card-skeleton-foto pof-skeleton"></div>
-                <div class="loja-card-skeleton-linha pof-skeleton"></div>
-                <div class="loja-card-skeleton-linha curta pof-skeleton"></div>
-            </div>
-            }
-        </div>
-        } @else if (erro()) {
-        <div class="loja-estado">
-            <p>{{ erro() }}</p>
-        </div>
-        } @else if (referencias().length === 0) {
-        <div class="loja-estado">
-            @if (busca()) {
-            <p>Nenhum produto encontrado para "{{ busca() }}".</p>
-            } @else {
-            <p>Nenhum produto disponível no momento.</p>
-            }
-        </div>
-        } @else {
-        <div class="loja-grid">
-            @for (referencia of referencias(); track referencia.id) {
-            <produto-card [referencia]="referencia" (abrir)="abrirReferencia(referencia)"
-                (adicionar)="adicionarAoCarrinho(referencia)"></produto-card>
-            }
-            @if (carregandoMais()) {
-            @for (item of skeletonItems; track item) {
-            <div class="loja-card-skeleton" aria-hidden="true">
-                <div class="loja-card-skeleton-foto pof-skeleton"></div>
-                <div class="loja-card-skeleton-linha pof-skeleton"></div>
-                <div class="loja-card-skeleton-linha curta pof-skeleton"></div>
-            </div>
-            }
-            }
-        </div>
-
-        @if (temMaisPaginas()) {
-        <div class="loja-carregar-mais">
-            <ui-button variant="secondary" [disabled]="carregandoMais()" (clicked)="carregarMais()">
-                @if (carregandoMais()) { Carregando... } @else { Ver mais produtos }
-            </ui-button>
-        </div>
-        }
-        }
-        }
-        </main>
-    </div>
-
-    <loja-footer></loja-footer>
+@if (lojaFechada()) {
+<div class="home-estado">
+    <p>A loja está fechada no momento. Volte mais tarde para conferir as novidades.</p>
 </div>
+} @else {
+
+@if (!busca()) {
+<loja-hero></loja-hero>
+
+@if (config.beneficios.ativo) {
+<section class="beneficios" aria-label="Benefícios">
+    <div class="pof-container pof-rail beneficios-trilho">
+        @for (item of config.beneficios.itens; track item.titulo) {
+        <div class="beneficio">
+            <span class="beneficio-icone">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    @switch (item.icone) {
+                    @case ('frete') {
+                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+                    <path d="M15 18H9" />
+                    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
+                    <circle cx="17" cy="18" r="2" />
+                    <circle cx="7" cy="18" r="2" />
+                    }
+                    @case ('desconto') {
+                    <path d="M19 5 5 19" />
+                    <circle cx="6.5" cy="6.5" r="2.5" />
+                    <circle cx="17.5" cy="17.5" r="2.5" />
+                    }
+                    @default {
+                    <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                    <path d="M13 5v2M13 17v2M13 11v2" />
+                    }
+                    }
+                </svg>
+            </span>
+            <div class="beneficio-texto">
+                <strong>{{ item.titulo }}</strong>
+                <span>{{ item.texto }}</span>
+            </div>
+        </div>
+        }
+    </div>
+</section>
+}
+}
+
+@if (carregando()) {
+<div class="home-estado"><p>Carregando…</p></div>
+} @else if (erro()) {
+<div class="home-estado"><p>{{ erro() }}</p></div>
+} @else if (busca()) {
+<section class="pof-container home-busca">
+    <h1 class="pof-titulo-secao">Resultados para "{{ busca() }}"</h1>
+    @if (resultado().length) {
+    <div class="home-grid">
+        @for (referencia of resultado(); track referencia.id) {
+        <produto-card [referencia]="referencia"></produto-card>
+        }
+    </div>
+    } @else {
+    <p class="home-estado-texto">Nenhum produto encontrado.</p>
+    }
+</section>
+} @else if (vitrines().length) {
+@for (vitrine of vitrines(); track vitrine.id) {
+<loja-vitrine [kicker]="vitrine.descricao" [titulo]="vitrine.nome ?? ''" [destaque]="destaque(vitrine.nome)"
+    [verTudoRota]="['/loja/lista', vitrine.id]" [referencias]="vitrine.referencias"></loja-vitrine>
+}
+} @else {
+<div class="home-estado"><p>Nenhum produto disponível no momento.</p></div>
+}
+
+}
+
+<loja-footer></loja-footer>

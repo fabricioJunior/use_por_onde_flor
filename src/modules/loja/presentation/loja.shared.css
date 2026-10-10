@@ -1,0 +1,361 @@
+/* Primitivos da nova estrutura da loja (handoff "Estrutura Teste"). Entra UMA vez como estilo
+   global (angular.json) -- incluir em `styleUrls` de cada componente duplicava ~4 kB por
+   componente e estourava o budget de bundle do build de produção. Tokens: src/tokens/colors.css. */
+
+:root {
+    --pof-creme: #F8F1EB;
+    --pof-tinta: #2B1919;
+    --pof-oliva-escura: #3E4636;
+    --pof-oliva: #6A755B;
+    --pof-salvia: #A0B08B;
+    --pof-nevoa: #ECEDE3;
+    --pof-bordo: #6D4141;
+    --pof-borda-fraca: rgba(160, 176, 139, .35);
+    --pof-borda: rgba(160, 176, 139, .45);
+    --pof-borda-forte: rgba(160, 176, 139, .7);
+    --pof-overlay: rgba(43, 25, 25, .42);
+}
+
+.pof-container {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+.pof-rail {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* `styles.scss` dá uma barra de 3px a todo `.pof-rail` e carrega depois deste arquivo -- na foto
+   do produto ela só suja a imagem, e o trilho anda por arrasto, miniaturas e indicadores.
+   Dois seletores de classe para ganhar da regra de lá; os outros trilhos seguem com a barra. */
+.pof-rail.galeria-trilho {
+    scrollbar-width: none;
+}
+
+.pof-rail.galeria-trilho::-webkit-scrollbar,
+.pof-rail.galeria-trilho::-webkit-scrollbar-thumb,
+.pof-rail.galeria-trilho::-webkit-scrollbar-track {
+    width: 0;
+    height: 0;
+    display: none;
+    background: transparent;
+}
+
+.pof-kicker {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--pof-oliva);
+}
+
+.pof-titulo-secao {
+    margin: 0;
+    font-size: 30px;
+    line-height: 1.1;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--pof-tinta);
+}
+
+.pof-titulo-secao.destaque {
+    color: var(--pof-bordo);
+}
+
+.pof-chip {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    font-family: inherit;
+    font-size: 12px;
+    border: 1px solid var(--pof-borda-forte);
+    background: transparent;
+    color: var(--pof-tinta);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+
+.pof-chip.selecionado {
+    background: var(--pof-tinta);
+    color: var(--pof-creme);
+    border-color: var(--pof-tinta);
+}
+
+.pof-chip:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.pof-btn-escuro {
+    min-height: 44px;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--pof-creme);
+    background: var(--pof-oliva-escura);
+    border: none;
+    padding: 0 12px;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.pof-btn-escuro:hover:not(:disabled) {
+    background: var(--pof-tinta);
+}
+
+.pof-btn-escuro:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.pof-btn-contorno {
+    min-height: 44px;
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--pof-tinta);
+    background: none;
+    border: 1px solid var(--pof-salvia);
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.pof-btn-contorno:hover {
+    background: var(--pof-nevoa);
+}
+
+.pof-seta {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid var(--pof-borda-forte);
+    background: none;
+    color: var(--pof-tinta);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+.pof-seta:hover {
+    background: var(--pof-nevoa);
+}
+
+.pof-link-ver-tudo {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--pof-tinta);
+    border-bottom: 1px solid var(--pof-salvia);
+    padding-bottom: 3px;
+    text-decoration: none;
+}
+
+/* Fundo de foto de produto: névoa + grafismo sálvia da marca. */
+.pof-foto-fundo {
+    background: var(--pof-nevoa) url('/assets/grafismos/cropped-salvia-14.svg') no-repeat center bottom -14px / auto 62%;
+}
+
+.pof-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--pof-overlay);
+    transition: opacity .3s ease;
+    border: none;
+    padding: 0;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--pof-oliva);
+    outline-offset: 2px;
+}
+
+/* Modal (usado pelo "Meios de pagamento" da PDP -- global pra não duplicar nem estourar o
+   budget de CSS por componente). */
+.pof-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.pof-modal-fundo {
+    position: absolute;
+    inset: 0;
+    background: var(--pof-overlay);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.pof-modal-painel {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    max-height: 85%;
+    overflow-y: auto;
+    background: var(--pof-creme);
+    display: flex;
+    flex-direction: column;
+}
+
+.pof-modal-topo {
+    height: 60px;
+    padding: 0 8px 0 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--pof-borda);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.pof-modal-topo button {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--pof-tinta);
+}
+
+.pof-modal-rotulo {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--pof-oliva-escura);
+}
+
+.pof-modal-pix {
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--pof-nevoa);
+}
+
+.pof-modal-pix-valores {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.pof-modal-pix-valores .pof-modal-riscado {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--pof-bordo);
+    text-decoration: line-through;
+}
+
+.pof-modal-pix-valores strong {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.pof-modal-obs {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--pof-oliva);
+}
+
+.pof-modal-cartao {
+    padding: 20px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pof-modal-cartao .pof-modal-rotulo {
+    margin-bottom: 8px;
+}
+
+.pof-modal-parcela {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--pof-borda-fraca);
+    font-size: 14px;
+}
+
+.pof-modal-parcela span:last-child {
+    font-weight: 300;
+    color: var(--pof-oliva);
+}
+
+.pof-modal-bandeiras {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.pof-modal-bandeiras span {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--pof-tinta);
+    border: 1px solid var(--pof-borda-forte);
+    padding: 5px 8px;
+    border-radius: 2px;
+}
+
+@media (max-width: 819px) {
+    .pof-container {
+        padding: 0 16px;
+    }
+
+    .pof-titulo-secao {
+        font-size: 24px;
+    }
+
+    .pof-chip {
+        min-width: 40px;
+        height: 40px;
+    }
+}
+
+/* Formas de pagamento da PDP: linha de etiquetas + a nota de parcelamento. */
+.compra-formas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.compra-formas-nota {
+    font-size: 13px;
+    color: var(--pof-oliva);
+}
+
+/* etiqueta estática (forma de pagamento): o chip sem a parte clicável */
+.compra-forma-chip {
+    display: inline-flex;
+    align-items: center;
+    cursor: default;
+}
