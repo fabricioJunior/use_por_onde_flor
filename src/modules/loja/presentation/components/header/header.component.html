@@ -12,15 +12,15 @@
 <!-- Desktop (>= 820px) -->
 <header class="header-desktop" (mouseleave)="fecharMega()">
     <div class="pof-container header-linha1">
-        <label class="header-busca">
+        <form class="header-busca" (ngSubmit)="buscar()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.3-4.3" />
             </svg>
-            <input type="search" placeholder="O que você procura?" [ngModel]="busca()"
-                (ngModelChange)="busca.set($event)" (keyup.enter)="buscar()" aria-label="Buscar produtos">
-        </label>
+            <input type="search" name="q" enterkeyhint="search" placeholder="O que você procura?"
+                [ngModel]="busca()" (ngModelChange)="busca.set($event)" aria-label="Buscar produtos">
+        </form>
 
         <a routerLink="/loja" class="header-logo" aria-label="Por Onde Flor">
             <app-logo variante="clara" [altura]="34"></app-logo>
@@ -130,15 +130,15 @@
         </button>
     </div>
 
-    <label class="drawer-busca">
+    <form class="drawer-busca" (ngSubmit)="buscar()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.3-4.3" />
         </svg>
-        <input type="search" placeholder="O que você procura?" [ngModel]="busca()" (ngModelChange)="busca.set($event)"
-            (keyup.enter)="buscar()" aria-label="Buscar produtos">
-    </label>
+        <input type="search" name="q" enterkeyhint="search" placeholder="O que você procura?"
+            [ngModel]="busca()" (ngModelChange)="busca.set($event)" aria-label="Buscar produtos">
+    </form>
 
     @if (nivel(); as atual) {
     <div class="drawer-subnivel">
