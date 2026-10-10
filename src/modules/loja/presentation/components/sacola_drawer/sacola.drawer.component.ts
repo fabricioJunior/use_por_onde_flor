@@ -13,7 +13,7 @@ import { formatarPreco, progressoFreteGratis } from "../../../services/preco.apr
     standalone: true,
     imports: [CommonModule],
     templateUrl: './sacola.drawer.component.html',
-    styleUrls: ['../../loja.shared.css', './sacola.drawer.component.css'],
+    styleUrl: './sacola.drawer.component.css',
 })
 export class SacolaDrawerComponent {
     formatarPreco = formatarPreco;

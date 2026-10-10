@@ -260,10 +260,10 @@
 
 <!-- 2.6 Modal "Meios de pagamento" -->
 @if (pagamentoAberto()) {
-<div class="modal" role="dialog" aria-label="Meios de pagamento">
-    <button type="button" class="modal-fundo" aria-label="Fechar" (click)="pagamentoAberto.set(false)"></button>
-    <div class="modal-painel">
-        <div class="modal-topo">
+<div class="pof-modal" role="dialog" aria-label="Meios de pagamento">
+    <button type="button" class="pof-modal-fundo" aria-label="Fechar" (click)="pagamentoAberto.set(false)"></button>
+    <div class="pof-modal-painel">
+        <div class="pof-modal-topo">
             <span>Meios de pagamento</span>
             <button type="button" aria-label="Fechar" (click)="pagamentoAberto.set(false)">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
@@ -273,24 +273,24 @@
             </button>
         </div>
         @if (pix(); as valorPix) {
-        <div class="modal-pix">
-            <span class="modal-rotulo">Pix · {{ config.pix.percentualDesconto }}% de desconto</span>
-            <div class="modal-pix-valores">
-                <span class="riscado">{{ formatarPreco(preco()) }}</span>
+        <div class="pof-modal-pix">
+            <span class="pof-modal-rotulo">Pix · {{ config.pix.percentualDesconto }}% de desconto</span>
+            <div class="pof-modal-pix-valores">
+                <span class="pof-modal-riscado">{{ formatarPreco(preco()) }}</span>
                 <strong>{{ formatarPreco(valorPix) }}</strong>
             </div>
-            <span class="modal-obs">O desconto vale sobre o valor dos produtos, sem o frete.</span>
+            <span class="pof-modal-obs">O desconto vale sobre o valor dos produtos, sem o frete.</span>
         </div>
         }
-        <div class="modal-cartao">
-            <span class="modal-rotulo">Cartão de crédito</span>
+        <div class="pof-modal-cartao">
+            <span class="pof-modal-rotulo">Cartão de crédito</span>
             @for (parcela of tabelaParcelas(); track parcela.numero) {
-            <div class="modal-parcela">
+            <div class="pof-modal-parcela">
                 <span>{{ parcela.numero }}x de {{ formatarPreco(parcela.valor) }} sem juros</span>
                 <span>Total {{ formatarPreco(preco()) }}</span>
             </div>
             }
-            <div class="modal-bandeiras">
+            <div class="pof-modal-bandeiras">
                 @for (meio of config.meiosPagamento; track meio) {
                 <span>{{ meio }}</span>
                 }

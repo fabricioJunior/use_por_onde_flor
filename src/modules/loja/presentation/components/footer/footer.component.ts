@@ -12,7 +12,7 @@ import { LOJA_CONFIG } from "../../../config/loja.config";
     standalone: true,
     imports: [CommonModule, RouterLink, LogoComponent],
     templateUrl: './footer.component.html',
-    styleUrls: ['../../loja.shared.css', './footer.component.css'],
+    styleUrl: './footer.component.css',
 })
 export class FooterComponent {
     config = LOJA_CONFIG;

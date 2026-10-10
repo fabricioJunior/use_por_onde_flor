@@ -24,7 +24,7 @@ const LIMITE_BUSCA = 24;
     standalone: true,
     imports: [CommonModule, HeaderComponent, HeroComponent, FooterComponent, VitrineComponent, ProdutoCardComponent],
     templateUrl: './loja.home.page.html',
-    styleUrls: ['../../loja.shared.css', './loja.home.page.css'],
+    styleUrl: './loja.home.page.css',
 })
 export class LojaHomePage implements OnInit {
     config = LOJA_CONFIG;

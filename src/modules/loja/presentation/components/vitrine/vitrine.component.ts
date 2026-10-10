@@ -11,7 +11,7 @@ import { ProdutoCardComponent } from "../produto_card/produto.card.component";
     standalone: true,
     imports: [CommonModule, RouterLink, ProdutoCardComponent],
     templateUrl: './vitrine.component.html',
-    styleUrls: ['../../loja.shared.css', './vitrine.component.css'],
+    styleUrl: './vitrine.component.css',
 })
 export class VitrineComponent {
     @ViewChild('trilho') trilho?: ElementRef<HTMLElement>;

@@ -21,7 +21,7 @@ import { MetaPixelService } from "../../../../core/meta-pixel/meta-pixel.service
     standalone: true,
     imports: [CommonModule, RouterLink],
     templateUrl: './produto.card.component.html',
-    styleUrls: ['../../loja.shared.css', './produto.card.component.css'],
+    styleUrl: './produto.card.component.css',
 })
 export class ProdutoCardComponent {
     @Input({ required: true }) referencia!: EcommerceReferenciaDto;

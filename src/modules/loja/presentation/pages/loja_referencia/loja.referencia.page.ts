@@ -28,7 +28,7 @@ import { normalizarNomeCor } from "../../utils/cor-apresentacao.util";
     standalone: true,
     imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, FooterComponent, VitrineComponent],
     templateUrl: './loja.referencia.page.html',
-    styleUrls: ['../../loja.shared.css', './loja.referencia.page.css'],
+    styleUrl: './loja.referencia.page.css',
 })
 export class LojaReferenciaPage implements OnInit {
     @ViewChild('galeria') galeriaRef?: ElementRef<HTMLElement>;

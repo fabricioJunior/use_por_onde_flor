@@ -19,7 +19,7 @@ const LIMITE = 24;
     standalone: true,
     imports: [CommonModule, RouterLink, HeaderComponent, FooterComponent, ProdutoCardComponent],
     templateUrl: './loja.lista.page.html',
-    styleUrls: ['../../loja.shared.css', './loja.lista.page.css'],
+    styleUrl: './loja.lista.page.css',
 })
 export class LojaListaPage implements OnInit {
     carregando = signal(true);

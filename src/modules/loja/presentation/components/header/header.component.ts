@@ -23,7 +23,7 @@ import { SacolaDrawerComponent } from "../sacola_drawer/sacola.drawer.component"
     standalone: true,
     imports: [CommonModule, FormsModule, RouterLink, LogoComponent, SacolaDrawerComponent],
     templateUrl: './header.component.html',
-    styleUrls: ['../../loja.shared.css', './header.component.css'],
+    styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit, OnDestroy {
     config = LOJA_CONFIG;

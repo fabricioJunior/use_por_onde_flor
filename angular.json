@@ -32,6 +32,7 @@
               "src/tokens/typography.css",
               "src/tokens/spacing.css",
               "src/tokens/effects.css",
+              "src/modules/loja/presentation/loja.shared.css",
               "src/styles.scss"
             ],
             "scripts": [],
@@ -106,7 +107,8 @@
               "src/tokens/typography.css",
               "src/tokens/spacing.css",
               "src/tokens/effects.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/modules/loja/presentation/loja.shared.css"
             ],
             "scripts": []
           }

@@ -14,7 +14,7 @@ const TROCA_AUTOMATICA_MS = 6000;
     standalone: true,
     imports: [CommonModule],
     templateUrl: './hero.component.html',
-    styleUrls: ['../../loja.shared.css', './hero.component.css'],
+    styleUrl: './hero.component.css',
 })
 export class HeroComponent implements OnInit, OnDestroy {
     desktop = signal<BannerDto[]>([]);

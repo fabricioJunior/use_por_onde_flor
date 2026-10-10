@@ -1,8 +1,8 @@
-/* Primitivos da nova estrutura da loja (handoff "Estrutura Teste"). Entram por `styleUrls` nos
-   componentes que precisam -- CSS de componente é escopado no Angular, então cada um inclui este
-   arquivo em vez de depender de estilo global. Tokens: ver src/tokens/colors.css. */
+/* Primitivos da nova estrutura da loja (handoff "Estrutura Teste"). Entra UMA vez como estilo
+   global (angular.json) -- incluir em `styleUrls` de cada componente duplicava ~4 kB por
+   componente e estourava o budget de bundle do build de produção. Tokens: src/tokens/colors.css. */
 
-:host {
+:root {
     --pof-creme: #F8F1EB;
     --pof-tinta: #2B1919;
     --pof-oliva-escura: #3E4636;
@@ -171,6 +171,146 @@ a:focus-visible,
 input:focus-visible {
     outline: 2px solid var(--pof-oliva);
     outline-offset: 2px;
+}
+
+/* Modal (usado pelo "Meios de pagamento" da PDP -- global pra não duplicar nem estourar o
+   budget de CSS por componente). */
+.pof-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.pof-modal-fundo {
+    position: absolute;
+    inset: 0;
+    background: var(--pof-overlay);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.pof-modal-painel {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    max-height: 85%;
+    overflow-y: auto;
+    background: var(--pof-creme);
+    display: flex;
+    flex-direction: column;
+}
+
+.pof-modal-topo {
+    height: 60px;
+    padding: 0 8px 0 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--pof-borda);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.pof-modal-topo button {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--pof-tinta);
+}
+
+.pof-modal-rotulo {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--pof-oliva-escura);
+}
+
+.pof-modal-pix {
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--pof-nevoa);
+}
+
+.pof-modal-pix-valores {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.pof-modal-pix-valores .pof-modal-riscado {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--pof-bordo);
+    text-decoration: line-through;
+}
+
+.pof-modal-pix-valores strong {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.pof-modal-obs {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--pof-oliva);
+}
+
+.pof-modal-cartao {
+    padding: 20px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pof-modal-cartao .pof-modal-rotulo {
+    margin-bottom: 8px;
+}
+
+.pof-modal-parcela {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--pof-borda-fraca);
+    font-size: 14px;
+}
+
+.pof-modal-parcela span:last-child {
+    font-weight: 300;
+    color: var(--pof-oliva);
+}
+
+.pof-modal-bandeiras {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.pof-modal-bandeiras span {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--pof-tinta);
+    border: 1px solid var(--pof-borda-forte);
+    padding: 5px 8px;
+    border-radius: 2px;
 }
 
 @media (max-width: 819px) {
