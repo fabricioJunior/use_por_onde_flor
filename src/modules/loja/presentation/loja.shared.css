@@ -14,6 +14,12 @@
     --pof-borda: rgba(160, 176, 139, .45);
     --pof-borda-forte: rgba(160, 176, 139, .7);
     --pof-overlay: rgba(43, 25, 25, .42);
+
+    /* Altura do topo fixo, descontada do banner da home para a foto ocupar o resto da tela.
+       Desktop: cabeçalho 84 + menu ~50. Mobile: cabeçalho 60. A barra de campanha está
+       desligada (ver loja.config.ts); quando ligar, somar os ~36 dela aqui (170 / 116). */
+    --pof-altura-topo: 134px;
+    --pof-altura-topo-mobile: 60px;
 }
 
 .pof-container {

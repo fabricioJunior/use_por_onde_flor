@@ -1,14 +1,33 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnDestroy, OnInit, signal } from "@angular/core";
+import { Router } from "@angular/router";
 import { BannerDataSource } from "../../../data/banner.data.source";
 import { BannerDto } from "../../../data/dtos/banner.dto";
 
 const TROCA_AUTOMATICA_MS = 6000;
+const LIMIAR_SWIPE_PX = 50;
 
-// Carrossel de banners (README 1.4): 20:7 no desktop, 3:2 no mobile, crossfade de .7s, troca a cada
-// 6s. Os banners vêm do admin (`GET /e-commerce/:id/banners`), cada um já cadastrado por
-// dispositivo -- os dois conjuntos são renderizados e o CSS mostra o do breakpoint atual, pra não
-// depender de JS de resize (SSR).
+/// Um slide = a foto horizontal do desktop e a vertical do mobile, pareadas por `ordem`.
+/// `<picture>` troca a fonte no breakpoint, então existe um só elemento por slide.
+interface HeroSlide {
+    id: number;
+    desktop: string;
+    mobile: string;
+    video: boolean;
+    /// Destino ao tocar no banner; `null` = sem link. Cada foto tem o seu: no celular
+    /// vale o link do banner vertical, no desktop o do horizontal.
+    href: string | null;
+    hrefMobile: string | null;
+}
+
+// Banner de foto em tela cheia (handoff "Banner da home com fotos de celular"): ocupa o que sobra
+// da viewport abaixo do topo, crossfade de .7s e troca a cada 6s. As fotos vêm do admin
+// (`GET /e-commerce/:id/banners`), cadastradas por dispositivo.
+//
+// ponytail: o banner não tem kicker, título nem CTA porque `EcommerceBannerEntity` só guarda
+// url/ordem/ativo/dispositivo -- sem campo de texto no backend, o bloco de texto sobre a foto (e o
+// gradiente que existe só para legibilizá-lo) ficam de fora. Quando a entidade ganhar
+// kicker/titulo/cta/alt, montar a sobreposição descrita no handoff.
 @Component({
     selector: 'loja-hero',
     standalone: true,
@@ -17,24 +36,34 @@ const TROCA_AUTOMATICA_MS = 6000;
     styleUrl: './hero.component.css',
 })
 export class HeroComponent implements OnInit, OnDestroy {
-    desktop = signal<BannerDto[]>([]);
-    mobile = signal<BannerDto[]>([]);
+    slides = signal<HeroSlide[]>([]);
     indice = signal(0);
 
-    private timer?: ReturnType<typeof setInterval>;
+    telaMobile = signal(false);
+    private consulta?: MediaQueryList;
+    private aoTrocarLargura = (e: MediaQueryListEvent) => this.telaMobile.set(e.matches);
 
-    constructor(private bannerDataSource: BannerDataSource) { }
+    private timer?: ReturnType<typeof setInterval>;
+    private pausado = false;
+    private arrastoX: number | null = null;
+    private arrastou = false;
+
+    constructor(private bannerDataSource: BannerDataSource, private router: Router) { }
 
     ngOnInit(): void {
+        if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+            this.consulta = window.matchMedia('(max-width: 819px)');
+            this.telaMobile.set(this.consulta.matches);
+            this.consulta.addEventListener('change', this.aoTrocarLargura);
+        }
         this.bannerDataSource.listar().subscribe({
             next: (banners) => {
                 const ativos = banners.filter((b) => b.ativo).sort((a, b) => a.ordem - b.ordem);
                 const desktop = ativos.filter((b) => b.dispositivo === 'desktop');
-                this.desktop.set(desktop);
-                // Loja que ainda não cadastrou banner mobile cai no desktop em vez de ficar vazia.
-                this.mobile.set(ativos.filter((b) => b.dispositivo === 'mobile').length
-                    ? ativos.filter((b) => b.dispositivo === 'mobile')
-                    : desktop);
+                const mobile = ativos.filter((b) => b.dispositivo === 'mobile');
+                // Loja que ainda não cadastrou a versão vertical cai na horizontal, em vez de
+                // ficar sem banner no celular.
+                this.slides.set(desktop.map((b, i) => this.slide(b, mobile[i] ?? b)));
                 this.reiniciar();
             },
             // Falha de rede não pode derrubar a home -- a seção simplesmente não aparece.
@@ -44,10 +73,52 @@ export class HeroComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         clearInterval(this.timer);
+        this.consulta?.removeEventListener('change', this.aoTrocarLargura);
+    }
+
+    private slide(desktop: BannerDto, mobile: BannerDto): HeroSlide {
+        return {
+            id: desktop.id,
+            desktop: desktop.url,
+            mobile: mobile.url,
+            video: desktop.type === 'Vídeo',
+            href: this.destino(desktop),
+            hrefMobile: this.destino(mobile),
+        };
+    }
+
+    // O link é do banner desktop: é ele que define o slide (o mobile é só a outra foto).
+    private destino(banner: BannerDto): string | null {
+        if (banner.linkTipo === 'lista' && banner.listaId) {
+            return `/loja/lista/${banner.listaId}`;
+        }
+        if (banner.linkTipo === 'url' && banner.linkUrl?.trim()) {
+            return banner.linkUrl.trim();
+        }
+        return null;
+    }
+
+    /// O href muda com a largura, então não dá para resolver só no CSS. No SSR vale o
+    /// desktop; o navegador corrige na hidratação e a cada mudança de tamanho.
+    destinoDoSlide(slide: HeroSlide): string | null {
+        return (this.telaMobile() ? slide.hrefMobile : slide.href) ?? null;
+    }
+
+    // Arrastar para passar a foto não pode virar clique no link.
+    aoClicar(evento: MouseEvent, slide: HeroSlide): void {
+        if (this.arrastou) {
+            evento.preventDefault();
+            return;
+        }
+        const href = this.destinoDoSlide(slide);
+        if (href?.startsWith('/')) {
+            evento.preventDefault();
+            void this.router.navigateByUrl(href);
+        }
     }
 
     get total(): number {
-        return Math.max(this.desktop().length, this.mobile().length);
+        return this.slides().length;
     }
 
     get pilulas(): number[] {
@@ -67,11 +138,48 @@ export class HeroComponent implements OnInit, OnDestroy {
         this.reiniciar();
     }
 
+    // Quem está lendo o banner não quer que ele troque sozinho no meio.
+    pausar(): void {
+        this.pausado = true;
+        clearInterval(this.timer);
+    }
+
+    retomar(): void {
+        this.pausado = false;
+        this.reiniciar();
+    }
+
+    onPointerDown(event: PointerEvent): void {
+        this.arrastoX = event.clientX;
+        this.arrastou = false;
+        this.pausar();
+    }
+
+    onPointerUp(event: PointerEvent): void {
+        const inicio = this.arrastoX;
+        this.arrastoX = null;
+        if (inicio !== null) {
+            const deltaX = event.clientX - inicio;
+            this.arrastou = Math.abs(deltaX) > LIMIAR_SWIPE_PX;
+            if (this.arrastou) {
+                this.passar(deltaX < 0 ? 1 : -1);
+            }
+        }
+        this.retomar();
+    }
+
     private reiniciar(): void {
         clearInterval(this.timer);
-        if (this.total < 2) {
+        if (this.total < 2 || this.pausado || this.animacaoReduzida()) {
             return;
         }
         this.timer = setInterval(() => this.indice.update((i) => (i + 1) % this.total), TROCA_AUTOMATICA_MS);
+    }
+
+    // Sem `window` no SSR; quem pediu menos movimento troca a foto só no toque ou na seta.
+    private animacaoReduzida(): boolean {
+        return typeof window !== 'undefined'
+            && typeof window.matchMedia === 'function'
+            && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
 }

@@ -1,23 +1,33 @@
 @if (total) {
-<section class="hero" aria-label="Banners">
-    <div class="hero-palco desktop">
-        @for (banner of desktop(); track banner.id; let i = $index) {
-        @if (banner.type === 'Vídeo') {
-        <video [src]="banner.url" [style.opacity]="i === indice() ? 1 : 0" autoplay muted loop playsinline></video>
+<section class="hero" aria-label="Banners" (pointerenter)="pausar()" (pointerleave)="retomar()"
+    (pointerdown)="onPointerDown($event)" (pointerup)="onPointerUp($event)"
+    (pointercancel)="onPointerUp($event)">
+    @for (slide of slides(); track slide.id; let i = $index) {
+    <div class="hero-slide" [style.opacity]="i === indice() ? 1 : 0" [attr.aria-hidden]="i === indice() ? null : true">
+        @if (slide.video) {
+        <video [src]="slide.desktop" autoplay muted loop playsinline></video>
         } @else {
-        <img [src]="banner.url" alt="" [style.opacity]="i === indice() ? 1 : 0">
+        <!-- Com link o slide vira <a> de verdade (abre em nova aba, teclado, SEO); sem link,
+             continua uma imagem. O clique é cancelado quando o gesto foi um arrasto. -->
+        @if (destinoDoSlide(slide); as href) {
+        <a class="hero-link" [href]="href" (click)="aoClicar($event, slide)"
+            [attr.tabindex]="i === indice() ? null : -1">
+            <picture>
+                <source media="(max-width: 819px)" [srcset]="slide.mobile">
+                <img [src]="slide.desktop" alt="" [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+                    [attr.fetchpriority]="i === 0 ? 'high' : null">
+            </picture>
+        </a>
+        } @else {
+        <picture>
+            <source media="(max-width: 819px)" [srcset]="slide.mobile">
+            <img [src]="slide.desktop" alt="" [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+                [attr.fetchpriority]="i === 0 ? 'high' : null">
+        </picture>
         }
         }
     </div>
-    <div class="hero-palco mobile">
-        @for (banner of mobile(); track banner.id; let i = $index) {
-        @if (banner.type === 'Vídeo') {
-        <video [src]="banner.url" [style.opacity]="i === indice() ? 1 : 0" autoplay muted loop playsinline></video>
-        } @else {
-        <img [src]="banner.url" alt="" [style.opacity]="i === indice() ? 1 : 0">
-        }
-        }
-    </div>
+    }
 
     @if (total > 1) {
     <button type="button" class="hero-seta anterior" aria-label="Banner anterior" (click)="passar(-1)">

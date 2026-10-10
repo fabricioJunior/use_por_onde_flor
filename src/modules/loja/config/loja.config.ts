@@ -38,8 +38,9 @@ export const LOJA_CONFIG = {
     // LIGADO por decisão da loja: o número de parcelas sem juros é definido AQUI, porque
     // `GET /e-commerce/:id/forma-pagamento` não expõe maxParcelas/juros. Quando o backend passar a
     // expor essa regra, trocar a origem do valor e deixar este arquivo só como fallback.
-    // `valorMinimoParcela: 0` = sem mínimo, então R$ 100 em 10x vira 10x de R$ 10,00.
-    parcelamento: { ativo: true, maxParcelas: 10, valorMinimoParcela: 0 },
+    // Escolha da loja: 6x, sem mínimo por parcela. Para parar de anunciar parcela de centavos em
+    // produto barato, basta pôr um piso em `valorMinimoParcela` (ex.: 20 -> R$ 100 vira 5x).
+    parcelamento: { ativo: true, maxParcelas: 6, valorMinimoParcela: 0 },
 
     // Preço no Pix com desconto + bloco Pix do modal de pagamento.
     // OCULTO: desconto por forma de pagamento existe em `/promocoes` (override por

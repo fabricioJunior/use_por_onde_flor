@@ -1,30 +1,41 @@
+/* Foto em tela cheia: a altura sai do que sobra da viewport abaixo do topo fixo.
+   `--pof-altura-topo` é o cabeçalho (84 + menu ~50); com a barra de campanha ligada o
+   header soma os ~36 dela à variável. A altura é fixa antes da foto carregar, então não
+   há salto de layout. */
 .hero {
     position: relative;
     width: 100%;
+    height: min(calc(100vh - var(--pof-altura-topo, 134px)), 880px);
+    min-height: 560px;
     background: var(--pof-nevoa);
     overflow: hidden;
+    touch-action: pan-y;
 }
 
-.hero-palco {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 20 / 7;
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    transition: opacity .7s ease;
 }
 
-.hero-palco.mobile {
-    display: none;
-    aspect-ratio: 3 / 2;
+.hero-link {
+    position: absolute;
+    inset: 0;
+    display: block;
 }
 
-.hero-palco img,
-.hero-palco video {
+.hero-slide img,
+.hero-slide video,
+.hero-slide picture {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     display: block;
-    transition: opacity .7s ease;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .hero-seta {
@@ -82,15 +93,20 @@
 }
 
 @media (max-width: 819px) {
-    .hero-palco.desktop {
-        display: none;
+    /* svh: no celular a barra do navegador entra e sai e vh daria altura maior que a tela. */
+    .hero {
+        height: calc(100svh - var(--pof-altura-topo-mobile, 60px));
+        min-height: 520px;
     }
 
-    .hero-palco.mobile {
-        display: block;
-    }
-
+    /* No mobile passa a foto deslizando, não por seta. */
     .hero-seta {
         display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-slide {
+        transition: none;
     }
 }
