@@ -45,6 +45,8 @@ export class LojaReferenciaPage implements OnInit {
     relacionados = signal<EcommerceReferenciaDto[]>([]);
     formasPagamento = signal<{ formaDePagamentoId: number; descricao: string; provider?: string }[]>([]);
     promocaoAplicada = signal<PromocaoDto | null>(null);
+    /// "Leve 2 e ganhe 30%" e afins: não mexem no preço unitário, mas a página anuncia a condição.
+    promocoesPorQuantidade = signal<PromocaoDto[]>([]);
     valorPromocional = signal<number | undefined>(undefined);
     /// Preço do cartão: base do parcelamento, que não pode sair sobre o preço do Pix.
     valorParcelado = signal<number | undefined>(undefined);
@@ -130,6 +132,9 @@ export class LojaReferenciaPage implements OnInit {
                 geraisPromocoes,
             );
             this.promocaoAplicada.set(aplicada?.promocao ?? null);
+            this.promocoesPorQuantidade.set(
+                this.promocaoPrecoService.porQuantidadeParaReferencia(referencia.referenciaId, promocoes.items),
+            );
             this.valorPromocional.set(aplicada?.valorFinal);
             this.formaMelhorPreco.set(this.promocaoPrecoService.melhorOpcaoParaReferencia(
                 referencia.referenciaId,

@@ -54,6 +54,16 @@ export class PromocaoPrecoService {
         return melhor ? { promocao: melhor.promocao, valorFinal: melhor.valorFinal } : null;
     }
 
+    // Promoções por quantidade (ex.: "leve 2 e ganhe 30%") que valem para esta referência. Elas
+    // NÃO entram no preço do catálogo -- o desconto depende de quantas peças o cliente vai levar
+    // (ver PromocaoTipoEscopo) --, mas a página do produto precisa anunciar a condição.
+    // Sem `referenciaIds` a promoção vale para o carrinho inteiro, então também conta.
+    porQuantidadeParaReferencia(referenciaId: number, promocoes: PromocaoDto[]): PromocaoDto[] {
+        return promocoes.filter((p) =>
+            p.tipoEscopo === 'faixa_quantidade'
+            && (!p.referenciaIds?.length || p.referenciaIds.includes(referenciaId)));
+    }
+
     /// Nomes de forma de pagamento que o cliente paga parcelado. Pix, boleto e dinheiro são à
     /// vista: o desconto deles não pode virar "Nx de ...".
     private static readonly CARTAO = /cart|cr[eé]d/i;
