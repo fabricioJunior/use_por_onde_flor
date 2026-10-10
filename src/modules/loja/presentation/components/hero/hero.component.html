@@ -9,7 +9,7 @@
         } @else {
         <!-- Com link o slide vira <a> de verdade (abre em nova aba, teclado, SEO); sem link,
              continua uma imagem. O clique é cancelado quando o gesto foi um arrasto. -->
-        @if (slide.href; as href) {
+        @if (destinoDoSlide(slide); as href) {
         <a class="hero-link" [href]="href" (click)="aoClicar($event, slide)"
             [attr.tabindex]="i === indice() ? null : -1">
             <picture>

@@ -42,12 +42,24 @@ describe('HeroComponent', () => {
             banner(3, 'desktop', 3, { linkTipo: 'url', linkUrl: '/loja?q=jeans' }),
             banner(4, 'desktop', 4),
         ]);
-        expect(hero.slides().map((s) => [s.href, s.interno])).toEqual([
-            ['/loja/lista/9', true],
-            ['https://instagram.com/x', false],
-            ['/loja?q=jeans', true],
-            [null, false],
+        expect(hero.slides().map((s) => s.href)).toEqual([
+            '/loja/lista/9',
+            'https://instagram.com/x',
+            '/loja?q=jeans',
+            null,
         ]);
+    });
+
+    it('no celular vale o link do banner vertical', () => {
+        const hero = montar([
+            banner(1, 'desktop', 1, { linkTipo: 'lista', listaId: 9 }),
+            banner(2, 'mobile', 1, { linkTipo: 'url', linkUrl: '/loja?q=jeans' }),
+        ]);
+        const slide = hero.slides()[0];
+        hero.telaMobile.set(false);
+        expect(hero.destinoDoSlide(slide)).toBe('/loja/lista/9');
+        hero.telaMobile.set(true);
+        expect(hero.destinoDoSlide(slide)).toBe('/loja?q=jeans');
     });
 
     it('arrastar para passar a foto não dispara o link', () => {

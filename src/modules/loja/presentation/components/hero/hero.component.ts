@@ -14,10 +14,10 @@ interface HeroSlide {
     desktop: string;
     mobile: string;
     video: boolean;
-    /// Destino ao tocar no banner; `null` = banner sem link.
+    /// Destino ao tocar no banner; `null` = sem link. Cada foto tem o seu: no celular
+    /// vale o link do banner vertical, no desktop o do horizontal.
     href: string | null;
-    /// Rota do próprio site: navega pelo router, sem recarregar a página.
-    interno: boolean;
+    hrefMobile: string | null;
 }
 
 // Banner de foto em tela cheia (handoff "Banner da home com fotos de celular"): ocupa o que sobra
@@ -39,6 +39,10 @@ export class HeroComponent implements OnInit, OnDestroy {
     slides = signal<HeroSlide[]>([]);
     indice = signal(0);
 
+    telaMobile = signal(false);
+    private consulta?: MediaQueryList;
+    private aoTrocarLargura = (e: MediaQueryListEvent) => this.telaMobile.set(e.matches);
+
     private timer?: ReturnType<typeof setInterval>;
     private pausado = false;
     private arrastoX: number | null = null;
@@ -47,6 +51,11 @@ export class HeroComponent implements OnInit, OnDestroy {
     constructor(private bannerDataSource: BannerDataSource, private router: Router) { }
 
     ngOnInit(): void {
+        if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+            this.consulta = window.matchMedia('(max-width: 819px)');
+            this.telaMobile.set(this.consulta.matches);
+            this.consulta.addEventListener('change', this.aoTrocarLargura);
+        }
         this.bannerDataSource.listar().subscribe({
             next: (banners) => {
                 const ativos = banners.filter((b) => b.ativo).sort((a, b) => a.ordem - b.ordem);
@@ -64,17 +73,17 @@ export class HeroComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         clearInterval(this.timer);
+        this.consulta?.removeEventListener('change', this.aoTrocarLargura);
     }
 
     private slide(desktop: BannerDto, mobile: BannerDto): HeroSlide {
-        const href = this.destino(desktop);
         return {
             id: desktop.id,
             desktop: desktop.url,
             mobile: mobile.url,
             video: desktop.type === 'Vídeo',
-            href,
-            interno: !!href && href.startsWith('/'),
+            href: this.destino(desktop),
+            hrefMobile: this.destino(mobile),
         };
     }
 
@@ -89,15 +98,22 @@ export class HeroComponent implements OnInit, OnDestroy {
         return null;
     }
 
+    /// O href muda com a largura, então não dá para resolver só no CSS. No SSR vale o
+    /// desktop; o navegador corrige na hidratação e a cada mudança de tamanho.
+    destinoDoSlide(slide: HeroSlide): string | null {
+        return (this.telaMobile() ? slide.hrefMobile : slide.href) ?? null;
+    }
+
     // Arrastar para passar a foto não pode virar clique no link.
     aoClicar(evento: MouseEvent, slide: HeroSlide): void {
         if (this.arrastou) {
             evento.preventDefault();
             return;
         }
-        if (slide.interno && slide.href) {
+        const href = this.destinoDoSlide(slide);
+        if (href?.startsWith('/')) {
             evento.preventDefault();
-            void this.router.navigateByUrl(slide.href);
+            void this.router.navigateByUrl(href);
         }
     }
 
