@@ -8,6 +8,12 @@ export interface EcommerceReferenciaDto {
     nome: string;
     idExterno: string;
     descricao?: string;
+    // Acordeão "Composição e cuidados" da página de produto -- textos livres do cadastro da
+    // referência (vêm da view, podem estar vazios; nesse caso o acordeão não aparece).
+    composicao?: string;
+    cuidados?: string;
+    categoriaId?: number;
+    categoriaNome?: string | null;
     valor: number;
     media_tipo?: string;
     media_url?: string;
