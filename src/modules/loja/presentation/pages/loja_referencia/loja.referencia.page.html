@@ -81,6 +81,9 @@
                     <span class="compra-parcelamento">{{ texto }}</span>
                     }
                 </div>
+                @if (precoAVista(); as aVista) {
+                <span class="compra-pix">{{ formatarPreco(aVista.valor) }} no {{ aVista.forma }}</span>
+                }
                 @if (pix(); as valorPix) {
                 <span class="compra-pix">ou {{ formatarPreco(valorPix) }} no Pix ({{ config.pix.percentualDesconto }}% off)</span>
                 }

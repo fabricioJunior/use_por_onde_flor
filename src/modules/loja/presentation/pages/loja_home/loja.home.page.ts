@@ -75,6 +75,7 @@ export class LojaHomePage implements OnInit {
                 ...r,
                 valorPromocional: this.promocaoPrecoService.calcularParaReferencia(r.referenciaId, r.valor, mapa, gerais) ?? undefined,
                 valorParcelado: this.promocaoPrecoService.precoParaParcelamento(r.referenciaId, r.valor, mapa, gerais, nomesFormaPagamento),
+                melhorDesconto: this.promocaoPrecoService.melhorOpcaoParaReferencia(r.referenciaId, r.valor, mapa, gerais, nomesFormaPagamento) ?? undefined,
             }));
 
             if (this.busca()) {

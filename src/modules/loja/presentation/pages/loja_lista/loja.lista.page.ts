@@ -79,6 +79,7 @@ export class LojaListaPage implements OnInit {
             ...r,
             valorPromocional: this.promocaoPrecoService.calcularParaReferencia(r.referenciaId, r.valor, mapa, gerais) ?? undefined,
             valorParcelado: this.promocaoPrecoService.precoParaParcelamento(r.referenciaId, r.valor, mapa, gerais, this.nomesFormaPagamento),
+            melhorDesconto: this.promocaoPrecoService.melhorOpcaoParaReferencia(r.referenciaId, r.valor, mapa, gerais, this.nomesFormaPagamento) ?? undefined,
         }));
     }
 

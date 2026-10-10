@@ -48,6 +48,8 @@ export class LojaReferenciaPage implements OnInit {
     valorPromocional = signal<number | undefined>(undefined);
     /// Preço do cartão: base do parcelamento, que não pode sair sobre o preço do Pix.
     valorParcelado = signal<number | undefined>(undefined);
+    /// Nome da forma com o melhor preço (ex.: PIX), para a linha abaixo do preço.
+    formaMelhorPreco = signal<string | null>(null);
 
     fotoAtual = signal(0);
     /// Com muitas fotos a coluna lateral fica mais alta que a imagem: mostra 5 e esconde o resto.
@@ -129,6 +131,13 @@ export class LojaReferenciaPage implements OnInit {
             );
             this.promocaoAplicada.set(aplicada?.promocao ?? null);
             this.valorPromocional.set(aplicada?.valorFinal);
+            this.formaMelhorPreco.set(this.promocaoPrecoService.melhorOpcaoParaReferencia(
+                referencia.referenciaId,
+                referencia.valor,
+                mapaPromocoes,
+                geraisPromocoes,
+                new Map(formasPagamento.map((f) => [f.formaDePagamentoId, f.descricao])),
+            )?.formaPagamentoNome ?? null);
             this.valorParcelado.set(this.promocaoPrecoService.precoParaParcelamento(
                 referencia.referenciaId,
                 referencia.valor,
@@ -199,17 +208,24 @@ export class LojaReferenciaPage implements OnInit {
     }
 
     preco(): number {
-        return this.valorPromocional() ?? this.referencia()?.valor ?? 0;
+        return this.valorParcelado() ?? this.valorPromocional() ?? this.referencia()?.valor ?? 0;
     }
 
     precoDe(): number | null {
         const referencia = this.referencia();
-        return this.valorPromocional() != null && referencia ? referencia.valor : null;
+        return referencia && this.preco() < referencia.valor ? referencia.valor : null;
     }
 
-    parcelamento = computed(() => textoParcelamento(this.valorParcelado() ?? this.preco()));
+    parcelamento = computed(() => textoParcelamento(this.preco()));
+
+    /// Melhor preço à vista quando bate o do cartão -- ex.: "R$ 60,00 no PIX".
+    precoAVista = computed(() => {
+        const melhor = this.valorPromocional();
+        const forma = this.formaMelhorPreco();
+        return melhor != null && melhor < this.preco() && forma ? { valor: melhor, forma } : null;
+    });
     pix = computed(() => precoPix(this.preco()));
-    tabelaParcelas = computed(() => parcelas(this.valorParcelado() ?? this.preco()));
+    tabelaParcelas = computed(() => parcelas(this.preco()));
 
     private static unicos(valores: (string | undefined)[]): string[] {
         const vistos: string[] = [];

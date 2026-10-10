@@ -40,16 +40,25 @@ export class ProdutoCardComponent {
         private metaPixel: MetaPixelService,
     ) { }
 
+    // Preço grande = o do cartão (ou o sem forma específica). O do Pix, quando melhor, vai na
+    // linha de baixo: ele é à vista e não serve de base para o parcelamento.
     get preco(): number {
-        return this.referencia.valorPromocional ?? this.referencia.valor;
+        return this.referencia.valorParcelado ?? this.referencia.valorPromocional ?? this.referencia.valor;
     }
 
     get precoDe(): number | null {
-        return this.referencia.valorPromocional != null ? this.referencia.valor : null;
+        return this.preco < this.referencia.valor ? this.referencia.valor : null;
+    }
+
+    /// Melhor preço à vista quando ele bate o do cartão -- ex.: "R$ 60,00 no PIX".
+    get precoAVista(): { valor: number; forma: string } | null {
+        const melhor = this.referencia.valorPromocional;
+        const forma = this.referencia.melhorDesconto?.formaPagamentoNome;
+        return melhor != null && melhor < this.preco && forma ? { valor: melhor, forma } : null;
     }
 
     // O parcelamento usa o preço do cartão: o preço exibido pode ser o do Pix, que é à vista.
-    parcelamento = computed(() => textoParcelamento(this.referencia.valorParcelado ?? this.preco));
+    parcelamento = computed(() => textoParcelamento(this.preco));
 
     // "-X%" quando há preço promocional; senão nenhum selo. ("Novo" não tem fonte no backend --
     // a view não expõe data de criação da referência, então o selo não é inventado.)
