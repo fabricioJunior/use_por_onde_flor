@@ -1,0 +1,37 @@
+@if (referencias.length) {
+<section class="pof-container vitrine">
+    <div class="vitrine-cabecalho">
+        <div class="vitrine-cabecalho-texto">
+            @if (kicker) {
+            <span class="pof-kicker">{{ kicker }}</span>
+            }
+            <h2 class="pof-titulo-secao" [class.destaque]="destaque">{{ titulo }}</h2>
+        </div>
+        <div class="vitrine-acoes">
+            @if (verTudoRota) {
+            <a [routerLink]="verTudoRota" class="pof-link-ver-tudo">Ver tudo</a>
+            }
+            <button type="button" class="pof-seta vitrine-seta" aria-label="Anterior" (click)="rolar(-1)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m15 18-6-6 6-6" />
+                </svg>
+            </button>
+            <button type="button" class="pof-seta vitrine-seta" aria-label="Próximo" (click)="rolar(1)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="pof-rail vitrine-trilho" #trilho>
+        @for (referencia of referencias; track referencia.id) {
+        <div class="vitrine-item">
+            <produto-card [referencia]="referencia"></produto-card>
+        </div>
+        }
+    </div>
+</section>
+}

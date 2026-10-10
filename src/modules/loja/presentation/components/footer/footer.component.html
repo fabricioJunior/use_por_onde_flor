@@ -1,21 +1,89 @@
-<footer class="loja-footer">
-    <div class="loja-footer-grid">
-        <div>
+@if (config.newsletter.ativo) {
+<section class="newsletter">
+    <div class="pof-container newsletter-inner">
+        <div class="newsletter-texto">
+            <span class="pof-kicker">Newsletter</span>
+            <h2 class="newsletter-titulo">Receba novidades e ofertas antes de todo mundo</h2>
+        </div>
+        <form class="newsletter-form" (submit)="$event.preventDefault()">
+            <input type="email" placeholder="Seu e-mail" aria-label="Seu e-mail">
+            <button type="submit" class="pof-btn-escuro">Cadastrar</button>
+        </form>
+    </div>
+</section>
+}
+
+<footer class="rodape">
+    <div class="pof-container rodape-grid desktop">
+        <div class="rodape-marca">
             <app-logo variante="negativa" [altura]="30"></app-logo>
-            <p class="loja-footer-descricao">Básico que acompanha, combina e transforma</p>
+            <p>Moda feminina atemporal. Cortes básicos, elegância discreta.</p>
+            @if (redesAtivas.length) {
+            <div class="rodape-redes">
+                @for (rede of redesAtivas; track rede.nome) {
+                <a [href]="rede.url" target="_blank" rel="noopener">{{ rede.nome }}</a>
+                }
+            </div>
+            }
         </div>
-        <div class="loja-footer-coluna">
-            <span class="loja-footer-titulo">Loja</span>
-            <a href="#">Novidades</a>
-            <a href="#">Roupas</a>
-            <a href="#">Acessórios</a>
+        @for (coluna of config.rodape; track coluna.titulo) {
+        <div class="rodape-coluna">
+            <span class="rodape-coluna-titulo">{{ coluna.titulo }}</span>
+            @for (link of coluna.links; track link.rota) {
+            <a [routerLink]="link.rota">{{ link.nome }}</a>
+            }
         </div>
-        <div class="loja-footer-coluna">
-            <span class="loja-footer-titulo">Ajuda</span>
-            <a href="#">Trocas e devoluções</a>
-            <a href="#">Guia de medidas</a>
-            <a href="#">Contato</a>
+        }
+    </div>
+
+    <div class="rodape-mobile">
+        <app-logo variante="negativa" [altura]="26"></app-logo>
+        <p>Moda feminina atemporal. Cortes básicos, elegância discreta.</p>
+        @if (redesAtivas.length) {
+        <div class="rodape-redes">
+            @for (rede of redesAtivas; track rede.nome) {
+            <a [href]="rede.url" target="_blank" rel="noopener">{{ rede.nome }}</a>
+            }
+        </div>
+        }
+        <div class="rodape-acordeao">
+            @for (coluna of config.rodape; track coluna.titulo; let i = $index) {
+            <div class="rodape-acordeao-item">
+                <button type="button" (click)="alternar(i)" [attr.aria-expanded]="aberto() === i">
+                    {{ coluna.titulo }}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                        [style.transform]="aberto() === i ? 'rotate(180deg)' : 'none'">
+                        <path d="m6 9 6 6 6-6" />
+                    </svg>
+                </button>
+                @if (aberto() === i) {
+                <div class="rodape-acordeao-links">
+                    @for (link of coluna.links; track link.rota) {
+                    <a [routerLink]="link.rota">{{ link.nome }}</a>
+                    }
+                </div>
+                }
+            </div>
+            }
         </div>
     </div>
-    <div class="loja-footer-copy">© 2026 Por Onde Flor</div>
+
+    <div class="pof-container rodape-base">
+        <div class="rodape-pagamentos">
+            @for (meio of config.meiosPagamento; track meio) {
+            <span>{{ meio }}</span>
+            }
+        </div>
+        <span class="rodape-copy">© {{ ano }} Por Onde Flor. Todos os direitos reservados.</span>
+    </div>
 </footer>
+
+@if (whatsappUrl(); as url) {
+<a [href]="url" class="whatsapp" target="_blank" rel="noopener" aria-label="Atendimento por WhatsApp">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+    </svg>
+</a>
+}

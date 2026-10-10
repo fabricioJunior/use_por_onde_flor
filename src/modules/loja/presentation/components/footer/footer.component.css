@@ -1,65 +1,262 @@
-.loja-footer {
-    position: relative;
-    overflow: hidden;
-    background: var(--surface-inverse);
-    color: var(--text-on-inverse);
+.newsletter {
+    background: var(--pof-nevoa);
+    margin-top: 64px;
 }
 
-.loja-footer-grid {
-    position: relative;
-    z-index: 1;
-    max-width: var(--container-max);
-    margin: 0 auto;
-    padding: var(--space-8) var(--container-padding);
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
+.newsletter-inner {
+    padding: 48px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px 48px;
+    flex-wrap: wrap;
 }
 
-.loja-footer-descricao {
-    font: var(--text-body-sm);
-    color: var(--text-on-inverse);
-    max-width: 260px;
-    margin: var(--space-3) 0 0;
-}
-
-.loja-footer-coluna {
+.newsletter-texto {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
-    font: var(--text-body-sm);
-    color: var(--text-on-inverse);
+    gap: 8px;
+    max-width: 520px;
 }
 
-.loja-footer-coluna a {
-    color: inherit;
-    text-decoration: none;
-    transition: color .18s ease;
+.newsletter-titulo {
+    margin: 0;
+    font-size: 26px;
+    line-height: 1.2;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--pof-tinta);
+    text-wrap: pretty;
 }
 
-.loja-footer-coluna a:hover {
-    color: var(--color-cream);
+.newsletter-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex: 1;
+    min-width: 260px;
+    max-width: 480px;
 }
 
-.loja-footer-titulo {
-    color: var(--text-on-inverse);
-    font: var(--text-eyebrow);
+.newsletter-form input {
+    flex: 1;
+    min-width: 0;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--pof-tinta);
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--pof-oliva);
+    outline: none;
+    padding: 12px 2px;
+}
+
+.newsletter-form button {
+    padding: 0 22px;
+}
+
+.rodape {
+    background: var(--pof-oliva-escura);
+    color: rgba(248, 241, 235, .75);
+    margin-top: 64px;
+}
+
+.newsletter + .rodape {
+    margin-top: 0;
+}
+
+.rodape-grid {
+    padding: 64px 40px 44px;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 48px;
+}
+
+.rodape-marca {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+.rodape-marca p,
+.rodape-mobile p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+    font-weight: 300;
+    max-width: 300px;
+}
+
+.rodape-redes {
+    display: flex;
+    gap: 18px;
+}
+
+.rodape-redes a {
+    font-size: 12px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    letter-spacing: var(--tracking-eyebrow);
+    color: var(--pof-creme);
+    text-decoration: none;
 }
 
-.loja-footer-copy {
-    position: relative;
-    z-index: 1;
-    border-top: 1px solid var(--color-neutral-800);
-    padding: var(--space-4) var(--container-padding);
-    font: var(--text-caption);
-    color: var(--text-on-inverse);
-    text-align: center;
+.rodape-coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-@media (min-width: 900px) {
-    .loja-footer-grid {
-        grid-template-columns: 1.4fr 1fr 1fr;
+.rodape-coluna-titulo {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--pof-salvia);
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.rodape-coluna a,
+.rodape-acordeao-links a {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(248, 241, 235, .75);
+    text-decoration: none;
+}
+
+.rodape-coluna a:hover,
+.rodape-acordeao-links a:hover {
+    color: var(--pof-creme);
+}
+
+.rodape-mobile {
+    display: none;
+    padding: 44px 16px 12px;
+    flex-direction: column;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+.rodape-acordeao {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(160, 176, 139, .3);
+    margin-top: 8px;
+}
+
+.rodape-acordeao-item {
+    border-bottom: 1px solid rgba(160, 176, 139, .3);
+}
+
+.rodape-acordeao-item button {
+    width: 100%;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--pof-creme);
+}
+
+.rodape-acordeao-item svg {
+    transition: transform .25s ease;
+}
+
+.rodape-acordeao-links {
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 14px;
+}
+
+.rodape-acordeao-links a {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.rodape-base {
+    padding: 22px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(160, 176, 139, .25);
+}
+
+.rodape-pagamentos {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.rodape-pagamentos span {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--pof-creme);
+    border: 1px solid rgba(248, 241, 235, .3);
+    padding: 5px 8px;
+    border-radius: 2px;
+}
+
+.rodape-copy {
+    font-size: 12px;
+    font-weight: 300;
+    color: rgba(248, 241, 235, .6);
+}
+
+.whatsapp {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    z-index: 50;
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: var(--pof-oliva);
+    color: var(--pof-creme);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(43, 25, 25, .25);
+    transition: background .2s ease;
+}
+
+.whatsapp:hover {
+    background: var(--pof-oliva-escura);
+}
+
+@media (max-width: 819px) {
+    .newsletter-inner {
+        padding: 36px 16px;
+    }
+
+    .rodape-grid.desktop {
+        display: none;
+    }
+
+    .rodape-mobile {
+        display: flex;
+    }
+
+    .rodape-base {
+        padding: 20px 16px 88px;
+    }
+
+    .whatsapp {
+        right: 16px;
+        bottom: 16px;
     }
 }
