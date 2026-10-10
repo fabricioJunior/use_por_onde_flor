@@ -62,12 +62,20 @@ export class LojaHomePage implements OnInit {
                 return;
             }
 
-            const promocoes = await firstValueFrom(this.lojaDataSource.promocoesAtivas()).catch(() => ({ items: [] }));
+            const [promocoes, formas] = await Promise.all([
+                firstValueFrom(this.lojaDataSource.promocoesAtivas()).catch(() => ({ items: [] })),
+                // Nome da forma distingue cartão (parcela) de Pix (à vista); sem isso o
+                // parcelamento sairia sobre o preço do Pix.
+                firstValueFrom(this.lojaDataSource.formaPagamento()).catch(() => []),
+            ]);
+            const nomesFormaPagamento = new Map(formas.map((f) => [f.formaDePagamentoId, f.descricao]));
             const mapa = this.promocaoPrecoService.montarMapa(promocoes.items);
             const gerais = this.promocaoPrecoService.promocoesGerais(promocoes.items);
             const comPreco = (referencias: EcommerceReferenciaDto[]) => referencias.map((r) => ({
                 ...r,
                 valorPromocional: this.promocaoPrecoService.calcularParaReferencia(r.referenciaId, r.valor, mapa, gerais) ?? undefined,
+                valorParcelado: this.promocaoPrecoService.precoParaParcelamento(r.referenciaId, r.valor, mapa, gerais, nomesFormaPagamento),
+                melhorDesconto: this.promocaoPrecoService.melhorOpcaoParaReferencia(r.referenciaId, r.valor, mapa, gerais, nomesFormaPagamento) ?? undefined,
             }));
 
             if (this.busca()) {

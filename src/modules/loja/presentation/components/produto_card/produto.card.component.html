@@ -21,6 +21,10 @@
     <span class="card-parcelamento">{{ texto }}</span>
     }
 
+    @if (precoAVista; as aVista) {
+    <span class="card-avista">{{ formatarPreco(aVista.valor) }} no {{ aVista.forma }}</span>
+    }
+
     @if (tamanhos().length > 1) {
     <div class="card-tamanhos">
         @for (tamanho of tamanhos(); track tamanho) {
