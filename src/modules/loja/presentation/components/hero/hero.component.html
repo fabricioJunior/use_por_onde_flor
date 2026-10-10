@@ -3,7 +3,8 @@
     (pointerdown)="onPointerDown($event)" (pointerup)="onPointerUp($event)"
     (pointercancel)="onPointerUp($event)">
     @for (slide of slides(); track slide.id; let i = $index) {
-    <div class="hero-slide" [style.opacity]="i === indice() ? 1 : 0" [attr.aria-hidden]="i === indice() ? null : true">
+    <div class="hero-slide" [class.ativo]="i === indice()" [style.opacity]="i === indice() ? 1 : 0"
+        [attr.aria-hidden]="i === indice() ? null : true">
         @if (slide.video) {
         <video [src]="slide.desktop" autoplay muted loop playsinline></video>
         } @else {
