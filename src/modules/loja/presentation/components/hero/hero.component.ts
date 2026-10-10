@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnDestroy, OnInit, signal } from "@angular/core";
+import { Router } from "@angular/router";
 import { BannerDataSource } from "../../../data/banner.data.source";
 import { BannerDto } from "../../../data/dtos/banner.dto";
 
@@ -13,6 +14,10 @@ interface HeroSlide {
     desktop: string;
     mobile: string;
     video: boolean;
+    /// Destino ao tocar no banner; `null` = banner sem link.
+    href: string | null;
+    /// Rota do próprio site: navega pelo router, sem recarregar a página.
+    interno: boolean;
 }
 
 // Banner de foto em tela cheia (handoff "Banner da home com fotos de celular"): ocupa o que sobra
@@ -37,8 +42,9 @@ export class HeroComponent implements OnInit, OnDestroy {
     private timer?: ReturnType<typeof setInterval>;
     private pausado = false;
     private arrastoX: number | null = null;
+    private arrastou = false;
 
-    constructor(private bannerDataSource: BannerDataSource) { }
+    constructor(private bannerDataSource: BannerDataSource, private router: Router) { }
 
     ngOnInit(): void {
         this.bannerDataSource.listar().subscribe({
@@ -61,12 +67,38 @@ export class HeroComponent implements OnInit, OnDestroy {
     }
 
     private slide(desktop: BannerDto, mobile: BannerDto): HeroSlide {
+        const href = this.destino(desktop);
         return {
             id: desktop.id,
             desktop: desktop.url,
             mobile: mobile.url,
             video: desktop.type === 'Vídeo',
+            href,
+            interno: !!href && href.startsWith('/'),
         };
+    }
+
+    // O link é do banner desktop: é ele que define o slide (o mobile é só a outra foto).
+    private destino(banner: BannerDto): string | null {
+        if (banner.linkTipo === 'lista' && banner.listaId) {
+            return `/loja/lista/${banner.listaId}`;
+        }
+        if (banner.linkTipo === 'url' && banner.linkUrl?.trim()) {
+            return banner.linkUrl.trim();
+        }
+        return null;
+    }
+
+    // Arrastar para passar a foto não pode virar clique no link.
+    aoClicar(evento: MouseEvent, slide: HeroSlide): void {
+        if (this.arrastou) {
+            evento.preventDefault();
+            return;
+        }
+        if (slide.interno && slide.href) {
+            evento.preventDefault();
+            void this.router.navigateByUrl(slide.href);
+        }
     }
 
     get total(): number {
@@ -103,6 +135,7 @@ export class HeroComponent implements OnInit, OnDestroy {
 
     onPointerDown(event: PointerEvent): void {
         this.arrastoX = event.clientX;
+        this.arrastou = false;
         this.pausar();
     }
 
@@ -111,7 +144,8 @@ export class HeroComponent implements OnInit, OnDestroy {
         this.arrastoX = null;
         if (inicio !== null) {
             const deltaX = event.clientX - inicio;
-            if (Math.abs(deltaX) > LIMIAR_SWIPE_PX) {
+            this.arrastou = Math.abs(deltaX) > LIMIAR_SWIPE_PX;
+            if (this.arrastou) {
                 this.passar(deltaX < 0 ? 1 : -1);
             }
         }
