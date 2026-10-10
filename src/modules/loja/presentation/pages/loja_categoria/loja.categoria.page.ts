@@ -134,6 +134,10 @@ export class LojaCategoriaPage implements OnInit {
                     referencia.referenciaId, referencia.valor, this.mapaPromocoesPorReferencia,
                     this.promocoesGerais, this.nomesFormaPagamento,
                 ) ?? undefined,
+                valorParcelado: this.promocaoPrecoService.precoParaParcelamento(
+                    referencia.referenciaId, referencia.valor, this.mapaPromocoesPorReferencia,
+                    this.promocoesGerais, this.nomesFormaPagamento,
+                ),
             })));
         } catch (error) {
             console.error('Erro ao carregar catálogo por categoria', error);

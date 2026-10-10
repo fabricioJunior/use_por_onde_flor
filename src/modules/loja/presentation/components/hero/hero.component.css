@@ -12,10 +12,17 @@
     touch-action: pan-y;
 }
 
+/* Os slides ficam empilhados e só a opacidade muda: sem isto o slide invisível de cima
+   continua recebendo o clique, e o link aberto é sempre o do último banner. */
 .hero-slide {
     position: absolute;
     inset: 0;
     transition: opacity .7s ease;
+    pointer-events: none;
+}
+
+.hero-slide.ativo {
+    pointer-events: auto;
 }
 
 .hero-link {

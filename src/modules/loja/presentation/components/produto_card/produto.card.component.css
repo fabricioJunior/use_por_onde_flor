@@ -85,6 +85,14 @@
     margin-top: -5px;
 }
 
+/* Melhor preço à vista (Pix): destaque discreto, abaixo do parcelamento. */
+.card-avista {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--pof-oliva-escura);
+    margin-top: -5px;
+}
+
 .card-tamanhos {
     display: flex;
     gap: 6px;

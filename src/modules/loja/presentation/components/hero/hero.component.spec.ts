@@ -62,6 +62,30 @@ describe('HeroComponent', () => {
         expect(hero.destinoDoSlide(slide)).toBe('/loja?q=jeans');
     });
 
+    it('só o slide visível recebe clique (senão abre sempre o link do último banner)', () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [HeroComponent],
+            providers: [{
+                provide: BannerDataSource, useValue: {
+                    listar: () => of([
+                        banner(1, 'desktop', 1, { linkTipo: 'lista', listaId: 19 }),
+                        banner(2, 'desktop', 2, { linkTipo: 'lista', listaId: 20 }),
+                    ]),
+                },
+            }],
+        });
+        const fixture = TestBed.createComponent(HeroComponent);
+        fixture.detectChanges();
+        const slides: HTMLElement[] = Array.from(
+            fixture.nativeElement.querySelectorAll('.hero-slide'),
+        );
+        expect(slides.length).toBe(2);
+        expect(slides[0].classList).toContain('ativo');
+        expect(slides[1].classList).not.toContain('ativo');
+        expect(getComputedStyle(slides[1]).pointerEvents).toBe('none');
+    });
+
     it('arrastar para passar a foto não dispara o link', () => {
         const hero = montar([
             banner(1, 'desktop', 1, { linkTipo: 'lista', listaId: 9 }),

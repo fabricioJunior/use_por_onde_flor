@@ -54,6 +54,48 @@ export class PromocaoPrecoService {
         return melhor ? { promocao: melhor.promocao, valorFinal: melhor.valorFinal } : null;
     }
 
+    /// Nomes de forma de pagamento que o cliente paga parcelado. Pix, boleto e dinheiro são à
+    /// vista: o desconto deles não pode virar "Nx de ...".
+    private static readonly CARTAO = /cart|cr[eé]d/i;
+
+    // Preço que vale para o PARCELAMENTO. Diferente do preço exibido, que é o MENOR entre todas as
+    // formas (normalmente o Pix): anunciar "6x de" sobre o preço do Pix promete uma parcela que o
+    // cliente não consegue no cartão. Considera só o desconto sem forma específica (quando a
+    // promoção não restringe) e os overrides de cartão.
+    precoParaParcelamento(
+        referenciaId: number,
+        valorBase: number,
+        mapaPorReferencia: Map<number, PromocaoDto>,
+        gerais: PromocaoDto[],
+        nomesFormaPagamento: Map<number, string>,
+    ): number {
+        const candidatas = [...gerais];
+        const especifica = mapaPorReferencia.get(referenciaId);
+        if (especifica) {
+            candidatas.push(especifica);
+        }
+        let menor = valorBase;
+
+        for (const promocao of candidatas) {
+            if (!promocao.restringirFormasPagamento) {
+                menor = Math.min(menor, this.calcular(promocao, valorBase));
+            }
+            for (const override of promocao.formasPagamento ?? []) {
+                const nome = nomesFormaPagamento.get(override.formaDePagamentoId) ?? '';
+                if (!PromocaoPrecoService.CARTAO.test(nome)) {
+                    continue;
+                }
+                menor = Math.min(menor, this.calcular({
+                    ...promocao,
+                    valorPercentual: override.valorPercentual ?? promocao.valorPercentual,
+                    valorFixo: override.valorFixo ?? promocao.valorFixo,
+                    precoFixo: override.precoFixo ?? promocao.precoFixo,
+                }, valorBase));
+            }
+        }
+        return menor;
+    }
+
     // Maior desconto possível pra essa referência, considerando TAMBÉM os overrides por forma de
     // pagamento de cada promoção candidata (não só o desconto padrão) -- é o que o card do catálogo
     // usa pra anunciar "até X% OFF no <forma>" antes de qualquer outra informação de preço.
