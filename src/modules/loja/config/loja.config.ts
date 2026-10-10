@@ -34,10 +34,12 @@ export const LOJA_CONFIG = {
     // branding/config da loja expuser esse valor; aí `minimo` vem de lá.
     freteGratis: { ativo: false, minimo: 399 },
 
-    // Parcelamento ("ou Nx de R$ X sem juros") no card, na PDP e no modal de pagamento.
-    // OCULTO: `GET /e-commerce/:id/forma-pagamento` só diz qual forma/provider a loja usa, sem
-    // regra de parcelas/juros. Ligar quando a forma de pagamento expuser maxParcelas/juros.
-    parcelamento: { ativo: false, maxParcelas: 6, valorMinimoParcela: 20 },
+    // Parcelamento ("Nx de R$ X sem juros") no card, na PDP e no modal de pagamento.
+    // LIGADO por decisão da loja: o número de parcelas sem juros é definido AQUI, porque
+    // `GET /e-commerce/:id/forma-pagamento` não expõe maxParcelas/juros. Quando o backend passar a
+    // expor essa regra, trocar a origem do valor e deixar este arquivo só como fallback.
+    // `valorMinimoParcela: 0` = sem mínimo, então R$ 100 em 10x vira 10x de R$ 10,00.
+    parcelamento: { ativo: true, maxParcelas: 10, valorMinimoParcela: 0 },
 
     // Preço no Pix com desconto + bloco Pix do modal de pagamento.
     // OCULTO: desconto por forma de pagamento existe em `/promocoes` (override por

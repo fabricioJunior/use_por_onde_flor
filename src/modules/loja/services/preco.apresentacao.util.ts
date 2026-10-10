@@ -4,23 +4,25 @@ export function formatarPreco(valor: number | undefined | null): string {
     return (valor ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-// "ou Nx de R$ X sem juros". Só existe quando `parcelamento.ativo` -- sem regra real de parcelas no
-// backend a frase fica oculta (ver loja.config.ts). N = min(maxParcelas, preço / valorMinimoParcela).
-export function textoParcelamento(preco: number): string | null {
+// Nº de parcelas sem juros: o teto vem da config da loja; `valorMinimoParcela > 0` ainda corta
+// parcela pequena demais (R$ 40 em 10x viraria 10x de R$ 4). Com 0, vale só o teto.
+function maximoDeParcelas(preco: number): number {
     const { ativo, maxParcelas, valorMinimoParcela } = LOJA_CONFIG.parcelamento;
     if (!ativo || !preco || preco <= 0) {
-        return null;
+        return 0;
     }
-    const n = Math.max(1, Math.min(maxParcelas, Math.floor(preco / valorMinimoParcela)));
-    return n > 1 ? `ou ${n}x de ${formatarPreco(preco / n)} sem juros` : null;
+    const porValor = valorMinimoParcela > 0 ? Math.floor(preco / valorMinimoParcela) : maxParcelas;
+    return Math.max(1, Math.min(maxParcelas, porValor));
+}
+
+// "Nx de R$ X sem juros", abaixo do preço.
+export function textoParcelamento(preco: number): string | null {
+    const n = maximoDeParcelas(preco);
+    return n > 1 ? `${n}x de ${formatarPreco(preco / n)} sem juros` : null;
 }
 
 export function parcelas(preco: number): { numero: number; valor: number }[] {
-    const { ativo, maxParcelas, valorMinimoParcela } = LOJA_CONFIG.parcelamento;
-    if (!ativo || !preco || preco <= 0) {
-        return [];
-    }
-    const maximo = Math.max(1, Math.min(maxParcelas, Math.floor(preco / valorMinimoParcela)));
+    const maximo = maximoDeParcelas(preco);
     return Array.from({ length: maximo }, (_, i) => ({ numero: i + 1, valor: preco / (i + 1) }));
 }
 

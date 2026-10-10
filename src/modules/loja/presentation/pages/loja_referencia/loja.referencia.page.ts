@@ -43,6 +43,7 @@ export class LojaReferenciaPage implements OnInit {
     produtos = signal<EcommerceReferenciaProdutoDto[]>([]);
     midias = signal<ReferenciaMidiaDto[]>([]);
     relacionados = signal<EcommerceReferenciaDto[]>([]);
+    formasPagamento = signal<{ formaDePagamentoId: number; descricao: string; provider?: string }[]>([]);
     promocaoAplicada = signal<PromocaoDto | null>(null);
     valorPromocional = signal<number | undefined>(undefined);
 
@@ -99,11 +100,14 @@ export class LojaReferenciaPage implements OnInit {
         }
 
         try {
-            const [referencia, produtos, promocoes] = await Promise.all([
+            const [referencia, produtos, promocoes, formasPagamento] = await Promise.all([
                 firstValueFrom(this.lojaDataSource.buscarReferencia(id)),
                 firstValueFrom(this.lojaDataSource.listarProdutos(id)),
                 firstValueFrom(this.lojaDataSource.promocoesAtivas()).catch(() => ({ items: [] as PromocaoDto[] })),
+                // Formas de pagamento da loja: dado real; falha aqui só esconde o bloco.
+                firstValueFrom(this.lojaDataSource.formaPagamento()).catch(() => []),
             ]);
+            this.formasPagamento.set(formasPagamento.filter((f) => !!f?.descricao));
 
             // Mídias usam o `referenciaId` real (não o id do vínculo com o e-commerce da rota).
             const midias = await firstValueFrom(this.midiaDataSource.listar(String(referencia.referenciaId)))

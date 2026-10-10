@@ -175,6 +175,20 @@
             <span class="compra-aviso">{{ mensagem }}</span>
             }
 
+            @if (formasPagamento().length) {
+            <div class="compra-secao">
+                <span class="compra-rotulo"><span>Formas de pagamento</span></span>
+                <div class="compra-formas">
+                    @for (forma of formasPagamento(); track forma.formaDePagamentoId) {
+                    <span class="compra-forma">{{ forma.descricao }}</span>
+                    }
+                </div>
+                @if (parcelamento(); as texto) {
+                <span class="compra-formas-nota">{{ texto }}</span>
+                }
+            </div>
+            }
+
             @if (config.freteGratis.ativo || config.parcelamento.ativo || config.pix.ativo) {
             <div class="compra-linhas">
                 @if (config.freteGratis.ativo) {

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { VitrineMenuItemDto } from '../data/dtos/vitrine.dto';
 import { LOJA_CONFIG } from '../config/loja.config';
 import { MenuVitrineService } from './menu.vitrine.service';
-import { parcelas, progressoFreteGratis, textoParcelamento } from './preco.apresentacao.util';
+import { formatarPreco, parcelas, progressoFreteGratis, textoParcelamento } from './preco.apresentacao.util';
 
 const lista = (id: number, nome: string | null, ordem: number, icone: string | null = null): VitrineMenuItemDto =>
   ({ tipo: 'lista', id, nome, descricao: null, icone, ordem });
@@ -60,11 +60,33 @@ describe('MenuVitrineService', () => {
 });
 
 describe('preco.apresentacao.util', () => {
-  it('não mostra parcelamento nem frete grátis enquanto a regra não vem do backend', () => {
-    expect(LOJA_CONFIG.parcelamento.ativo).toBeFalse();
-    expect(textoParcelamento(300)).toBeNull();
-    expect(parcelas(300)).toEqual([]);
+  it('não mostra frete grátis enquanto a regra não vem do backend', () => {
+    expect(LOJA_CONFIG.freteGratis.ativo).toBeFalse();
     expect(progressoFreteGratis(100)).toBeNull();
+  });
+
+  // O teto de parcelas é decisão da loja, configurada no front (ver loja.config.ts).
+  it('usa o teto da config quando não há mínimo por parcela', () => {
+    const original = { ...LOJA_CONFIG.parcelamento };
+    Object.assign(LOJA_CONFIG.parcelamento, { ativo: true, maxParcelas: 10, valorMinimoParcela: 0 });
+    try {
+      // `formatarPreco` usa espaço não separável depois do R$ -- comparar com ele, não com literal.
+      expect(textoParcelamento(100)).toBe(`10x de ${formatarPreco(10)} sem juros`);
+      expect(parcelas(100).length).toBe(10);
+    } finally {
+      Object.assign(LOJA_CONFIG.parcelamento, original);
+    }
+  });
+
+  it('não anuncia parcelamento com a regra desligada', () => {
+    const original = { ...LOJA_CONFIG.parcelamento };
+    Object.assign(LOJA_CONFIG.parcelamento, { ativo: false });
+    try {
+      expect(textoParcelamento(300)).toBeNull();
+      expect(parcelas(300)).toEqual([]);
+    } finally {
+      Object.assign(LOJA_CONFIG.parcelamento, original);
+    }
   });
 
   it('calcula N = min(max, preço/mínimo) quando o parcelamento está ligado', () => {
