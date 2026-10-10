@@ -1,0 +1,39 @@
+<loja-header></loja-header>
+
+<main class="pof-container lista">
+    <nav class="lista-breadcrumb">
+        <a routerLink="/loja">Início</a>
+        <span aria-hidden="true">/</span>
+        <span class="atual">{{ lista()?.nome ?? 'Seleção' }}</span>
+    </nav>
+
+    <header class="lista-cabecalho">
+        <h1 class="pof-titulo-secao">{{ lista()?.nome ?? '' }}</h1>
+        @if (lista()?.descricao) {
+        <p class="lista-descricao">{{ lista()!.descricao }}</p>
+        }
+    </header>
+
+    @if (carregando()) {
+    <p class="lista-estado">Carregando…</p>
+    } @else if (erro()) {
+    <p class="lista-estado">{{ erro() }}</p>
+    } @else if (referencias().length === 0) {
+    <p class="lista-estado">Nenhum produto nesta seleção no momento.</p>
+    } @else {
+    <div class="lista-grid">
+        @for (referencia of referencias(); track referencia.id) {
+        <produto-card [referencia]="referencia"></produto-card>
+        }
+    </div>
+    @if (temMais()) {
+    <div class="lista-mais">
+        <button type="button" class="pof-btn-contorno" [disabled]="carregandoMais()" (click)="carregarMais()">
+            @if (carregandoMais()) { Carregando… } @else { Ver mais produtos }
+        </button>
+    </div>
+    }
+    }
+</main>
+
+<loja-footer></loja-footer>

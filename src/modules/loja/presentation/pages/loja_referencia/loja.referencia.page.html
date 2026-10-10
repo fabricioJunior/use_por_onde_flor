@@ -1,188 +1,329 @@
-<div class="pagina-shell">
-    <loja-header [itensNoCarrinho]="itensNoCarrinho()"></loja-header>
-    @if (loading()) {
-    <app-pof-loader variante="cheia"></app-pof-loader>
-    } @else if (erro()) {
-    <div class="pagina-estado">
-        <p>{{ erro() }}</p>
-    </div>
-    } @else {
-    @if (referencia(); as item) {
-    <div class="pagina-conteudo">
+<loja-header></loja-header>
+
+@if (carregando()) {
+<div class="pdp-estado"><p>Carregando…</p></div>
+} @else if (erro()) {
+<div class="pdp-estado"><p>{{ erro() }}</p></div>
+} @else {
+@if (referencia(); as ref) {
+
+<div class="pof-container pdp">
+    <!-- 2.1 Breadcrumb -->
+    <nav class="pdp-breadcrumb">
+        <a routerLink="/loja">Início</a>
+        <span aria-hidden="true">/</span>
+        @if (ref.categoriaNome) {
+        <a [routerLink]="['/loja/categoria', ref.categoriaId]">{{ ref.categoriaNome }}</a>
+        <span aria-hidden="true">/</span>
+        }
+        <span class="atual">{{ ref.nome }}</span>
+    </nav>
+
+    <div class="pdp-grid">
+        <!-- 2.3 Galeria -->
         <div class="galeria">
-            <div class="foto-principal" [class.zoom-ativo]="zoomAtivo()"
-                (pointerdown)="onFotoPointerDown($event)" (pointermove)="onFotoPointerMove($event)"
-                (pointerup)="onFotoPointerUp($event)" (pointercancel)="onFotoPointerUp($event)">
-                @if (fotoSelecionada(); as foto) {
-                <img [src]="foto.url" [alt]="item.nome"
-                    [style.transform]="zoomAtivo() ? 'scale(2) translate(' + (panX() / 2) + 'px, ' + (panY() / 2) + 'px)' : 'none'">
-                @if (midias().length > 1) {
-                @if (indiceFotoAtual() > 0) {
-                <button type="button" class="foto-seta foto-seta-esquerda" aria-label="Foto anterior"
-                    (click)="$event.stopPropagation(); fotoAnterior()">‹</button>
+            @if (midias().length > 1) {
+            <div class="galeria-thumbs">
+                @for (midia of thumbsVisiveis(); track midia.id; let i = $index) {
+                <button type="button" class="galeria-thumb" [class.ativa]="fotoAtual() === i"
+                    [attr.aria-label]="'Ver foto ' + (i + 1)" (click)="selecionarFoto(i)">
+                    <img [src]="midia.url" alt="">
+                </button>
                 }
-                @if (indiceFotoAtual() < midias().length - 1) {
-                <button type="button" class="foto-seta foto-seta-direita" aria-label="Próxima foto"
-                    (click)="$event.stopPropagation(); fotoProxima()">›</button>
-                }
-                }
-                <span class="foto-zoom-dica" aria-hidden="true">{{ zoomAtivo() ? 'Toque para reduzir' : 'Toque para ampliar' }}</span>
-                } @else {
-                <span class="foto-placeholder">Sem foto</span>
+                @if (thumbsOcultas() > 0) {
+                <button type="button" class="galeria-thumb galeria-thumb-mais"
+                    [attr.aria-label]="todasAsThumbs() ? 'Ver menos fotos' : 'Ver mais ' + thumbsOcultas() + ' fotos'"
+                    (click)="todasAsThumbs.set(!todasAsThumbs())">
+                    {{ todasAsThumbs() ? '−' : '+' + thumbsOcultas() }}
+                </button>
                 }
             </div>
-            @if (midias().length > 1) {
-            <div class="tira-thumbs">
-                @if (podeRolarThumbEsquerda()) {
-                <button type="button" class="thumb-seta thumb-seta-esquerda" aria-label="Ver fotos anteriores"
-                    (click)="rolarThumb(-1)">‹</button>
-                }
-                <div class="thumb-lista" #thumbLista (scroll)="atualizarSetasThumb()">
+            }
+
+            <div class="galeria-principal">
+                <div class="pof-rail galeria-trilho" #galeria (scroll)="onGaleriaScroll()"
+                    (pointerdown)="onGaleriaPointerDown($event)" (pointermove)="onGaleriaPointerMove($event)"
+                    (pointerup)="onGaleriaPointerUp($event)" (pointercancel)="onGaleriaPointerUp($event)">
+                    @if (midias().length === 0) {
+                    <div class="galeria-foto pof-foto-fundo"></div>
+                    }
                     @for (midia of midias(); track midia.id) {
-                    <button type="button" class="thumb" [class.ativo]="midia === fotoSelecionada()"
-                        (click)="selecionarMidia(midia)">
-                        <img [src]="midia.url" [alt]="item.nome">
+                    <div class="galeria-foto pof-foto-fundo">
+                        <img [src]="midia.url" [alt]="ref.nome">
+                    </div>
+                    }
+                </div>
+
+                @if (promocaoAplicada()?.regras) {
+                <span class="galeria-selo">{{ promocaoAplicada()!.regras }}</span>
+                }
+
+                @if (midias().length > 1) {
+                <div class="galeria-indicadores" aria-hidden="true">
+                    @for (midia of midias(); track midia.id; let i = $index) {
+                    <span class="galeria-pilula" [class.ativa]="fotoAtual() === i"></span>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- 2.4 Caixa de compra -->
+        <div class="compra">
+            <div class="compra-topo">
+                <h1 class="compra-nome">{{ ref.nome }}</h1>
+                <div class="compra-precos">
+                    @if (precoDe(); as de) {
+                    <span class="compra-preco-de">{{ formatarPreco(de) }}</span>
+                    }
+                    <span class="compra-preco">{{ formatarPreco(preco()) }}</span>
+                    @if (parcelamento(); as texto) {
+                    <span class="compra-parcelamento">{{ texto }}</span>
+                    }
+                </div>
+                @if (pix(); as valorPix) {
+                <span class="compra-pix">ou {{ formatarPreco(valorPix) }} no Pix ({{ config.pix.percentualDesconto }}% off)</span>
+                }
+            </div>
+
+            @if (promocaoAplicada()?.regras) {
+            <div class="compra-promocao">
+                <span class="compra-promocao-icone">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                        <path d="M13 5v2M13 17v2M13 11v2" />
+                    </svg>
+                </span>
+                <div class="compra-promocao-texto">
+                    <strong>Promoção</strong>
+                    <span>{{ promocaoAplicada()!.regras }}</span>
+                </div>
+            </div>
+            }
+
+            @if (cores().length > 1) {
+            <div class="compra-secao">
+                <div class="compra-rotulo">
+                    <span>Cor</span>
+                    <strong>{{ corSelecionada() ? normalizarNomeCor(corSelecionada()!) : 'Selecione' }}</strong>
+                </div>
+                <div class="compra-chips">
+                    @for (cor of cores(); track cor) {
+                    <button type="button" class="pof-chip chip-cor" [class.selecionado]="corSelecionada() === cor"
+                        [disabled]="!corDisponivel(cor)" (click)="selecionarCor(cor)">{{ normalizarNomeCor(cor) }}</button>
+                    }
+                </div>
+            </div>
+            }
+
+            @if (estampas().length > 1) {
+            <div class="compra-secao">
+                <div class="compra-rotulo">
+                    <span>Estampa</span>
+                    <strong>{{ estampaSelecionada() ?? 'Selecione' }}</strong>
+                </div>
+                <div class="compra-estampas">
+                    @for (estampa of estampas(); track estampa) {
+                    <button type="button" class="estampa-swatch" [class.selecionada]="estampaSelecionada() === estampa"
+                        [disabled]="!estampaDisponivel(estampa)" [attr.aria-label]="estampa"
+                        (click)="selecionarEstampa(estampa)">
+                        @if (imagemEstampa(estampa); as imagem) {
+                        <img [src]="imagem" alt="">
+                        } @else {
+                        <span>{{ estampa }}</span>
+                        }
                     </button>
                     }
                 </div>
-                @if (podeRolarThumbDireita()) {
-                <button type="button" class="thumb-seta thumb-seta-direita" aria-label="Ver mais fotos"
-                    (click)="rolarThumb(1)">›</button>
+            </div>
+            }
+
+            @if (tamanhos().length) {
+            <div class="compra-secao">
+                <div class="compra-rotulo">
+                    <span>Tamanho</span>
+                    @if (config.guiaMedidas.url) {
+                    <a [href]="config.guiaMedidas.url" target="_blank" rel="noopener" class="compra-link">Guia de medidas</a>
+                    }
+                </div>
+                <div class="compra-chips">
+                    @for (tamanho of tamanhos(); track tamanho) {
+                    <button type="button" class="pof-chip chip-tamanho"
+                        [class.selecionado]="tamanhoSelecionado() === tamanho" [disabled]="!tamanhoDisponivel(tamanho)"
+                        (click)="selecionarTamanho(tamanho)">{{ tamanho }}</button>
+                    }
+                </div>
+                @if (ultimasPecas()) {
+                <span class="compra-ultimas"><span class="ponto"></span>Atenção, últimas peças!</span>
                 }
             </div>
             }
-        </div>
 
-        <div class="detalhes">
-            <h1>{{ item.nome }}</h1>
-            @if (valorPromocional(); as promocional) {
-            <p class="preco">
-                <span class="preco-original">{{ formatarPreco(item.valor) }}</span>
-                <span class="preco-promocional">{{ formatarPreco(promocional) }}</span>
-            </p>
-            } @else {
-            <p class="preco">{{ formatarPreco(item.valor) }}</p>
+            <div class="compra-acoes">
+                <div class="compra-qtd">
+                    <button type="button" aria-label="Diminuir" (click)="alterarQuantidade(-1)">−</button>
+                    <span>{{ quantidade() }}</span>
+                    <button type="button" aria-label="Aumentar" (click)="alterarQuantidade(1)">+</button>
+                </div>
+                <button type="button" class="pof-btn-escuro compra-botao"
+                    [disabled]="!disponivelParaVenda() || adicionando()" (click)="comprar()">
+                    @if (!disponivelParaVenda()) { Indisponível } @else { Comprar }
+                </button>
+            </div>
+            @if (aviso(); as mensagem) {
+            <span class="compra-aviso">{{ mensagem }}</span>
             }
-            <p class="descricao">{{ item.descricao || 'Sem descrição disponível.' }}</p>
 
-            @if (cores().length > 0) {
-            <section class="secao-variacao" #secaoCor>
-                <h2 class="secao-titulo">
-                    Cor: <span class="secao-titulo-valor">{{ corSelecionadaLabel() }}</span>
-                    <span class="secao-titulo-contador">· {{ cores().length }} {{ cores().length === 1 ? 'opção' : 'opções' }}</span>
-                </h2>
-                <div class="tira-cores">
-                    @if (podeRolarCorEsquerda()) {
-                    <button type="button" class="tira-seta tira-seta-esquerda" aria-label="Ver cores anteriores"
-                        (click)="rolarCor(-1)">‹</button>
-                    }
-                    <div class="tira-cores-scroll" #corLista (scroll)="atualizarSetasCor()" role="group" aria-label="Selecione a cor">
-                        @for (cor of cores(); track cor) {
-                        <button type="button" class="chip-cor" [class.ativo]="corSelecionada() === cor"
-                            [class.indisponivel]="!corDisponivel(cor)"
-                            [disabled]="!corDisponivel(cor)"
-                            [attr.aria-label]="'Cor: ' + normalizarNomeCor(cor) + (corSelecionada() === cor ? ', selecionada' : '') + (corDisponivel(cor) ? '' : ', indisponível')"
-                            [attr.aria-pressed]="corSelecionada() === cor"
-                            (click)="selecionarCor(cor)">
-                            <span class="chip-cor-swatch" [class.clara]="corEhClara(cor)" [class.neutro]="!corHex(cor)"
-                                [style.background-color]="corHex(cor)">
-                                <span class="swatch-check" aria-hidden="true">✓</span>
-                            </span>
-                            <span class="chip-cor-nome">{{ normalizarNomeCor(cor) }}</span>
-                        </button>
-                        }
-                    </div>
-                    @if (podeRolarCorDireita()) {
-                    <button type="button" class="tira-seta tira-seta-direita" aria-label="Ver mais cores"
-                        (click)="rolarCor(1)">›</button>
+            @if (formasPagamento().length) {
+            <div class="compra-secao">
+                <span class="compra-rotulo"><span>Formas de pagamento</span></span>
+                <div class="compra-formas">
+                    @for (forma of formasPagamento(); track forma.formaDePagamentoId) {
+                    <span class="pof-chip compra-forma-chip">{{ forma.descricao }}</span>
                     }
                 </div>
-            </section>
-            }
-
-            @if (tamanhosParaCorAtual().length > 0) {
-            <section class="secao-variacao" #secaoTamanho>
-                <h2 class="secao-titulo">Tamanho: <span class="secao-titulo-valor">{{ tamanhoSelecionadoLabel() }}</span></h2>
-                <div class="tira-cores">
-                    @if (podeRolarTamanhoEsquerda()) {
-                    <button type="button" class="tira-seta tira-seta-esquerda" aria-label="Ver tamanhos anteriores"
-                        (click)="rolarTamanho(-1)">‹</button>
-                    }
-                    <div class="seletor-opcoes" #tamanhoLista (scroll)="atualizarSetasTamanho()" role="group" aria-label="Selecione o tamanho">
-                        @for (tamanho of tamanhosParaCorAtual(); track tamanho) {
-                        <button type="button" class="opcao" [class.ativo]="tamanhoSelecionado() === tamanho"
-                            [class.esgotado]="!tamanhoDisponivel(tamanho)" [disabled]="!tamanhoDisponivel(tamanho)"
-                            [attr.aria-label]="'Tamanho: ' + tamanho + (tamanhoSelecionado() === tamanho ? ', selecionado' : '') + (tamanhoDisponivel(tamanho) ? '' : ', indisponível')"
-                            [attr.aria-pressed]="tamanhoSelecionado() === tamanho"
-                            (click)="selecionarTamanho(tamanho)">{{ tamanho }}</button>
-                        }
-                    </div>
-                    @if (podeRolarTamanhoDireita()) {
-                    <button type="button" class="tira-seta tira-seta-direita" aria-label="Ver mais tamanhos"
-                        (click)="rolarTamanho(1)">›</button>
-                    }
-                </div>
-            </section>
-            }
-
-            @if (referenciaTemEstampa()) {
-            <section class="secao-variacao" #secaoEstampa>
-                <h2 class="secao-titulo">Estampa: <span class="secao-titulo-valor">{{ estampaSelecionadaLabel() }}</span></h2>
-                <div class="tira-cores">
-                    @if (podeRolarEstampaEsquerda()) {
-                    <button type="button" class="tira-seta tira-seta-esquerda" aria-label="Ver estampas anteriores"
-                        (click)="rolarEstampa(-1)">‹</button>
-                    }
-                    <div class="seletor-opcoes" #estampaLista (scroll)="atualizarSetasEstampa()" role="group" aria-label="Selecione a estampa">
-                        @for (estampa of estampasParaSelecaoAtual(); track estampa) {
-                        <button type="button" class="opcao" [class.ativo]="estampaSelecionada() === estampa"
-                            [class.esgotado]="!estampaDisponivel(estampa)" [disabled]="!estampaDisponivel(estampa)"
-                            [attr.aria-label]="'Estampa: ' + estampa + (estampaSelecionada() === estampa ? ', selecionada' : '') + (estampaDisponivel(estampa) ? '' : ', indisponível')"
-                            [attr.aria-pressed]="estampaSelecionada() === estampa"
-                            (click)="selecionarEstampa(estampa)">{{ estampa }}</button>
-                        }
-                    </div>
-                    @if (podeRolarEstampaDireita()) {
-                    <button type="button" class="tira-seta tira-seta-direita" aria-label="Ver mais estampas"
-                        (click)="rolarEstampa(1)">›</button>
-                    }
-                </div>
-            </section>
-            }
-
-            @if (produtosDisponiveis().length === 0) {
-            <p class="aviso">Produto indisponível no momento.</p>
-            } @else if (mensagemValidacao()) {
-            <p class="aviso" role="alert">{{ mensagemValidacao() }}</p>
-            }
-
-            @if (produtoSelecionado(); as selecionado) {
-            <div class="quantidade">
-                <span class="seletor-titulo">Quantidade</span>
-                <div class="quantidade-stepper">
-                    <button type="button" class="stepper-botao" [disabled]="quantidade() <= 1"
-                        (click)="decrementarQuantidade()">−</button>
-                    <span class="quantidade-valor">{{ quantidade() }}</span>
-                    <button type="button" class="stepper-botao" [disabled]="quantidade() >= (selecionado.quantidadeDisponivel ?? selecionado.saldo ?? 1)"
-                        (click)="incrementarQuantidade()">+</button>
-                </div>
+                @if (parcelamento(); as texto) {
+                <span class="compra-formas-nota">{{ texto }}</span>
+                }
             </div>
             }
 
-            @if (adicionado()) {
-            <div class="confirmacao">
-                <p>Adicionado à sacola.</p>
-                <ui-button variant="secondary" size="sm" (clicked)="irParaCarrinho()">Ver sacola</ui-button>
+            @if (config.freteGratis.ativo || config.parcelamento.ativo || config.pix.ativo) {
+            <div class="compra-linhas">
+                @if (config.freteGratis.ativo) {
+                <div class="compra-linha">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6A755B" stroke-width="1.6"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+                        <path d="M15 18H9" />
+                        <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
+                        <circle cx="17" cy="18" r="2" />
+                        <circle cx="7" cy="18" r="2" />
+                    </svg>
+                    Frete grátis a partir de {{ formatarPreco(config.freteGratis.minimo) }}
+                </div>
+                }
+                @if (config.parcelamento.ativo || config.pix.ativo) {
+                <button type="button" class="compra-linha compra-linha-botao" (click)="pagamentoAberto.set(true)">
+                    <span>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6A755B" stroke-width="1.6"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect width="20" height="14" x="2" y="5" rx="2" />
+                            <path d="M2 10h20" />
+                        </svg>
+                        Ver meios de pagamento
+                    </span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="m9 18 6-6-6-6" />
+                    </svg>
+                </button>
+                }
             </div>
             }
-            <div class="acoes-compra">
-                <ui-button size="lg" variant="secondary" [disabled]="!produtoSelecionado() || adicionando()" (clicked)="adicionarAoCarrinho()">
-                    @if (adicionando()) { Adicionando... } @else { Adicionar à sacola }
-                </ui-button>
-                <ui-button size="lg" [disabled]="!produtoSelecionado()" (clicked)="comprarAgora()">Comprar agora</ui-button>
+
+            @if (config.freteCep.ativo) {
+            <div class="compra-secao">
+                <span class="compra-rotulo"><span>Calcular frete e prazo</span></span>
+                <div class="compra-cep">
+                    <input type="text" inputmode="numeric" placeholder="00000-000" [ngModel]="cep()"
+                        (ngModelChange)="onCepChange($event)" aria-label="CEP">
+                    <button type="button" class="compra-cep-botao" [disabled]="cotando()" (click)="calcularFrete()">
+                        @if (cotando()) { Calculando… } @else { Calcular }
+                    </button>
+                </div>
+                @if (cepErro()) {
+                <span class="compra-aviso">Digite um CEP válido com 8 números.</span>
+                }
+                @for (opcao of opcoesFrete(); track opcao.serviceId) {
+                <div class="frete-opcao">
+                    <span class="frete-nome">{{ opcao.service }}</span>
+                    <span class="frete-valor">{{ formatarPreco(valorFrete(opcao)) }}</span>
+                    <span class="frete-prazo">{{ prazoFrete(opcao) }}</span>
+                </div>
+                }
+            </div>
+            }
+
+            @if (acordeoes().length) {
+            <div class="acordeao">
+                @for (secao of acordeoes(); track secao.id) {
+                <div class="acordeao-item">
+                    <button type="button" (click)="alternarAcordeao(secao.id)"
+                        [attr.aria-expanded]="acordeaoAberto() === secao.id">
+                        {{ secao.titulo }}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                            [style.transform]="acordeaoAberto() === secao.id ? 'rotate(180deg)' : 'none'">
+                            <path d="m6 9 6 6 6-6" />
+                        </svg>
+                    </button>
+                    @if (acordeaoAberto() === secao.id) {
+                    <p class="acordeao-texto">{{ secao.texto }}</p>
+                    }
+                </div>
+                }
+            </div>
+            }
+
+            <div class="compartilhar">
+                <span>Compartilhar</span>
+                <a [href]="compartilharWhatsapp()" target="_blank" rel="noopener">WhatsApp</a>
+                <a [href]="compartilharPinterest()" target="_blank" rel="noopener">Pinterest</a>
+                <button type="button" (click)="copiarLink()">Copiar link</button>
             </div>
         </div>
     </div>
-    }
-    }
 </div>
+
+<!-- 2.7 Você também pode gostar (catálogo da mesma categoria) -->
+<loja-vitrine kicker="Da mesma categoria" titulo="Você também pode gostar" [referencias]="relacionados()"
+    [verTudoRota]="ref.categoriaId ? ['/loja/categoria', ref.categoriaId] : null"></loja-vitrine>
+
+<!-- 2.6 Modal "Meios de pagamento" -->
+@if (pagamentoAberto()) {
+<div class="pof-modal" role="dialog" aria-label="Meios de pagamento">
+    <button type="button" class="pof-modal-fundo" aria-label="Fechar" (click)="pagamentoAberto.set(false)"></button>
+    <div class="pof-modal-painel">
+        <div class="pof-modal-topo">
+            <span>Meios de pagamento</span>
+            <button type="button" aria-label="Fechar" (click)="pagamentoAberto.set(false)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                    stroke-linecap="round" aria-hidden="true">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        @if (pix(); as valorPix) {
+        <div class="pof-modal-pix">
+            <span class="pof-modal-rotulo">Pix · {{ config.pix.percentualDesconto }}% de desconto</span>
+            <div class="pof-modal-pix-valores">
+                <span class="pof-modal-riscado">{{ formatarPreco(preco()) }}</span>
+                <strong>{{ formatarPreco(valorPix) }}</strong>
+            </div>
+            <span class="pof-modal-obs">O desconto vale sobre o valor dos produtos, sem o frete.</span>
+        </div>
+        }
+        <div class="pof-modal-cartao">
+            <span class="pof-modal-rotulo">Cartão de crédito</span>
+            @for (parcela of tabelaParcelas(); track parcela.numero) {
+            <div class="pof-modal-parcela">
+                <span>{{ parcela.numero }}x de {{ formatarPreco(parcela.valor) }} sem juros</span>
+                <span>Total {{ formatarPreco(preco()) }}</span>
+            </div>
+            }
+            <div class="pof-modal-bandeiras">
+                @for (meio of config.meiosPagamento; track meio) {
+                <span>{{ meio }}</span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+}
+}
+
+<loja-footer></loja-footer>

@@ -6,6 +6,7 @@ import { environment } from "../../../environments/environment";
 import { EcommerceReferenciaDto, EcommerceReferenciaProdutoDto, PaginationDto } from "./dtos/ecommerce-referencia.dto";
 import { PromocaoDto } from "./dtos/promocao.dto";
 import { CategoriaDto } from "./dtos/categoria.dto";
+import { ListaDetalheDto, VitrineHomeItemDto, VitrineMenuItemDto } from "./dtos/vitrine.dto";
 
 // Base fixa 'e-commerce/{ecommerceId}' -- cada método completa com o sufixo do endpoint via
 // `options.path` (RemoteDataSourceBase concatena path + pathArguments + suffix).
@@ -28,6 +29,45 @@ export class LojaDataSource extends RemoteDataSourceBase<any> {
         return this.getList({
             pathArguments: this.ecommerceArgs(),
             path: '/catalogos/categorias',
+        });
+    }
+
+    // Menu do site na ordem definida no admin (itens `lista` são link direto, `grupo` abre
+    // mega-menu com as `listas` dele). Cache de 30s no backend.
+    vitrineMenu(): Observable<VitrineMenuItemDto[]> {
+        return this.getList({
+            pathArguments: this.ecommerceArgs(),
+            path: '/catalogos/vitrine/menu',
+        });
+    }
+
+    // Vitrines da home, já com as referências de cada uma (lista sem referência não vem).
+    vitrineHome(limite: number): Observable<VitrineHomeItemDto[]> {
+        return this.getList({
+            pathArguments: this.ecommerceArgs(),
+            path: '/catalogos/vitrine/home',
+            queryParameters: { limite },
+        });
+    }
+
+    listaDetalhe(listaId: number | string): Observable<ListaDetalheDto> {
+        return this.get({
+            pathArguments: this.ecommerceArgs(),
+            path: `/catalogos/listas/${listaId}`,
+        });
+    }
+
+    listaReferencias(
+        listaId: number | string, page: number, limit: number, search?: string,
+    ): Observable<PaginationDto<EcommerceReferenciaDto>> {
+        const queryParameters: Record<string, string | number> = { page, limit };
+        if (search) {
+            queryParameters['search'] = search;
+        }
+        return this.get({
+            pathArguments: this.ecommerceArgs(),
+            path: `/catalogos/listas/${listaId}/referencias`,
+            queryParameters,
         });
     }
 

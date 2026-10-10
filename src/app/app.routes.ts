@@ -26,6 +26,7 @@ import { ReferenciaComponent } from '../modules/referencias/pages/referencia/ref
 import { LojaHomePage } from '../modules/loja/presentation/pages/loja_home/loja.home.page';
 import { LojaReferenciaPage } from '../modules/loja/presentation/pages/loja_referencia/loja.referencia.page';
 import { LojaCategoriaPage } from '../modules/loja/presentation/pages/loja_categoria/loja.categoria.page';
+import { LojaListaPage } from '../modules/loja/presentation/pages/loja_lista/loja.lista.page';
 import { CarrinhoPage } from '../modules/carrinho/presentation/pages/carrinho/carrinho.page';
 import { CheckoutPage } from '../modules/checkout/presentation/pages/checkout/checkout.page';
 
@@ -120,6 +121,10 @@ export const routes: Routes = [
     },
     {
         path: 'loja/categoria/:id', component: LojaCategoriaPage,
+    },
+    {
+        // "Ver tudo" das vitrines e destino dos itens do menu (lista do catálogo da vitrine).
+        path: 'loja/lista/:id', component: LojaListaPage,
     },
     {
         path: 'carrinho', component: CarrinhoPage,
