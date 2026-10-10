@@ -1,0 +1,69 @@
+<button type="button" class="pof-overlay sacola-overlay" aria-label="Fechar sacola"
+    [style.opacity]="sacola.aberta() ? 1 : 0" [style.pointerEvents]="sacola.aberta() ? 'auto' : 'none'"
+    (click)="sacola.fechar()"></button>
+
+<aside class="sacola-painel" [class.aberta]="sacola.aberta()" role="dialog" aria-label="Sacola"
+    [attr.aria-hidden]="sacola.aberta() ? null : 'true'">
+    <div class="sacola-topo">
+        <span class="sacola-titulo">Sacola ({{ sacola.contagem() }})</span>
+        <button type="button" class="sacola-fechar" aria-label="Fechar sacola" (click)="sacola.fechar()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    @if (frete(); as f) {
+    <div class="sacola-frete">
+        <span class="sacola-frete-texto">
+            @if (f.falta > 0) { Faltam {{ formatarPreco(f.falta) }} para ganhar frete grátis }
+            @else { Você ganhou frete grátis! }
+        </span>
+        <div class="sacola-frete-barra"><div class="sacola-frete-preenchido" [style.width.%]="f.percentual"></div></div>
+    </div>
+    }
+
+    <div class="sacola-itens pof-rail-vertical">
+        @if (sacola.itens().length === 0) {
+        <div class="sacola-vazia">
+            <img src="/assets/tracos/traco-s.svg" alt="" aria-hidden="true">
+            <p>Sua sacola está vazia.</p>
+        </div>
+        }
+        @for (item of sacola.itens(); track item.produtoId) {
+        <div class="sacola-item">
+            <div class="sacola-item-foto pof-foto-fundo">
+                @if (item.imagemUrl) {
+                <img [src]="item.imagemUrl" [alt]="nomeItem(item)">
+                }
+            </div>
+            <div class="sacola-item-info">
+                <span class="sacola-item-nome">{{ nomeItem(item) }}</span>
+                @if (variacao(item)) {
+                <span class="sacola-item-variacao">{{ variacao(item) }}</span>
+                }
+                <div class="sacola-qtd">
+                    <button type="button" aria-label="Diminuir" (click)="alterar(item, -1)">−</button>
+                    <span>{{ item.quantidade }}</span>
+                    <button type="button" aria-label="Aumentar" (click)="alterar(item, 1)">+</button>
+                </div>
+            </div>
+            <div class="sacola-item-valores">
+                <span class="sacola-item-total">{{ formatarPreco(totalLinha(item)) }}</span>
+                <button type="button" class="sacola-remover" (click)="sacola.remover(item)">Remover</button>
+            </div>
+        </div>
+        }
+    </div>
+
+    <div class="sacola-rodape">
+        <div class="sacola-subtotal">
+            <span>Subtotal</span>
+            <strong>{{ formatarPreco(sacola.subtotal()) }}</strong>
+        </div>
+        <button type="button" class="pof-btn-escuro sacola-finalizar" [disabled]="sacola.itens().length === 0"
+            (click)="finalizar()">Finalizar compra</button>
+        <button type="button" class="pof-btn-contorno" (click)="sacola.fechar()">Continuar comprando</button>
+    </div>
+</aside>

@@ -1,0 +1,230 @@
+.sacola-overlay {
+    z-index: 70;
+    cursor: pointer;
+}
+
+.sacola-painel {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 71;
+    width: 100%;
+    max-width: 420px;
+    background: var(--pof-creme);
+    color: var(--pof-tinta);
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.2, .7, .3, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.sacola-painel.aberta {
+    transform: none;
+}
+
+.sacola-topo {
+    height: 64px;
+    padding: 0 8px 0 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--pof-borda);
+}
+
+.sacola-titulo {
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.sacola-fechar {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--pof-tinta);
+}
+
+.sacola-frete {
+    padding: 16px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--pof-nevoa);
+}
+
+.sacola-frete-texto {
+    font-size: 13px;
+}
+
+.sacola-frete-barra {
+    height: 5px;
+    border-radius: 999px;
+    background: var(--pof-borda-fraca);
+    overflow: hidden;
+}
+
+.sacola-frete-preenchido {
+    height: 100%;
+    background: var(--pof-oliva);
+    border-radius: 999px;
+    transition: width .4s ease;
+}
+
+.sacola-itens {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 22px;
+    scrollbar-width: none;
+}
+
+.sacola-itens::-webkit-scrollbar {
+    display: none;
+}
+
+.sacola-vazia {
+    padding: 56px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    text-align: center;
+}
+
+.sacola-vazia img {
+    height: 48px;
+}
+
+.sacola-vazia p {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--pof-bordo);
+}
+
+.sacola-item {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    gap: 14px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--pof-borda-fraca);
+}
+
+.sacola-item-foto {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+}
+
+.sacola-item-foto img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sacola-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.sacola-item-nome {
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.sacola-item-variacao {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--pof-oliva);
+}
+
+.sacola-qtd {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--pof-borda-forte);
+    align-self: flex-start;
+    margin-top: 4px;
+}
+
+.sacola-qtd button {
+    width: 34px;
+    height: 34px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--pof-tinta);
+    font-size: 16px;
+}
+
+.sacola-qtd span {
+    min-width: 24px;
+    text-align: center;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
+.sacola-item-valores {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.sacola-item-total {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.sacola-remover {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--pof-bordo);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.sacola-rodape {
+    padding: 18px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 1px solid var(--pof-borda);
+}
+
+.sacola-subtotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.sacola-subtotal span {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--pof-oliva);
+}
+
+.sacola-subtotal strong {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.sacola-finalizar {
+    min-height: 50px;
+    font-size: 12px;
+}
