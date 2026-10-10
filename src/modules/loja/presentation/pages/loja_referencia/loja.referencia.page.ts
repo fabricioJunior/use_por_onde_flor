@@ -46,6 +46,8 @@ export class LojaReferenciaPage implements OnInit {
     formasPagamento = signal<{ formaDePagamentoId: number; descricao: string; provider?: string }[]>([]);
     promocaoAplicada = signal<PromocaoDto | null>(null);
     valorPromocional = signal<number | undefined>(undefined);
+    /// Preço do cartão: base do parcelamento, que não pode sair sobre o preço do Pix.
+    valorParcelado = signal<number | undefined>(undefined);
 
     fotoAtual = signal(0);
     /// Com muitas fotos a coluna lateral fica mais alta que a imagem: mostra 5 e esconde o resto.
@@ -117,14 +119,23 @@ export class LojaReferenciaPage implements OnInit {
             this.produtos.set(produtos);
             this.midias.set(this.ordenarMidias(midias.filter((m) => m?.url)));
 
+            const mapaPromocoes = this.promocaoPrecoService.montarMapa(promocoes.items);
+            const geraisPromocoes = this.promocaoPrecoService.promocoesGerais(promocoes.items);
             const aplicada = this.promocaoPrecoService.promocaoAplicadaParaReferencia(
                 referencia.referenciaId,
                 referencia.valor,
-                this.promocaoPrecoService.montarMapa(promocoes.items),
-                this.promocaoPrecoService.promocoesGerais(promocoes.items),
+                mapaPromocoes,
+                geraisPromocoes,
             );
             this.promocaoAplicada.set(aplicada?.promocao ?? null);
             this.valorPromocional.set(aplicada?.valorFinal);
+            this.valorParcelado.set(this.promocaoPrecoService.precoParaParcelamento(
+                referencia.referenciaId,
+                referencia.valor,
+                mapaPromocoes,
+                geraisPromocoes,
+                new Map(formasPagamento.map((f) => [f.formaDePagamentoId, f.descricao])),
+            ));
 
             this.metaPixel.viewContent({
                 contentIds: [(referencia.idExterno ?? '').trim() || String(referencia.referenciaId)],
@@ -196,9 +207,9 @@ export class LojaReferenciaPage implements OnInit {
         return this.valorPromocional() != null && referencia ? referencia.valor : null;
     }
 
-    parcelamento = computed(() => textoParcelamento(this.preco()));
+    parcelamento = computed(() => textoParcelamento(this.valorParcelado() ?? this.preco()));
     pix = computed(() => precoPix(this.preco()));
-    tabelaParcelas = computed(() => parcelas(this.preco()));
+    tabelaParcelas = computed(() => parcelas(this.valorParcelado() ?? this.preco()));
 
     private static unicos(valores: (string | undefined)[]): string[] {
         const vistos: string[] = [];

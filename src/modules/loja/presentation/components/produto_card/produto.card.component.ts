@@ -48,7 +48,8 @@ export class ProdutoCardComponent {
         return this.referencia.valorPromocional != null ? this.referencia.valor : null;
     }
 
-    parcelamento = computed(() => textoParcelamento(this.preco));
+    // O parcelamento usa o preço do cartão: o preço exibido pode ser o do Pix, que é à vista.
+    parcelamento = computed(() => textoParcelamento(this.referencia.valorParcelado ?? this.preco));
 
     // "-X%" quando há preço promocional; senão nenhum selo. ("Novo" não tem fonte no backend --
     // a view não expõe data de criação da referência, então o selo não é inventado.)

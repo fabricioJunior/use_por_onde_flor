@@ -30,6 +30,9 @@ export interface EcommerceReferenciaDto {
     // PromocaoPrecoService.melhorOpcaoParaReferencia). `formaPagamentoNome` null = desconto vale
     // pra qualquer forma; presente = só bate esse percentual pagando naquela forma específica.
     melhorDesconto?: { percentualOff: number; formaPagamentoNome: string | null };
+    // Preço que vale no cartão, base do "Nx de ..." -- o preço exibido pode ser o do Pix, que é à
+    // vista (ver PromocaoPrecoService.precoParaParcelamento).
+    valorParcelado?: number;
 }
 
 export interface EcommerceReferenciaProdutoDto {

@@ -70,3 +70,36 @@ describe('PromocaoPrecoService', () => {
     });
   });
 });
+
+describe('precoParaParcelamento', () => {
+    const servico = new PromocaoPrecoService();
+    // Promoção restrita: 30% no cartão, 40% no Pix. O site mostra R$ 60 (Pix), mas parcelar
+    // tem que ser sobre R$ 70 (cartão).
+    const promo = {
+        id: 1,
+        tipoDesconto: 'percentual',
+        tipoEscopo: 'referencias',
+        referenciaIds: [7],
+        restringirFormasPagamento: true,
+        formasPagamento: [
+            { formaDePagamentoId: 1, valorPercentual: 30 },
+            { formaDePagamentoId: 2, valorPercentual: 40 },
+        ],
+    } as any;
+    const nomes = new Map([[1, 'Cartão de Crédito'], [2, 'PIX']]);
+    const mapa = servico.montarMapa([promo]);
+
+    it('parcela sobre o preço do cartão, não o do Pix', () => {
+        expect(servico.calcularParaReferencia(7, 100, mapa, [])).toBe(60);
+        expect(servico.precoParaParcelamento(7, 100, mapa, [], nomes)).toBe(70);
+    });
+
+    it('sem forma de cartão na promoção, parcela sobre o preço cheio', () => {
+        expect(servico.precoParaParcelamento(7, 100, mapa, [], new Map([[2, 'PIX']]))).toBe(100);
+    });
+
+    it('desconto sem forma específica vale para o parcelamento', () => {
+        const geral = { id: 2, tipoDesconto: 'percentual', tipoEscopo: 'geral', valorPercentual: 10 } as any;
+        expect(servico.precoParaParcelamento(7, 100, new Map(), [geral], nomes)).toBe(90);
+    });
+});

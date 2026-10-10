@@ -47,15 +47,20 @@ export class LojaListaPage implements OnInit {
         });
     }
 
+    private nomesFormaPagamento = new Map<number, string>();
+
     private async carregar(): Promise<void> {
         this.carregando.set(true);
         this.erro.set('');
         try {
-            const [lista, resposta, promocoes] = await Promise.all([
+            const [lista, resposta, promocoes, formas] = await Promise.all([
                 firstValueFrom(this.lojaDataSource.listaDetalhe(this.listaId)),
                 firstValueFrom(this.lojaDataSource.listaReferencias(this.listaId, 1, LIMITE)),
                 firstValueFrom(this.lojaDataSource.promocoesAtivas()).catch(() => ({ items: [] })),
+                // Nome da forma distingue cartão (parcela) de Pix (à vista).
+                firstValueFrom(this.lojaDataSource.formaPagamento()).catch(() => []),
             ]);
+            this.nomesFormaPagamento = new Map(formas.map((f) => [f.formaDePagamentoId, f.descricao]));
             this.lista.set(lista);
             this.referencias.set(this.comPreco(resposta.items, promocoes.items));
             this.temMais.set(resposta.meta?.has_next_page ?? false);
@@ -73,6 +78,7 @@ export class LojaListaPage implements OnInit {
         return referencias.map((r) => ({
             ...r,
             valorPromocional: this.promocaoPrecoService.calcularParaReferencia(r.referenciaId, r.valor, mapa, gerais) ?? undefined,
+            valorParcelado: this.promocaoPrecoService.precoParaParcelamento(r.referenciaId, r.valor, mapa, gerais, this.nomesFormaPagamento),
         }));
     }
 
