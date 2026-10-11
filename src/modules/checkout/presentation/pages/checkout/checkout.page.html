@@ -167,7 +167,7 @@
                         @for (opcao of opcoesFrete(); track opcao.serviceId) {
                         <button type="button" class="opcao frete" [class.ativo]="freteSelecionado()?.serviceId === opcao.serviceId"
                             (click)="selecionarFrete(opcao)">
-                            <span>{{ opcao.carrier }} - {{ opcao.service }}</span>
+                            <span>@if (opcao.carrierPicture) {<img [src]="opcao.carrierPicture" [alt]="opcao.carrier" height="18" loading="lazy" style="margin-right:6px;vertical-align:middle"> }{{ opcao.carrier }} - {{ opcao.service }}</span>
                             <span>{{ formatarPreco(opcao.customPrice ?? opcao.price) }} · {{ opcao.customDeliveryTime ?? opcao.deliveryTime }} dias úteis</span>
                         </button>
                         }

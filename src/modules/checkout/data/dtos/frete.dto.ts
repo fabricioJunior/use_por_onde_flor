@@ -4,6 +4,7 @@ export interface OpcaoFreteDto {
     serviceId: string;
     service: string;
     carrier: string;
+    carrierPicture?: string;
     price: number;
     customPrice?: number;
     deliveryTime: number;
