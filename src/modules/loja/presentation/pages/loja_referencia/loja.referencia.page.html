@@ -254,7 +254,7 @@
                         @if (cotando()) { Calculando… } @else { Calcular }
                     </button>
                 </div>
-                <button type="button" class="compra-cep-localizacao" [disabled]="localizando()"
+                <button type="button" class="compra-cep-botao" [disabled]="localizando()"
                     (click)="usarLocalizacao()">
                     @if (localizando()) { Buscando localização… } @else { Usar minha localização }
                 </button>
