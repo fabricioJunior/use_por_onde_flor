@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, map } from "rxjs";
 import { RemoteDataSourceBase } from "../../core/http/remote.data.source.base";
 import { environment } from "../../../environments/environment";
 import { CheckoutRequestDto, CheckoutResponseDto } from "./dtos/checkout.dto";
@@ -23,11 +23,14 @@ export class CheckoutDataSource extends RemoteDataSourceBase<CheckoutResponseDto
     }
 
     cotarFrete(dto: CotarFreteRequestDto): Observable<OpcaoFreteDto[]> {
-        return this.post({
+        // Mais barato primeiro (PDP e checkout usam esta mesma cotação; o checkout pré-seleciona a 1ª).
+        return (this.post({
             pathArguments: { ecommerceId: environment.ecommerceId.toString() },
             path: '/frete',
             body: dto,
-        }) as unknown as Observable<OpcaoFreteDto[]>;
+        }) as unknown as Observable<OpcaoFreteDto[]>).pipe(
+            map((opcoes) => [...(opcoes ?? [])].sort((a, b) => (a.customPrice ?? a.price) - (b.customPrice ?? b.price))),
+        );
     }
 
     cotar(dto: CotarCheckoutRequestDto): Observable<CotarCheckoutResponseDto> {

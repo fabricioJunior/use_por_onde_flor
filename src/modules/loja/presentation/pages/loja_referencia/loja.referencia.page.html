@@ -266,7 +266,7 @@
                 }
                 @for (opcao of opcoesFrete(); track opcao.serviceId) {
                 <div class="frete-opcao">
-                    <span class="frete-nome">{{ opcao.service }}</span>
+                    <span class="frete-nome">@if (opcao.carrierPicture) {<img [src]="opcao.carrierPicture" [alt]="opcao.carrier" height="18" loading="lazy" style="margin-right:6px;vertical-align:middle"> }{{ opcao.service }}</span>
                     <span class="frete-valor">{{ formatarPreco(valorFrete(opcao)) }}</span>
                     <span class="frete-prazo">{{ prazoFrete(opcao) }}</span>
                 </div>
