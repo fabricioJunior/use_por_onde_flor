@@ -1,3 +1,4 @@
+import { CepLocalService } from '../../../../core/cep/cep-local.service';
 import { CommonModule } from "@angular/common";
 import { Component, ElementRef, OnInit, ViewChild, computed, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
@@ -75,6 +76,8 @@ export class LojaReferenciaPage implements OnInit {
     cep = signal('');
     cepErro = signal(false);
     cotando = signal(false);
+    localizando = signal(false);
+    localizacaoErro = signal(false);
     opcoesFrete = signal<OpcaoFreteDto[]>([]);
 
     constructor(
@@ -86,9 +89,13 @@ export class LojaReferenciaPage implements OnInit {
         private promocaoPrecoService: PromocaoPrecoService,
         private sacola: SacolaService,
         private metaPixel: MetaPixelService,
+        private cepLocal: CepLocalService,
     ) { }
 
     ngOnInit(): void {
+        if (this.cepLocal.cep()) {
+            this.onCepChange(this.cepLocal.cep());
+        }
         this.route.paramMap.subscribe(async (params) => {
             await this.carregar(params.get('id') ?? '');
         });
@@ -446,6 +453,19 @@ export class LojaReferenciaPage implements OnInit {
         this.cepErro.set(false);
     }
 
+    async usarLocalizacao(): Promise<void> {
+        this.localizando.set(true);
+        this.localizacaoErro.set(false);
+        const cep = await this.cepLocal.detectarPorLocalizacao();
+        this.localizando.set(false);
+        if (!cep) {
+            this.localizacaoErro.set(true);
+            return;
+        }
+        this.onCepChange(cep);
+        await this.calcularFrete();
+    }
+
     async calcularFrete(): Promise<void> {
         const digitos = this.cep().replace(/\D/g, '');
         const produto = this.produtoSelecionado() ?? this.produtos().find((p) => this.temEstoque(p));
@@ -461,6 +481,7 @@ export class LojaReferenciaPage implements OnInit {
                 cepDestino: digitos,
             }));
             this.opcoesFrete.set(opcoes ?? []);
+            this.cepLocal.salvar(digitos);
         } catch (error) {
             console.error('Erro ao cotar frete', error);
             this.cepErro.set(true);

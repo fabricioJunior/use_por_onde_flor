@@ -18,6 +18,7 @@ import { CheckoutDataSource } from "../../../data/checkout.data.source";
 import { EnderecoDataSource } from "../../../data/endereco.data.source";
 import { EnderecoDto } from "../../../data/dtos/endereco.dto";
 import { CheckoutCobrancaDto, ModalidadeEntregaPedido } from "../../../data/dtos/checkout.dto";
+import { CepLocalService } from "../../../../core/cep/cep-local.service";
 import { OpcaoFreteDto } from "../../../data/dtos/frete.dto";
 import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
 import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
@@ -126,9 +127,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
     clienteForm: ReturnType<FormBuilder['group']>;
     enderecoForm: ReturnType<FormBuilder['group']>;
 
-    // Integração de frete fora do ar (2026-09-13) -- desativa "Receber em casa" até voltar.
-    // Reverter pra true assim que a integração normalizar.
-    entregaDisponivel = false;
+    entregaDisponivel = true;
 
     modalidadeEntrega = signal<ModalidadeEntregaPedido>('retirada');
     // Exibido abaixo do seletor de modalidade quando "Retirar na loja" está selecionado (ver
@@ -160,6 +159,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
         private http: HttpClient,
         public router: Router,
         private metaPixel: MetaPixelService,
+        private cepLocal: CepLocalService,
     ) {
         this.autenticado = this.autenticacaoService.estaAutenticado();
         if (this.autenticado) {
@@ -332,6 +332,11 @@ export class CheckoutPage implements OnInit, OnDestroy {
             return;
         }
 
+        const salvo = this.cepLocal.cep();
+        if (this.mostrarNovoEndereco() && salvo && !this.enderecoForm.get('cep')!.value) {
+            this.enderecoForm.get('cep')!.setValue(`${salvo.slice(0, 5)}-${salvo.slice(5)}`);
+        }
+
         const cepAtual = this.mostrarNovoEndereco()
             ? this.enderecoForm.get('cep')!.value
             : this.enderecos().find((endereco) => endereco.id === this.enderecoSelecionadoId())?.cep;
@@ -356,6 +361,8 @@ export class CheckoutPage implements OnInit, OnDestroy {
             this.freteSelecionado.set(null);
             return;
         }
+
+        this.cepLocal.salvar(cep);
 
         if (cep === this.ultimoCepCotado) {
             return;
