@@ -65,11 +65,15 @@ export class LoginSenhaComponent implements OnInit {
             this.formGroup.get('senha')?.value,
         );
         if (sucess) {
-            if (!this.loginService.emailVerificadoDaSessao()) {
+            const returnUrl = this.loginComponent.returnUrl();
+            // Link do e-mail de verificação precisa chegar em /verificar-email logado; sem essa exceção o
+            // e-mail pendente barra o login e o cliente nunca confirma (loop).
+            const indoConfirmarEmail = returnUrl?.startsWith('/verificar-email') ?? false;
+            if (!this.loginService.emailVerificadoDaSessao() && !indoConfirmarEmail) {
                 this.router.navigate(['/email-pendente']);
                 return;
             }
-            this.router.navigateByUrl(this.loginComponent.returnUrl() ?? '/loja');
+            this.router.navigateByUrl(returnUrl ?? '/loja');
         } else {
             this.errorMessage.set('Senha incorreta, tente novamente');
         }
