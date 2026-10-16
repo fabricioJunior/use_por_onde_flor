@@ -18,6 +18,7 @@ import { CheckoutDataSource } from "../../../data/checkout.data.source";
 import { EnderecoDataSource } from "../../../data/endereco.data.source";
 import { EnderecoDto } from "../../../data/dtos/endereco.dto";
 import { CheckoutCobrancaDto, ModalidadeEntregaPedido } from "../../../data/dtos/checkout.dto";
+import { CepLocalService } from "../../../../core/cep/cep-local.service";
 import { OpcaoFreteDto } from "../../../data/dtos/frete.dto";
 import { ButtonComponent } from "../../../../loja/presentation/components/ui/button/button.component";
 import { HeaderComponent } from "../../../../loja/presentation/components/header/header.component";
@@ -95,6 +96,11 @@ export class CheckoutPage implements OnInit, OnDestroy {
     verificandoPagamento = signal(false);
     pagamentoNaoConfirmado = signal(false);
     cotandoPreco = signal(false);
+    // Cupom: só vira "aplicado" depois que /cotar confirma desconto (ver aplicarCupom); o mesmo código
+    // vai no finalizar e o backend revalida.
+    codigoCupomDigitado = '';
+    cupomAplicado = signal<string | null>(null);
+    cupomMensagem = signal('');
     // Só feedback visual do botão "Copiar código" (cdkCopyToClipboard já faz a cópia de verdade) --
     // volta ao texto original depois de um tempo pra não ficar "Código copiado" pra sempre.
     codigoPixCopiado = signal(false);
@@ -126,9 +132,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
     clienteForm: ReturnType<FormBuilder['group']>;
     enderecoForm: ReturnType<FormBuilder['group']>;
 
-    // Integração de frete fora do ar (2026-09-13) -- desativa "Receber em casa" até voltar.
-    // Reverter pra true assim que a integração normalizar.
-    entregaDisponivel = false;
+    entregaDisponivel = true;
 
     modalidadeEntrega = signal<ModalidadeEntregaPedido>('retirada');
     // Exibido abaixo do seletor de modalidade quando "Retirar na loja" está selecionado (ver
@@ -160,6 +164,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
         private http: HttpClient,
         public router: Router,
         private metaPixel: MetaPixelService,
+        private cepLocal: CepLocalService,
     ) {
         this.autenticado = this.autenticacaoService.estaAutenticado();
         if (this.autenticado) {
@@ -332,6 +337,11 @@ export class CheckoutPage implements OnInit, OnDestroy {
             return;
         }
 
+        const salvo = this.cepLocal.cep();
+        if (this.mostrarNovoEndereco() && salvo && !this.enderecoForm.get('cep')!.value) {
+            this.enderecoForm.get('cep')!.setValue(`${salvo.slice(0, 5)}-${salvo.slice(5)}`);
+        }
+
         const cepAtual = this.mostrarNovoEndereco()
             ? this.enderecoForm.get('cep')!.value
             : this.enderecos().find((endereco) => endereco.id === this.enderecoSelecionadoId())?.cep;
@@ -356,6 +366,8 @@ export class CheckoutPage implements OnInit, OnDestroy {
             this.freteSelecionado.set(null);
             return;
         }
+
+        this.cepLocal.salvar(cep);
 
         if (cep === this.ultimoCepCotado) {
             return;
@@ -475,7 +487,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
     // Desconto de promoção pode variar por forma de pagamento (restringirFormasPagamento/override
     // em promocao_forma_pagamento, ver EcommerceCheckoutService.montarItensComDesconto) -- recotar
     // sempre que a escolha mudar, senão o valor exibido não bate com o que o backend vai cobrar.
-    private async atualizarPrecosPorFormaPagamento(formaDePagamentoId: number): Promise<void> {
+    private async atualizarPrecosPorFormaPagamento(formaDePagamentoId?: number): Promise<void> {
         if (this.itens().length === 0) {
             return;
         }
@@ -484,16 +496,58 @@ export class CheckoutPage implements OnInit, OnDestroy {
             const cotacao = await firstValueFrom(this.checkoutDataSource.cotar({
                 itens: this.itens().map((item) => ({ produtoId: item.produtoId!, quantidade: item.quantidade! })),
                 formaDePagamentoId,
+                codigoCupom: this.cupomAplicado() ?? undefined,
             }));
             this.itens.set(this.itens().map((item) => {
                 const precoItem = cotacao.itens.find((i) => i.produtoId === item.produtoId);
                 return precoItem ? { ...item, valor: precoItem.valor, valorPromocional: precoItem.valorPromocional } : item;
             }));
+            if (cotacao.cupom && !cotacao.cupom.aplicado) {
+                this.cupomAplicado.set(null);
+                this.cupomMensagem.set(cotacao.cupom.motivo ?? 'Cupom não pôde ser aplicado.');
+            }
         } catch (error) {
             console.error('Erro ao recalcular preço pra forma de pagamento selecionada', error);
         } finally {
             this.cotandoPreco.set(false);
         }
+    }
+
+    async aplicarCupom(): Promise<void> {
+        const codigo = this.codigoCupomDigitado.trim().toUpperCase();
+        if (!codigo || this.cotandoPreco() || this.itens().length === 0) {
+            return;
+        }
+        this.cotandoPreco.set(true);
+        this.cupomMensagem.set('');
+        try {
+            const cotacao = await firstValueFrom(this.checkoutDataSource.cotar({
+                itens: this.itens().map((item) => ({ produtoId: item.produtoId!, quantidade: item.quantidade! })),
+                formaDePagamentoId: this.formaPagamentoSelecionadaId() ?? undefined,
+                codigoCupom: codigo,
+            }));
+            if (!cotacao.cupom?.aplicado) {
+                this.cupomMensagem.set(cotacao.cupom?.motivo ?? 'Cupom não pôde ser aplicado.');
+                return;
+            }
+            this.itens.set(this.itens().map((item) => {
+                const precoItem = cotacao.itens.find((i) => i.produtoId === item.produtoId);
+                return precoItem ? { ...item, valor: precoItem.valor, valorPromocional: precoItem.valorPromocional } : item;
+            }));
+            this.cupomAplicado.set(codigo);
+        } catch (error) {
+            console.error('Erro ao validar cupom', error);
+            this.cupomMensagem.set('Não foi possível validar o cupom agora. Tente novamente.');
+        } finally {
+            this.cotandoPreco.set(false);
+        }
+    }
+
+    async removerCupom(): Promise<void> {
+        this.cupomAplicado.set(null);
+        this.cupomMensagem.set('');
+        this.codigoCupomDigitado = '';
+        await this.atualizarPrecosPorFormaPagamento(this.formaPagamentoSelecionadaId() ?? undefined);
     }
 
     private camposInvalidos(form: ReturnType<FormBuilder['group']>): string[] {
@@ -586,6 +640,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
                 enderecoEntregaId,
                 enderecoEntrega,
                 freteEscolhido: this.freteSelecionado() ?? undefined,
+                codigoCupom: this.cupomAplicado() ?? undefined,
                 formaDePagamentoId: this.formaPagamentoSelecionadaId() ?? undefined,
                 // cookies do Pixel (_fbp/_fbc): ajudam a Meta a casar o Purchase do servidor com o do navegador
                 rastreio: this.metaPixel.dadosDeRastreio(),

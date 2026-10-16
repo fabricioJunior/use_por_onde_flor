@@ -396,3 +396,9 @@ h2 {
         color: var(--text-primary);
     }
 }
+
+.checkout-cupom { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+.checkout-cupom-form, .checkout-cupom-aplicado { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.checkout-cupom-input { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; font: inherit; text-transform: uppercase; }
+.checkout-cupom-aplicar, .checkout-cupom-remover { padding: 10px 14px; border: 1px solid currentColor; border-radius: 8px; background: transparent; font: inherit; cursor: pointer; }
+.checkout-cupom-aplicar:disabled, .checkout-cupom-remover:disabled { opacity: 0.5; cursor: default; }

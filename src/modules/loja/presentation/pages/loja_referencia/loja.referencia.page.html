@@ -254,8 +254,15 @@
                         @if (cotando()) { Calculando… } @else { Calcular }
                     </button>
                 </div>
+                <button type="button" class="compra-cep-localizacao" [disabled]="localizando()"
+                    (click)="usarLocalizacao()">
+                    @if (localizando()) { Buscando localização… } @else { Usar minha localização }
+                </button>
                 @if (cepErro()) {
                 <span class="compra-aviso">Digite um CEP válido com 8 números.</span>
+                }
+                @if (localizacaoErro()) {
+                <span class="compra-aviso">Não foi possível obter o CEP pela localização. Digite manualmente.</span>
                 }
                 @for (opcao of opcoesFrete(); track opcao.serviceId) {
                 <div class="frete-opcao">

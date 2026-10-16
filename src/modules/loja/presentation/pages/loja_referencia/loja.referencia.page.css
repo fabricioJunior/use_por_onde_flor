@@ -614,3 +614,20 @@
         height: 44px;
     }
 }
+
+.compra-cep-localizacao {
+    align-self: flex-start;
+    padding: 0;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--pof-tinta);
+    background: none;
+    border: 0;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.compra-cep-localizacao:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
