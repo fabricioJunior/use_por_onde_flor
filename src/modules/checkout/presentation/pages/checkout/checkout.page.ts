@@ -96,6 +96,11 @@ export class CheckoutPage implements OnInit, OnDestroy {
     verificandoPagamento = signal(false);
     pagamentoNaoConfirmado = signal(false);
     cotandoPreco = signal(false);
+    // Cupons: só viram "aplicados" depois que /cotar confirma desconto (ver aplicarCupom); os mesmos códigos
+    // vão no finalizar e o backend revalida. Vários só somam se forem cumulativos (backend decide).
+    codigoCupomDigitado = '';
+    cuponsAplicados = signal<{ codigo: string; desconto?: number }[]>([]);
+    cupomMensagem = signal('');
     // Só feedback visual do botão "Copiar código" (cdkCopyToClipboard já faz a cópia de verdade) --
     // volta ao texto original depois de um tempo pra não ficar "Código copiado" pra sempre.
     codigoPixCopiado = signal(false);
@@ -482,7 +487,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
     // Desconto de promoção pode variar por forma de pagamento (restringirFormasPagamento/override
     // em promocao_forma_pagamento, ver EcommerceCheckoutService.montarItensComDesconto) -- recotar
     // sempre que a escolha mudar, senão o valor exibido não bate com o que o backend vai cobrar.
-    private async atualizarPrecosPorFormaPagamento(formaDePagamentoId: number): Promise<void> {
+    private async atualizarPrecosPorFormaPagamento(formaDePagamentoId?: number): Promise<void> {
         if (this.itens().length === 0) {
             return;
         }
@@ -491,16 +496,81 @@ export class CheckoutPage implements OnInit, OnDestroy {
             const cotacao = await firstValueFrom(this.checkoutDataSource.cotar({
                 itens: this.itens().map((item) => ({ produtoId: item.produtoId!, quantidade: item.quantidade! })),
                 formaDePagamentoId,
+                codigosCupom: this.codigosAplicados(),
             }));
             this.itens.set(this.itens().map((item) => {
                 const precoItem = cotacao.itens.find((i) => i.produtoId === item.produtoId);
                 return precoItem ? { ...item, valor: precoItem.valor, valorPromocional: precoItem.valorPromocional } : item;
             }));
+            // Cupom que deixou de valer (ex.: forma de pagamento com promoção maior) sai da lista com o motivo.
+            const recusado = cotacao.cupons?.find((c) => !c.aplicado);
+            if (recusado) {
+                this.cuponsAplicados.set(this.cuponsAplicados().filter((c) => cotacao.cupons!.some((r) => r.aplicado && r.codigo === c.codigo)));
+                this.cupomMensagem.set(this.motivoCupom(recusado));
+            }
         } catch (error) {
             console.error('Erro ao recalcular preço pra forma de pagamento selecionada', error);
         } finally {
             this.cotandoPreco.set(false);
         }
+    }
+
+    // "Cupom X: motivo" -- o backend manda o motivo sem o código do cupom.
+    private motivoCupom(cupom?: { codigo: string; motivo?: string }): string {
+        return cupom ? `Cupom ${cupom.codigo}: ${cupom.motivo ?? 'não pôde ser aplicado'}.` : 'Cupom não pôde ser aplicado.';
+    }
+
+    private codigosAplicados(): string[] | undefined {
+        const codigos = this.cuponsAplicados().map((c) => c.codigo);
+        return codigos.length ? codigos : undefined;
+    }
+
+    async aplicarCupom(): Promise<void> {
+        const codigo = this.codigoCupomDigitado.trim().toUpperCase();
+        if (!codigo || this.cotandoPreco() || this.itens().length === 0) {
+            return;
+        }
+        if (this.cuponsAplicados().some((c) => c.codigo === codigo)) {
+            this.cupomMensagem.set('Esse cupom já foi aplicado.');
+            return;
+        }
+        this.cotandoPreco.set(true);
+        this.cupomMensagem.set('');
+        try {
+            const cotacao = await firstValueFrom(this.checkoutDataSource.cotar({
+                itens: this.itens().map((item) => ({ produtoId: item.produtoId!, quantidade: item.quantidade! })),
+                formaDePagamentoId: this.formaPagamentoSelecionadaId() ?? undefined,
+                codigosCupom: [...this.cuponsAplicados().map((c) => c.codigo), codigo],
+            }));
+            const novo = cotacao.cupons?.find((c) => c.codigo === codigo);
+            if (!novo?.aplicado) {
+                this.cupomMensagem.set(this.motivoCupom(novo));
+                return;
+            }
+            // Cupom já aplicado que o novo não deixa somar (ex.: não é cumulativo): não descarta em silêncio, explica e mantém o anterior.
+            const barrado = cotacao.cupons?.find((c) => !c.aplicado && c.codigo !== codigo);
+            if (barrado) {
+                this.cupomMensagem.set(`Cupom ${codigo} não pôde ser somado: ${this.motivoCupom(barrado)}`);
+                return;
+            }
+            this.itens.set(this.itens().map((item) => {
+                const precoItem = cotacao.itens.find((i) => i.produtoId === item.produtoId);
+                return precoItem ? { ...item, valor: precoItem.valor, valorPromocional: precoItem.valorPromocional } : item;
+            }));
+            this.cuponsAplicados.set(cotacao.cupons!.filter((c) => c.aplicado).map((c) => ({ codigo: c.codigo, desconto: c.desconto })));
+            this.codigoCupomDigitado = '';
+        } catch (error) {
+            console.error('Erro ao validar cupom', error);
+            this.cupomMensagem.set('Não foi possível validar o cupom agora. Tente novamente.');
+        } finally {
+            this.cotandoPreco.set(false);
+        }
+    }
+
+    async removerCupom(codigo: string): Promise<void> {
+        this.cuponsAplicados.set(this.cuponsAplicados().filter((c) => c.codigo !== codigo));
+        this.cupomMensagem.set('');
+        await this.atualizarPrecosPorFormaPagamento(this.formaPagamentoSelecionadaId() ?? undefined);
     }
 
     private camposInvalidos(form: ReturnType<FormBuilder['group']>): string[] {
@@ -593,6 +663,7 @@ export class CheckoutPage implements OnInit, OnDestroy {
                 enderecoEntregaId,
                 enderecoEntrega,
                 freteEscolhido: this.freteSelecionado() ?? undefined,
+                codigosCupom: this.codigosAplicados(),
                 formaDePagamentoId: this.formaPagamentoSelecionadaId() ?? undefined,
                 // cookies do Pixel (_fbp/_fbc): ajudam a Meta a casar o Purchase do servidor com o do navegador
                 rastreio: this.metaPixel.dadosDeRastreio(),

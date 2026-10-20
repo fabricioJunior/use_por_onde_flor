@@ -1,6 +1,7 @@
 export interface CotarCheckoutRequestDto {
     itens: { produtoId: number; quantidade: number }[];
     formaDePagamentoId?: number;
+    codigosCupom?: string[];
 }
 
 export interface CotarCheckoutItemDto {
@@ -12,4 +13,5 @@ export interface CotarCheckoutItemDto {
 export interface CotarCheckoutResponseDto {
     itens: CotarCheckoutItemDto[];
     total: number;
+    cupons?: { codigo: string; aplicado: boolean; motivo?: string; desconto?: number }[];
 }
