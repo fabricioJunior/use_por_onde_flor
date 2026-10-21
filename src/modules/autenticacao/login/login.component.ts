@@ -31,6 +31,9 @@ export class LoginComponent implements OnInit {
     // URL pra onde voltar após login (ex: veio do checkout finalizar compra).
     returnUrl = signal<string | null>(null);
 
+    // Conta migrada que ainda nao criou senha propria: o passo de senha avisa pra criar uma nova.
+    senhaTemporaria = signal(false);
+
     // Traço decorativo do painel — path livre em coordenadas 0-100 (decisão de design, sem referência visual).
     tracoPath = 'M0,68 C20,45 35,88 55,58 C72,34 85,62 100,40';
 

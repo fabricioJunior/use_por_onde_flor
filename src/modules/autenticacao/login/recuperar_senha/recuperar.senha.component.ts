@@ -33,12 +33,14 @@ export class RecuperarSenhaComponent implements OnInit {
     avancaEnable = signal(false);
     emailDeRecuperacaoEnviado = signal(false);
     carregando = signal(false);
+    senhaTemporaria;
 
     emailControl: FormControl;
     loginGroup: FormGroup;
 
     constructor(loginComponent: LoginComponent, private autenticacaoService: AutenticacaoService, private router: Router, private route: ActivatedRoute) {
         this.loginGroup = loginComponent.loginGroup;
+        this.senhaTemporaria = loginComponent.senhaTemporaria;
         this.emailControl = loginComponent.loginGroup.get('email') as FormControl;
         this.updateErrorMessage();
         merge(this.emailControl.statusChanges, this.emailControl.valueChanges)
