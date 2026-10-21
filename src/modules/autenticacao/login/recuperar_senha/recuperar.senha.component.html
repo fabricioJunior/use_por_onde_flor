@@ -19,9 +19,15 @@
     </div>
 
     } @else {
+    @if (senhaTemporaria()) {
+    <p>Por questões de segurança, você precisa criar uma nova senha para
+        continuar: confirme seu e-mail abaixo e enviaremos um código de
+        redefinição.</p>
+    } @else {
     <p>Insira o e-mail associado à sua conta para receber o codigo de
         redefinição
         de senha.</p>
+    }
     <mat-form-field appearance="outline">
         <mat-label>E-mail</mat-label>
         <input matInput placeholder="E-mail" formControlName="email"

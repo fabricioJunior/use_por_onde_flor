@@ -20,7 +20,7 @@ export class EmailComponent {
     avancaEnable = signal(false);
 
     loginGroup: FormGroup;
-    constructor(private router: Router, loginComponent: LoginComponent, private loginService: AutenticacaoService) {
+    constructor(private router: Router, private loginComponent: LoginComponent, private loginService: AutenticacaoService) {
         this.loginGroup = loginComponent.loginGroup;
         this.updateErrorMessage();
         merge(loginComponent.loginGroup.get('email')!.statusChanges, this.loginGroup.get('email')!.valueChanges)
@@ -45,11 +45,12 @@ export class EmailComponent {
     onAvancarTap() {
 
         this.loginService.validarEmailValido(this.loginGroup.get('email')?.value).subscribe((data) => {
+            this.loginComponent.senhaTemporaria.set(data.senhaTemporaria === true);
             if (data.valido) {
                 this.errorMessage.set('E-mail não cadastrado, verifique o e-mail inserido ou crie um conta');
             } else {
                 this.errorMessage.set('');
-                this.router.navigate(['login/stepSenha'])
+                this.router.navigate([data.senhaTemporaria ? 'login/recuperarSenha' : 'login/stepSenha'])
 
             }
         });
