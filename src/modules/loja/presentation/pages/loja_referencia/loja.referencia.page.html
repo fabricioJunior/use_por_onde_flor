@@ -21,7 +21,7 @@
 
     <div class="pdp-grid">
         <!-- 2.3 Galeria -->
-        <div class="galeria">
+        <div class="galeria" [class.galeria-sem-thumbs]="midias().length <= 1">
             @if (midias().length > 1) {
             <div class="galeria-thumbs">
                 @for (midia of thumbsVisiveis(); track midia.id; let i = $index) {
