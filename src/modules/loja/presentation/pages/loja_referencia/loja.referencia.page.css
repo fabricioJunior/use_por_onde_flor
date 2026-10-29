@@ -61,6 +61,11 @@
     align-items: start;
 }
 
+/* 0 ou 1 foto: não existe a coluna de miniaturas, senão a foto cai nos 72px dela */
+.galeria-sem-thumbs {
+    grid-template-columns: minmax(0, 1fr);
+}
+
 .galeria-thumbs {
     display: flex;
     flex-direction: column;
