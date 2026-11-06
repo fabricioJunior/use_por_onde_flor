@@ -92,6 +92,30 @@
         }
         }
         }
+
+        @if (opcoesPagamento(); as opcoes) {
+        @let temCobranca = temCobrancaPendente(p);
+        @if (temCobranca && !mostrandoOutrasFormas()) {
+        <button type="button" class="pedido-botao-reenviar-email" (click)="mostrandoOutrasFormas.set(true)">Pagar de outra forma</button>
+        }
+        @if (!temCobranca || mostrandoOutrasFormas()) {
+        <div class="pedido-escolha-pagamento">
+            <h3>Como deseja pagar?</h3>
+            @if (temCobranca && perdeDescontoAoTrocar()) {
+            <p class="pedido-escolha-aviso">Ao trocar a forma de pagamento, o desconto combinado com o vendedor deixa de valer.</p>
+            }
+            @for (forma of opcoes.formas; track forma.formaDePagamentoId) {
+            <button type="button" class="pedido-escolha-opcao" [disabled]="escolhendoForma()" (click)="escolherForma(forma)">
+                <span>{{ forma.descricao }}@if (forma.definidaPeloVendedor) { · combinado com o vendedor }</span>
+                <strong>{{ formatarPreco(forma.valor) }}</strong>
+                @if (forma.desconto > 0) {
+                <small>desconto de {{ formatarPreco(forma.desconto) }}</small>
+                }
+            </button>
+            }
+        </div>
+        }
+        }
     </section>
 
     <section class="pedido-secao">

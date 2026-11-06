@@ -7,7 +7,7 @@ import { HeaderComponent } from "../../../../loja/presentation/components/header
 import { FooterComponent } from "../../../../loja/presentation/components/footer/footer.component";
 import { AutenticacaoService } from "../../../../autenticacao/services/autenticacao.service";
 import { PedidosService } from "../../../services/pedidos.service";
-import { PedidoDetalheDto } from "../../../data/dto/pedido-detalhe.dto";
+import { OpcaoPagamentoPublicoDto, OpcoesPagamentoPublicoDto, PedidoDetalheDto } from "../../../data/dto/pedido-detalhe.dto";
 import { ToastService } from "../../../../loja/presentation/components/ui/toast/toast.service";
 import { pedidoFoiEntregue, situacaoPedidoLabel } from "../../../utils/pedido-situacao.util";
 import { descricaoVariacao } from "../../../../loja/presentation/utils/variacao-apresentacao.util";
@@ -28,6 +28,10 @@ export class PedidoDetalhePage implements OnInit {
     pedido = signal<PedidoDetalheDto | null>(null);
     pagamentoConcluido = signal(false);
     reenviandoEmail = signal(false);
+    // Escolha da forma de pagamento pelo link (só com token). Sem opções = pedido que não aceita pagar por aqui (pago, cancelado...).
+    opcoesPagamento = signal<OpcoesPagamentoPublicoDto | null>(null);
+    escolhendoForma = signal(false);
+    mostrandoOutrasFormas = signal(false);
 
     private id = 0;
     private token: string | null = null;
@@ -61,6 +65,8 @@ export class PedidoDetalhePage implements OnInit {
             if (this.pagamentoConcluido() && token) {
                 void this.metaPixel.purchaseDoPedido(id, token);
             }
+
+            await this.carregarOpcoesPagamento();
         } catch (error) {
             if (error instanceof HttpErrorResponse && error.status === 404) {
                 this.naoEncontrado.set(true);
@@ -84,6 +90,46 @@ export class PedidoDetalhePage implements OnInit {
 
     foiEntregue(pedido: PedidoDetalheDto): boolean {
         return pedidoFoiEntregue(pedido.situacaoEntrega, pedido.retiradoEm);
+    }
+
+    private async carregarOpcoesPagamento(): Promise<void> {
+        if (!this.token) {
+            return;
+        }
+        try {
+            const opcoes = await this.pedidosService.opcoesPagamento(this.id, this.token);
+            this.opcoesPagamento.set(opcoes.formas.length ? opcoes : null);
+        } catch {
+            // 400 = pedido pago/cancelado/parcial: simplesmente não oferece escolha.
+            this.opcoesPagamento.set(null);
+        }
+    }
+
+    temCobrancaPendente(pedido: PedidoDetalheDto): boolean {
+        return !!pedido.pagamentos?.some((pagamento) => !pagamento.confirmadoEm && pagamento.cobranca);
+    }
+
+    // O desconto combinado com o vendedor só vale para a forma que ele definiu; trocar de forma o remove (o backend zera).
+    perdeDescontoAoTrocar(): boolean {
+        return !!this.opcoesPagamento()?.formas.some((forma) => forma.definidaPeloVendedor && forma.desconto > 0);
+    }
+
+    async escolherForma(forma: OpcaoPagamentoPublicoDto): Promise<void> {
+        if (!this.token || this.escolhendoForma()) {
+            return;
+        }
+        this.escolhendoForma.set(true);
+        try {
+            await this.pedidosService.escolherPagamento(this.id, this.token, forma.formaDePagamentoId);
+            this.pedido.set(await this.pedidosService.buscarPublico(this.id, this.token));
+            this.mostrandoOutrasFormas.set(false);
+            await this.carregarOpcoesPagamento();
+        } catch (error) {
+            console.error('Erro ao escolher a forma de pagamento', error);
+            this.toastService.show('Não foi possível gerar o pagamento. Tente novamente.', 'error');
+        } finally {
+            this.escolhendoForma.set(false);
+        }
     }
 
     async reenviarEmail(): Promise<void> {

@@ -78,3 +78,19 @@ export class PedidoDetalheDto {
         Object.assign(this, partial);
     }
 }
+
+// Formas de pagamento online que o cliente pode escolher no link do pedido (GET v1/pedidos/publico/:id/opcoes-pagamento).
+export class OpcaoPagamentoPublicoDto {
+    formaDePagamentoId!: number;
+    descricao!: string;
+    parcelas!: number;
+    valor!: number;
+    desconto!: number;
+    definidaPeloVendedor!: boolean;
+}
+
+export class OpcoesPagamentoPublicoDto {
+    pedidoId!: number;
+    totalSemDescontos!: number;
+    formas!: OpcaoPagamentoPublicoDto[];
+}
