@@ -35,6 +35,7 @@ export class PedidoDetalhePage implements OnInit {
 
     private id = 0;
     private token: string | null = null;
+    private redirecionandoParaPagamento = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -120,16 +121,60 @@ export class PedidoDetalhePage implements OnInit {
         }
         this.escolhendoForma.set(true);
         try {
+            // Já existe cobrança pendente nessa mesma forma: não cria outra no gateway, só retoma a atual.
+            const pedidoAtual = this.pedido();
+            const cobrancaAtual = pedidoAtual ? this.cobrancaPendenteDaForma(pedidoAtual, forma.formaDePagamentoId) : undefined;
+            if (cobrancaAtual) {
+                this.mostrandoOutrasFormas.set(false);
+                this.redirecionarParaPagamento(cobrancaAtual.urlDePagamento);
+                return;
+            }
+
             await this.pedidosService.escolherPagamento(this.id, this.token, forma.formaDePagamentoId);
-            this.pedido.set(await this.pedidosService.buscarPublico(this.id, this.token));
+            const pedidoAtualizado = await this.pedidosService.buscarPublico(this.id, this.token);
+            this.pedido.set(pedidoAtualizado);
             this.mostrandoOutrasFormas.set(false);
             await this.carregarOpcoesPagamento();
+
+            // Cobrança com link do gateway (cartão etc.): leva o cliente direto pro pagamento. Pix não tem
+            // urlDePagamento -- segue mostrando QR/copia e cola na própria página.
+            this.redirecionarParaPagamento(this.urlDePagamentoPendente(pedidoAtualizado));
         } catch (error) {
             console.error('Erro ao escolher a forma de pagamento', error);
             this.toastService.show('Não foi possível gerar o pagamento. Tente novamente.', 'error');
         } finally {
-            this.escolhendoForma.set(false);
+            // Mantém os botões travados enquanto o navegador troca de página, pra não permitir novo clique.
+            if (!this.redirecionandoParaPagamento) {
+                this.escolhendoForma.set(false);
+            }
         }
+    }
+
+    // Mesma aba: popup aberta depois de um await é bloqueada pelo navegador. O link "Ir para o pagamento" segue como fallback.
+    private redirecionarParaPagamento(url: string | undefined): void {
+        if (url && typeof window !== 'undefined') {
+            this.redirecionandoParaPagamento = true;
+            window.location.href = url;
+        }
+    }
+
+    private cobrancaPendenteDaForma(pedido: PedidoDetalheDto, formaDePagamentoId: number) {
+        return pedido.pagamentos?.find(
+            (pagamento) =>
+                !pagamento.confirmadoEm &&
+                pagamento.estoqueDisponivel !== false &&
+                !!pagamento.cobranca &&
+                pagamento.formaDePagamento?.id === formaDePagamentoId,
+        )?.cobranca;
+    }
+
+    private urlDePagamentoPendente(pedido: PedidoDetalheDto): string | undefined {
+        return pedido.pagamentos?.find(
+            (pagamento) =>
+                !pagamento.confirmadoEm &&
+                pagamento.estoqueDisponivel !== false &&
+                !!pagamento.cobranca?.urlDePagamento,
+        )?.cobranca?.urlDePagamento;
     }
 
     async reenviarEmail(): Promise<void> {
