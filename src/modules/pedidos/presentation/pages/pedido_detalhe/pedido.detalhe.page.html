@@ -101,6 +101,9 @@
         @if (!temCobranca || mostrandoOutrasFormas()) {
         <div class="pedido-escolha-pagamento">
             <h3>Como deseja pagar?</h3>
+            @if (!temCobranca && p.desconto) {
+            <p class="pedido-escolha-aviso">Este pedido tem desconto de {{ formatarPreco(p.desconto) }}, válido só para a forma de pagamento combinada com o vendedor. Para pagar com o desconto, peça a ele para gerar o pagamento.</p>
+            }
             @if (temCobranca && perdeDescontoAoTrocar()) {
             <p class="pedido-escolha-aviso">Ao trocar a forma de pagamento, o desconto combinado com o vendedor deixa de valer.</p>
             }
