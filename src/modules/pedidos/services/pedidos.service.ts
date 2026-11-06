@@ -3,7 +3,7 @@ import { firstValueFrom } from "rxjs";
 import { PedidosDataSource } from "../data/pedidos.data.source";
 import { PedidoPublicoDataSource } from "../data/pedido-publico.data.source";
 import { PedidosListaDto } from "../data/dto/pedidos-lista.dto";
-import { PedidoDetalheDto } from "../data/dto/pedido-detalhe.dto";
+import { OpcoesPagamentoPublicoDto, PedidoDetalheDto } from "../data/dto/pedido-detalhe.dto";
 
 @Injectable()
 export class PedidosService {
@@ -23,6 +23,14 @@ export class PedidosService {
 
     buscarPublico(id: number, token: string): Promise<PedidoDetalheDto> {
         return firstValueFrom(this.pedidoPublicoDataSource.buscar(id, token));
+    }
+
+    opcoesPagamento(id: number, token: string): Promise<OpcoesPagamentoPublicoDto> {
+        return firstValueFrom(this.pedidoPublicoDataSource.opcoesPagamento(id, token));
+    }
+
+    async escolherPagamento(id: number, token: string, formaDePagamentoId: number): Promise<void> {
+        await firstValueFrom(this.pedidoPublicoDataSource.escolherPagamento(id, token, formaDePagamentoId));
     }
 
     reenviarEmail(id: number, token: string | null): Promise<void> {
