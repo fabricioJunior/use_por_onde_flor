@@ -120,7 +120,16 @@ export class PedidoDetalhePage implements OnInit {
         }
         this.escolhendoForma.set(true);
         try {
-            await this.pedidosService.escolherPagamento(this.id, this.token, forma.formaDePagamentoId);
+            const escolhido = await this.pedidosService.escolherPagamento(this.id, this.token, forma.formaDePagamentoId);
+
+            // Escolheu a forma: leva direto ao gateway (mesma aba; abrir outra aba depois de uma chamada assíncrona é bloqueado
+            // pelo navegador). Sem link de redirecionamento (ex: Pix copia-e-cola), relê o pedido e mostra o QR Code/código.
+            const url = escolhido?.cobranca?.urlDePagamento;
+            if (url) {
+                window.location.assign(url);
+                return;
+            }
+
             this.pedido.set(await this.pedidosService.buscarPublico(this.id, this.token));
             this.mostrandoOutrasFormas.set(false);
             await this.carregarOpcoesPagamento();

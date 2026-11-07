@@ -94,3 +94,8 @@ export class OpcoesPagamentoPublicoDto {
     totalSemDescontos!: number;
     formas!: OpcaoPagamentoPublicoDto[];
 }
+
+// Resposta de POST v1/pedidos/publico/:id/pagamento: só o que o site usa para levar o cliente ao gateway.
+export class PagamentoEscolhidoDto {
+    cobranca?: { urlDePagamento?: string; qrCodePix?: string; chavePixCopiaECola?: string };
+}
