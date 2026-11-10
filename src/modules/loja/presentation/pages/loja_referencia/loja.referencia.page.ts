@@ -228,7 +228,7 @@ export class LojaReferenciaPage implements OnInit {
         return referencia && this.preco() < referencia.valor ? referencia.valor : null;
     }
 
-    parcelamento = computed(() => textoParcelamento(this.preco()));
+    parcelamento = computed(() => textoParcelamento(this.preco(), this.precoDe() != null));
 
     /// Melhor preço à vista quando bate o do cartão -- ex.: "R$ 60,00 no PIX".
     precoAVista = computed(() => {
@@ -237,7 +237,7 @@ export class LojaReferenciaPage implements OnInit {
         return melhor != null && melhor < this.preco() && forma ? { valor: melhor, forma } : null;
     });
     pix = computed(() => precoPix(this.preco()));
-    tabelaParcelas = computed(() => parcelas(this.preco()));
+    tabelaParcelas = computed(() => parcelas(this.preco(), this.precoDe() != null));
 
     private static unicos(valores: (string | undefined)[]): string[] {
         const vistos: string[] = [];
