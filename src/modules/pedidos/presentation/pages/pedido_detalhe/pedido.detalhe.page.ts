@@ -7,7 +7,7 @@ import { HeaderComponent } from "../../../../loja/presentation/components/header
 import { FooterComponent } from "../../../../loja/presentation/components/footer/footer.component";
 import { AutenticacaoService } from "../../../../autenticacao/services/autenticacao.service";
 import { PedidosService } from "../../../services/pedidos.service";
-import { OpcaoPagamentoPublicoDto, OpcoesPagamentoPublicoDto, PedidoDetalheDto } from "../../../data/dto/pedido-detalhe.dto";
+import { OpcaoPagamentoPublicoDto, OpcoesPagamentoPublicoDto, PedidoDetalheDto, PedidoPagamentoCobrancaDto } from "../../../data/dto/pedido-detalhe.dto";
 import { ToastService } from "../../../../loja/presentation/components/ui/toast/toast.service";
 import { pedidoFoiEntregue, situacaoPedidoLabel } from "../../../utils/pedido-situacao.util";
 import { descricaoVariacao } from "../../../../loja/presentation/utils/variacao-apresentacao.util";
@@ -114,12 +114,34 @@ export class PedidoDetalhePage implements OnInit {
         return !!this.opcoesPagamento()?.formas.some((forma) => forma.definidaPeloVendedor && forma.desconto > 0);
     }
 
+    private cobrancaPendenteDaForma(formaDePagamentoId: number): PedidoPagamentoCobrancaDto | undefined {
+        return this.pedido()?.pagamentos?.find(
+            (pagamento) =>
+                !pagamento.confirmadoEm &&
+                pagamento.estoqueDisponivel !== false &&
+                !!pagamento.cobranca &&
+                pagamento.formaDePagamento?.id === formaDePagamentoId,
+        )?.cobranca;
+    }
+
     async escolherForma(forma: OpcaoPagamentoPublicoDto): Promise<void> {
         if (!this.token || this.escolhendoForma()) {
             return;
         }
         this.escolhendoForma.set(true);
         try {
+            // Já existe cobrança pendente nessa mesma forma: não cria outra no gateway, só retoma a atual
+            // (com link, leva ao gateway; Pix já mostra QR Code/código na própria página).
+            const cobrancaAtual = this.cobrancaPendenteDaForma(forma.formaDePagamentoId);
+            if (cobrancaAtual) {
+                if (cobrancaAtual.urlDePagamento) {
+                    window.location.assign(cobrancaAtual.urlDePagamento);
+                    return;
+                }
+                this.mostrandoOutrasFormas.set(false);
+                return;
+            }
+
             const escolhido = await this.pedidosService.escolherPagamento(this.id, this.token, forma.formaDePagamentoId);
 
             // Escolheu a forma: leva direto ao gateway (mesma aba; abrir outra aba depois de uma chamada assíncrona é bloqueado
