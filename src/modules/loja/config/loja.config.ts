@@ -40,7 +40,9 @@ export const LOJA_CONFIG = {
     // expor essa regra, trocar a origem do valor e deixar este arquivo só como fallback.
     // Escolha da loja: 6x, sem mínimo por parcela. Para parar de anunciar parcela de centavos em
     // produto barato, basta pôr um piso em `valorMinimoParcela` (ex.: 20 -> R$ 100 vira 5x).
-    parcelamento: { ativo: true, maxParcelas: 6, valorMinimoParcela: 0 },
+    // `maxParcelasPromocional`: teto quando o preço exibido é promocional (preço menor que o de tabela),
+    // ex.: Black Friday = até 2x sem juros.
+    parcelamento: { ativo: true, maxParcelas: 6, maxParcelasPromocional: 2, valorMinimoParcela: 0 },
 
     // Preço no Pix com desconto + bloco Pix do modal de pagamento.
     // OCULTO: desconto por forma de pagamento existe em `/promocoes` (override por

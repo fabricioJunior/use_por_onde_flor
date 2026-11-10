@@ -103,6 +103,19 @@ describe('preco.apresentacao.util', () => {
     }
   });
 
+  it('limita o parcelamento a maxParcelasPromocional quando o preço é promocional', () => {
+    const original = { ...LOJA_CONFIG.parcelamento };
+    Object.assign(LOJA_CONFIG.parcelamento, { ativo: true, maxParcelas: 6, maxParcelasPromocional: 2, valorMinimoParcela: 0 });
+    try {
+      expect(textoParcelamento(300)).toContain('6x');
+      expect(textoParcelamento(300, true)).toBe(`2x de ${formatarPreco(150)} sem juros`);
+      expect(parcelas(300, true).map((p) => p.numero)).toEqual([1, 2]);
+      expect(parcelas(300).length).toBe(6);
+    } finally {
+      Object.assign(LOJA_CONFIG.parcelamento, original);
+    }
+  });
+
   it('calcula falta/percentual do frete grátis quando a regra está ligada', () => {
     const original = { ...LOJA_CONFIG.freteGratis };
     Object.assign(LOJA_CONFIG.freteGratis, { ativo: true, minimo: 400 });

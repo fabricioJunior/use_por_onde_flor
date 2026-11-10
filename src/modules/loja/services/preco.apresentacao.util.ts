@@ -6,23 +6,25 @@ export function formatarPreco(valor: number | undefined | null): string {
 
 // Nº de parcelas sem juros: o teto vem da config da loja; `valorMinimoParcela > 0` ainda corta
 // parcela pequena demais (R$ 40 em 10x viraria 10x de R$ 4). Com 0, vale só o teto.
-function maximoDeParcelas(preco: number): number {
-    const { ativo, maxParcelas, valorMinimoParcela } = LOJA_CONFIG.parcelamento;
+// `promocional` (preço menor que o de tabela) usa o teto `maxParcelasPromocional`.
+function maximoDeParcelas(preco: number, promocional = false): number {
+    const { ativo, maxParcelas, maxParcelasPromocional, valorMinimoParcela } = LOJA_CONFIG.parcelamento;
     if (!ativo || !preco || preco <= 0) {
         return 0;
     }
-    const porValor = valorMinimoParcela > 0 ? Math.floor(preco / valorMinimoParcela) : maxParcelas;
-    return Math.max(1, Math.min(maxParcelas, porValor));
+    const teto = promocional ? Math.min(maxParcelas, maxParcelasPromocional) : maxParcelas;
+    const porValor = valorMinimoParcela > 0 ? Math.floor(preco / valorMinimoParcela) : teto;
+    return Math.max(1, Math.min(teto, porValor));
 }
 
 // "Nx de R$ X sem juros", abaixo do preço.
-export function textoParcelamento(preco: number): string | null {
-    const n = maximoDeParcelas(preco);
+export function textoParcelamento(preco: number, promocional = false): string | null {
+    const n = maximoDeParcelas(preco, promocional);
     return n > 1 ? `${n}x de ${formatarPreco(preco / n)} sem juros` : null;
 }
 
-export function parcelas(preco: number): { numero: number; valor: number }[] {
-    const maximo = maximoDeParcelas(preco);
+export function parcelas(preco: number, promocional = false): { numero: number; valor: number }[] {
+    const maximo = maximoDeParcelas(preco, promocional);
     return Array.from({ length: maximo }, (_, i) => ({ numero: i + 1, valor: preco / (i + 1) }));
 }
 
