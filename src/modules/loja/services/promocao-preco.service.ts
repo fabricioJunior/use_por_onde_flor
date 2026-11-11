@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { PromocaoDto } from "../data/dtos/promocao.dto";
+import { EcommerceReferenciaDto } from "../data/dtos/ecommerce-referencia.dto";
 
 // Mesma matemática de apollo-api DescontoCalculatorService (sem estado, sem I/O) -- catálogo
 // público não tem endpoint de preço-com-desconto pronto, então calcula aqui a partir da lista de
@@ -28,6 +29,19 @@ export class PromocaoPrecoService {
             mapa.set(referenciaId, this.melhorPromocao(lista, 100));
         }
         return mapa;
+    }
+
+    // Preenche valorPromocional/valorParcelado/melhorDesconto -- o que o card de produto lê.
+    // Toda lista que renderiza card precisa passar por aqui (a API devolve só o valor de tabela).
+    comPreco(referencias: EcommerceReferenciaDto[], promocoes: PromocaoDto[], nomesFormaPagamento: Map<number, string>): EcommerceReferenciaDto[] {
+        const mapa = this.montarMapa(promocoes);
+        const gerais = this.promocoesGerais(promocoes);
+        return referencias.map((r) => ({
+            ...r,
+            valorPromocional: this.calcularParaReferencia(r.referenciaId, r.valor, mapa, gerais) ?? undefined,
+            valorParcelado: this.precoParaParcelamento(r.referenciaId, r.valor, mapa, gerais, nomesFormaPagamento),
+            melhorDesconto: this.melhorOpcaoParaReferencia(r.referenciaId, r.valor, mapa, gerais, nomesFormaPagamento) ?? undefined,
+        }));
     }
 
     // gerais precisa do valorBase real pra comparar com as por-referência -- resolve por item em

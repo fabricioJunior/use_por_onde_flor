@@ -174,7 +174,7 @@ export class LojaReferenciaPage implements OnInit {
                 this.corSelecionada.set(disponiveis[0]?.corNome ?? null);
             }
 
-            void this.carregarRelacionados(referencia);
+            void this.carregarRelacionados(referencia, promocoes.items, new Map(formasPagamento.map((f) => [f.formaDePagamentoId, f.descricao])));
         } catch (error) {
             console.error('Erro ao carregar referência da loja', error);
             this.erro.set('Não foi possível carregar este produto no momento.');
@@ -185,7 +185,7 @@ export class LojaReferenciaPage implements OnInit {
 
     // "Você também pode gostar": não existe endpoint de relacionados -- usa o catálogo da mesma
     // categoria (dado real), tirando a própria referência. Sem categoria, a vitrine não aparece.
-    private async carregarRelacionados(referencia: EcommerceReferenciaDto): Promise<void> {
+    private async carregarRelacionados(referencia: EcommerceReferenciaDto, promocoes: PromocaoDto[], nomesFormaPagamento: Map<number, string>): Promise<void> {
         if (!referencia.categoriaId) {
             return;
         }
@@ -193,7 +193,8 @@ export class LojaReferenciaPage implements OnInit {
             const resposta = await firstValueFrom(
                 this.lojaDataSource.listarReferencias(1, 12, undefined, [referencia.categoriaId]),
             );
-            this.relacionados.set(resposta.items.filter((r) => r.id !== referencia.id));
+            this.relacionados.set(this.promocaoPrecoService.comPreco(
+                resposta.items.filter((r) => r.id !== referencia.id), promocoes, nomesFormaPagamento));
         } catch (error) {
             console.error('Erro ao carregar produtos relacionados', error);
         }

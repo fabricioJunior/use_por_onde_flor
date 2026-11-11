@@ -15,6 +15,24 @@ describe('PromocaoPrecoService', () => {
     expect(service).toBeTruthy();
   });
 
+  describe('comPreco', () => {
+    it('aplica preço fixo da promoção por referência (ex.: R$ 59 por R$ 49) e parcela sobre o preço promocional', () => {
+      const promocao: PromocaoDto = { id: 54, tipoDesconto: 'preco_fixo', tipoEscopo: 'referencias', referenciaIds: [10], precoFixo: 49 };
+      const [com, sem] = service.comPreco(
+        [{ referenciaId: 10, valor: 59 }, { referenciaId: 11, valor: 59 }] as any, [promocao], new Map());
+      expect(com.valorPromocional).toBe(49);
+      expect(com.valorParcelado).toBe(49);
+      expect(com.melhorDesconto?.percentualOff).toBe(17);
+      expect(sem.valorPromocional).toBeUndefined();
+    });
+
+    it('aplica percentual por referência (30% nas bolsas)', () => {
+      const promocao: PromocaoDto = { id: 60, tipoDesconto: 'percentual', tipoEscopo: 'referencias', referenciaIds: [20], valorPercentual: 30 };
+      const [r] = service.comPreco([{ referenciaId: 20, valor: 100 }] as any, [promocao], new Map());
+      expect(r.valorPromocional).toBe(70);
+    });
+  });
+
   describe('calcularFaixaParaCarrinho', () => {
     const promocaoLeve2: PromocaoDto = {
       id: 45,
