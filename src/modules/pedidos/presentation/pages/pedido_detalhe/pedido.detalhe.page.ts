@@ -110,8 +110,9 @@ export class PedidoDetalhePage implements OnInit {
     }
 
     // O desconto combinado com o vendedor só vale para a forma que ele definiu; trocar de forma o remove (o backend zera).
-    perdeDescontoAoTrocar(): boolean {
-        return !!this.opcoesPagamento()?.formas.some((forma) => forma.definidaPeloVendedor && forma.desconto > 0);
+    // Com cobrança pendente, desconto > 0 vem do vendedor: se o cliente já tivesse trocado pelo link, o backend o teria zerado.
+    temDescontoDoVendedor(pedido: PedidoDetalheDto): boolean {
+        return (pedido.desconto ?? 0) > 0 || !!this.opcoesPagamento()?.formas.some((forma) => forma.definidaPeloVendedor && forma.desconto > 0);
     }
 
     private cobrancaPendenteDaForma(formaDePagamentoId: number): PedidoPagamentoCobrancaDto | undefined {
