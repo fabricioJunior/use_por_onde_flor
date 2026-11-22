@@ -351,7 +351,12 @@ h2 {
     align-self: center;
 }
 
+/* No celular o resumo some; o cupom aparece numa seção própria na coluna do formulário. */
+.checkout-secao-cupom-mobile { display: none; }
+
 @media (max-width: 860px) {
+    .checkout-secao-cupom-mobile { display: block; }
+
     .checkout-grid {
         grid-template-columns: 1fr;
     }
