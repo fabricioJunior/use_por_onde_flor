@@ -59,6 +59,24 @@
     } @else {
 
     <div class="checkout-grid">
+        <ng-template #cupomTpl>
+            <div class="checkout-cupom">
+                @for (cupom of cuponsAplicados(); track cupom.codigo) {
+                <div class="checkout-cupom-aplicado">
+                    <span>Cupom <strong>{{ cupom.codigo }}</strong> aplicado@if (cupom.desconto) { (−{{ formatarPreco(cupom.desconto) }}) }</span>
+                    <button type="button" class="checkout-cupom-remover" (click)="removerCupom(cupom.codigo)" [disabled]="cotandoPreco()">Remover</button>
+                </div>
+                }
+                <div class="checkout-cupom-form">
+                    <input type="text" class="checkout-cupom-input" [placeholder]="cuponsAplicados().length ? 'Adicionar outro cupom' : 'Cupom de desconto'" maxlength="50" autocomplete="off"
+                        [(ngModel)]="codigoCupomDigitado" [ngModelOptions]="{ standalone: true }" (keydown.enter)="aplicarCupom()" />
+                    <button type="button" class="checkout-cupom-aplicar" (click)="aplicarCupom()" [disabled]="cotandoPreco() || !codigoCupomDigitado.trim()">Aplicar</button>
+                </div>
+                @if (cupomMensagem()) {
+                <p class="checkout-aviso">{{ cupomMensagem() }}</p>
+                }
+            </div>
+        </ng-template>
         <div class="checkout-secoes">
             @if (!autenticado) {
             <section class="checkout-secao">
@@ -190,6 +208,11 @@
                 </div>
             </section>
             }
+
+            <section class="checkout-secao checkout-secao-cupom-mobile">
+                <h2>Cupom de desconto</h2>
+                <ng-container *ngTemplateOutlet="cupomTpl"></ng-container>
+            </section>
         </div>
 
         <aside class="checkout-resumo">
@@ -220,22 +243,7 @@
                 }
             </div>
 
-            <div class="checkout-cupom">
-                @for (cupom of cuponsAplicados(); track cupom.codigo) {
-                <div class="checkout-cupom-aplicado">
-                    <span>Cupom <strong>{{ cupom.codigo }}</strong> aplicado@if (cupom.desconto) { (−{{ formatarPreco(cupom.desconto) }}) }</span>
-                    <button type="button" class="checkout-cupom-remover" (click)="removerCupom(cupom.codigo)" [disabled]="cotandoPreco()">Remover</button>
-                </div>
-                }
-                <div class="checkout-cupom-form">
-                    <input type="text" class="checkout-cupom-input" [placeholder]="cuponsAplicados().length ? 'Adicionar outro cupom' : 'Cupom de desconto'" maxlength="50" autocomplete="off"
-                        [(ngModel)]="codigoCupomDigitado" [ngModelOptions]="{ standalone: true }" (keydown.enter)="aplicarCupom()" />
-                    <button type="button" class="checkout-cupom-aplicar" (click)="aplicarCupom()" [disabled]="cotandoPreco() || !codigoCupomDigitado.trim()">Aplicar</button>
-                </div>
-                @if (cupomMensagem()) {
-                <p class="checkout-aviso">{{ cupomMensagem() }}</p>
-                }
-            </div>
+            <ng-container *ngTemplateOutlet="cupomTpl"></ng-container>
 
             @if (freteSelecionado(); as frete) {
             <div class="checkout-resumo-linha">
